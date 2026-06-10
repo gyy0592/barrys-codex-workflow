@@ -63,3 +63,24 @@ Problem:
 Prevention:
 
 - Put test byproducts under the test's own temporary directory so concurrent runs do not collide.
+
+## Test Every Required Component
+
+Problem:
+
+- The first implementation commit tested templates and tmux scripts, but did not directly test `SKILL.md`.
+
+Prevention:
+
+- Keep a dedicated skill contract test.
+- Treat "all tests pass" as incomplete when a required component has no direct test or inspection gate.
+
+## Run Diff Formatting Checks
+
+Problem:
+
+- A reviewed commit passed functional tests but had a blank line at EOF reported by `git diff --check`.
+
+Prevention:
+
+- Run `git diff --check` before each commit.

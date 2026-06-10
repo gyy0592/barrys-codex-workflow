@@ -100,3 +100,10 @@ Next:
 
 - Commit the test enhancement.
 - Ask a clean-context subagent to review the new commit after the previous implementation review returns.
+
+Subagent reviews:
+
+- Review of `c4aa61b`: FAIL. Finding: `SKILL.md` did not have direct test coverage in that commit.
+- Response: `4ba128d` added `tests/test_skill_contract.sh` and included it in `tests/run_tests.sh`.
+- Review of `4ba128d`: PASS. Finding: no goal mismatch, but `git diff --check 4ba128d^ 4ba128d` reported a blank line at EOF in `tests/test_skill_contract.sh`.
+- Response: remove the blank line at EOF in the next commit.

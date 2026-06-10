@@ -19,4 +19,3 @@ if grep -F -e 'control/self_check.md' -e 'control/progress.md' -e 'control/done.
 fi
 
 printf 'test_skill_contract PASS\n'
-
