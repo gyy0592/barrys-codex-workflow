@@ -1,6 +1,6 @@
 # codex_workflow_tmux
 
-This repository implements a tmux-based supervision workflow for Codex.
+This repository is being built to implement a tmux-based supervision workflow for Codex.
 
 The source design is `/home/yguo173/Downloads/tmux_codex_workflow_design.md`.
 
@@ -19,4 +19,3 @@ Required repository areas:
 - `tests/`: shell tests that prove the scripts and templates work.
 - `docs/experiment_book.md`: chronological record of work and verification.
 - `docs/bitter_lessons.md`: repeated mistakes and prevention rules.
-

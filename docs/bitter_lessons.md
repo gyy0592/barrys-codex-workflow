@@ -43,3 +43,23 @@ Prevention:
 
 - Create the target directory from an existing parent directory before running commands inside it.
 
+## Do Not Claim Completion Early
+
+Problem:
+
+- The bootstrap README said the repository "implements" the workflow before scripts, templates, and tests were committed.
+
+Prevention:
+
+- Use "is being built to implement" until the repository has working components and passing tests.
+- Only claim that the repository implements the workflow after current evidence proves it.
+
+## Keep Tests Isolated
+
+Problem:
+
+- A draft test wrote expected-failure output to fixed `/tmp` paths.
+
+Prevention:
+
+- Put test byproducts under the test's own temporary directory so concurrent runs do not collide.
