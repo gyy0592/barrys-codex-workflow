@@ -107,3 +107,35 @@ Subagent reviews:
 - Response: `4ba128d` added `tests/test_skill_contract.sh` and included it in `tests/run_tests.sh`.
 - Review of `4ba128d`: PASS. Finding: no goal mismatch, but `git diff --check 4ba128d^ 4ba128d` reported a blank line at EOF in `tests/test_skill_contract.sh`.
 - Response: remove the blank line at EOF in the next commit.
+
+## 2026-06-10 14:13 - Review fix audit
+
+Goal:
+
+- Verify that the review fixes are complete.
+
+Actions:
+
+- Committed `c88c4dd`, which records review findings, updates bitter lessons, and removes the extra EOF blank line.
+- Asked a clean-context subagent to review `c88c4dd`.
+
+Verification:
+
+- Subagent review of `c88c4dd`: PASS.
+- `tests/run_tests.sh` passed.
+- `bash -n scripts/*.sh tests/*.sh` passed.
+- `git diff --check` passed.
+- `git diff --check c88c4dd^ c88c4dd` passed.
+- Current implementation text uses only `control/goal.md` and `control/constraint.md`. Extra control-file names appear only in tests that assert those files must not exist.
+
+Current completion evidence:
+
+- Git repository exists at `/home/yguo173/Programs/codex_workflow_tmux`.
+- Commits exist for bootstrap, core components, skill contract test, and review fixes.
+- `SKILL.md`, `templates/`, `scripts/`, and `tests/` exist.
+- `docs/experiment_book.md` and `docs/bitter_lessons.md` exist and have been updated during the work.
+- A real tmux session was created during `tests/test_tmux_scripts.sh`.
+
+Remaining:
+
+- Final clean-context review of this audit commit.
