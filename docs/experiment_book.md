@@ -201,3 +201,17 @@ Verification:
 - `bash -n scripts/*.sh tests/*.sh` passed.
 - `git diff --check` passed.
 - `README.md` now points to `/home/yguo173/Downloads/tmux_codex_workflow_design.html`.
+
+## 2026-06-10 - Final README wording
+
+Goal:
+
+- Make README describe the completed current state instead of a build-in-progress state.
+
+Action:
+
+- Changed README wording from "is being built to implement" to "implements" after tests, installation checks, and clean-context review had passed.
+
+Verification:
+
+- The next verification run must prove the commit with this wording still passes all checks.
