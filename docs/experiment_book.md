@@ -136,6 +136,7 @@ Current completion evidence:
 - `docs/experiment_book.md` and `docs/bitter_lessons.md` exist and have been updated during the work.
 - A real tmux session was created during `tests/test_tmux_scripts.sh`.
 
-Remaining:
+Review boundary:
 
-- Final clean-context review of this audit commit.
+- A commit can only be reviewed after it exists.
+- The final post-commit review result is reported in the conversation instead of being written back into this file, because writing that result would create another commit that would itself need another review.
