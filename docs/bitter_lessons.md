@@ -105,3 +105,14 @@ Problem:
 Prevention:
 
 - Run `git diff --check HEAD^ HEAD` after each commit, not only before commit.
+
+## Use The Current Goal Source
+
+Problem:
+
+- README still pointed to the older Markdown design file after the active goal switched to the HTML design file.
+
+Prevention:
+
+- Before final review, search for both old and current design paths.
+- Treat the current goal's referenced source file as authoritative.

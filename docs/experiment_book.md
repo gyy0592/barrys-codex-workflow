@@ -179,3 +179,25 @@ Post-commit finding:
 
 - `git diff --check HEAD^ HEAD` found blank lines at EOF in `docs/usage.md`, `scripts/install_skill.sh`, and `tests/test_install_skill.sh`.
 - Response: remove the blank EOF lines and add a bitter lesson for checking committed diffs.
+
+## 2026-06-10 - Source design path fix
+
+Goal:
+
+- Align README with the current goal source file.
+
+Finding:
+
+- A clean-context subagent found that `README.md` still pointed to `/home/yguo173/Downloads/tmux_codex_workflow_design.md`.
+- The current goal points to `/home/yguo173/Downloads/tmux_codex_workflow_design.html`.
+
+Action:
+
+- Updated `README.md` to point to the HTML design.
+
+Verification:
+
+- `tests/run_tests.sh` passed.
+- `bash -n scripts/*.sh tests/*.sh` passed.
+- `git diff --check` passed.
+- `README.md` now points to `/home/yguo173/Downloads/tmux_codex_workflow_design.html`.

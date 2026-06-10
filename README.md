@@ -2,7 +2,7 @@
 
 This repository is being built to implement a tmux-based supervision workflow for Codex.
 
-The source design is `/home/yguo173/Downloads/tmux_codex_workflow_design.md`.
+The source design is `/home/yguo173/Downloads/tmux_codex_workflow_design.html`.
 
 Core rule:
 
