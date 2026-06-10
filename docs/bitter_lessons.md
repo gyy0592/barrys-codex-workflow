@@ -84,3 +84,14 @@ Problem:
 Prevention:
 
 - Run `git diff --check` before each commit.
+
+## Install The Skill, Not Only The Repo
+
+Problem:
+
+- A repository-level `SKILL.md` is not enough for automatic Codex discovery.
+
+Prevention:
+
+- Install the skill into `~/.codex/skills/tmux-codex-supervisor`.
+- Keep absolute workflow paths in `SKILL.md` so it works from any task directory.

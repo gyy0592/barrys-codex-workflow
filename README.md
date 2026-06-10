@@ -19,3 +19,4 @@ Required repository areas:
 - `tests/`: shell tests that prove the scripts and templates work.
 - `docs/experiment_book.md`: chronological record of work and verification.
 - `docs/bitter_lessons.md`: repeated mistakes and prevention rules.
+- `docs/usage.md`: how to install the skill and use it from any task directory.

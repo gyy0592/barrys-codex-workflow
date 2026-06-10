@@ -140,3 +140,37 @@ Review boundary:
 
 - A commit can only be reviewed after it exists.
 - The final post-commit review result is reported in the conversation instead of being written back into this file, because writing that result would create another commit that would itself need another review.
+
+## 2026-06-10 - Skill installation fix
+
+Goal:
+
+- Make the workflow usable from any task directory.
+- Make Codex able to discover the skill from `~/.codex/skills/tmux-codex-supervisor`.
+
+Actions:
+
+- Added `scripts/install_skill.sh`.
+- Added `docs/usage.md`.
+- Updated `SKILL.md` to use absolute paths under `/home/yguo173/Programs/codex_workflow_tmux`.
+- Added `tests/test_install_skill.sh`.
+
+Verification:
+
+- `tests/run_tests.sh` passed.
+- `bash -n scripts/*.sh tests/*.sh` passed.
+- `git diff --check` passed.
+- `scripts/install_skill.sh` installed the skill to `/home/yguo173/.codex/skills/tmux-codex-supervisor`.
+- Installed `SKILL.md` contains absolute paths to `/home/yguo173/Programs/codex_workflow_tmux/scripts/init_control_files.sh` and `/home/yguo173/Programs/codex_workflow_tmux/templates/short_goal_message.md`.
+
+Observed output:
+
+```text
+test_skill_contract PASS
+test_install_skill PASS
+CONTROL_FILES_CREATED /tmp/tmp.jXK8BB5UUj/task/control
+test_templates PASS
+test_tmux_scripts PASS
+ALL_TESTS_PASS
+SKILL_INSTALLED /home/yguo173/.codex/skills/tmux-codex-supervisor
+```

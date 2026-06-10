@@ -4,6 +4,7 @@ set -euo pipefail
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 
 "$repo_dir/tests/test_skill_contract.sh"
+"$repo_dir/tests/test_install_skill.sh"
 "$repo_dir/tests/test_templates.sh"
 "$repo_dir/tests/test_tmux_scripts.sh"
 
