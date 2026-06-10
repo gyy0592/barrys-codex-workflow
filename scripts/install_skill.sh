@@ -13,4 +13,3 @@ cp "$repo_dir/scripts/"*.sh "$skill_dir/scripts/"
 chmod +x "$skill_dir/scripts/"*.sh
 
 printf 'SKILL_INSTALLED %s\n' "$skill_dir"
-

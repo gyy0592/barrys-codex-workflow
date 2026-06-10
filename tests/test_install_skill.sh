@@ -22,4 +22,3 @@ grep -F '/home/yguo173/Programs/codex_workflow_tmux/scripts/init_control_files.s
 grep -F '/home/yguo173/Programs/codex_workflow_tmux/templates/short_goal_message.md' "$skill_dir/SKILL.md" >/dev/null
 
 printf 'test_install_skill PASS\n'
-

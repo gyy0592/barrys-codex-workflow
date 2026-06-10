@@ -174,3 +174,8 @@ test_tmux_scripts PASS
 ALL_TESTS_PASS
 SKILL_INSTALLED /home/yguo173/.codex/skills/tmux-codex-supervisor
 ```
+
+Post-commit finding:
+
+- `git diff --check HEAD^ HEAD` found blank lines at EOF in `docs/usage.md`, `scripts/install_skill.sh`, and `tests/test_install_skill.sh`.
+- Response: remove the blank EOF lines and add a bitter lesson for checking committed diffs.

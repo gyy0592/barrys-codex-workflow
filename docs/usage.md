@@ -56,4 +56,3 @@ Read the controlled tmux screen:
 ```
 
 The main Codex supervises. The controlled Codex executes the task described in `control/goal.md` while following `control/constraint.md`.
-

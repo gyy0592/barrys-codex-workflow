@@ -95,3 +95,13 @@ Prevention:
 
 - Install the skill into `~/.codex/skills/tmux-codex-supervisor`.
 - Keep absolute workflow paths in `SKILL.md` so it works from any task directory.
+
+## Check New Files For EOF Formatting
+
+Problem:
+
+- The install commit added files with a blank line at EOF.
+
+Prevention:
+
+- Run `git diff --check HEAD^ HEAD` after each commit, not only before commit.
