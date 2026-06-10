@@ -69,3 +69,34 @@ Next:
 
 - Commit this implementation batch.
 - Ask a clean-context subagent to review the new commit and test evidence.
+
+## 2026-06-10 14:12 - Skill contract test
+
+Goal:
+
+- Add direct test coverage for `SKILL.md`.
+
+Actions:
+
+- Added `tests/test_skill_contract.sh`.
+- Updated `tests/run_tests.sh` to run the skill contract test before template and tmux tests.
+
+Verification:
+
+- `tests/run_tests.sh` passed.
+- `bash -n scripts/*.sh tests/*.sh` passed.
+
+Observed output:
+
+```text
+test_skill_contract PASS
+CONTROL_FILES_CREATED /tmp/tmp.a6jQHcrfYK/task/control
+test_templates PASS
+test_tmux_scripts PASS
+ALL_TESTS_PASS
+```
+
+Next:
+
+- Commit the test enhancement.
+- Ask a clean-context subagent to review the new commit after the previous implementation review returns.
