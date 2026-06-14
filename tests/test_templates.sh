@@ -92,6 +92,7 @@ fi
 semantic_gate_templates=(
   "$repo_dir/templates/prompt_for_run_prep.md"
   "$repo_dir/templates/prompt_for_supervisor.md"
+  "$repo_dir/templates/constraint.md"
   "$repo_dir/templates/run_goal.md"
   "$repo_dir/templates/source_discovery.md"
   "$repo_dir/templates/abstract_plan.md"
