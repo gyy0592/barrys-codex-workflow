@@ -7,7 +7,7 @@ skill_dir="$codex_home/skills/tmux-codex-supervisor"
 
 mkdir -p "$skill_dir/templates" "$skill_dir/scripts"
 
-cp "$repo_dir/SKILL.md" "$skill_dir/SKILL.md"
+sed "s#__WORKFLOW_ROOT__#$repo_dir#g" "$repo_dir/SKILL.md" > "$skill_dir/SKILL.md"
 cp "$repo_dir/templates/"*.md "$skill_dir/templates/"
 cp "$repo_dir/scripts/"*.sh "$skill_dir/scripts/"
 chmod +x "$skill_dir/scripts/"*.sh
