@@ -16,19 +16,10 @@ test ! -e "$tmp_dir/task/control/self_check.md"
 test ! -e "$tmp_dir/task/control/progress.md"
 test ! -e "$tmp_dir/task/control/done.md"
 
-grep -F 'control/goal.md' "$repo_dir/templates/short_goal_message.md" >/dev/null
-grep -F 'control/constraint.md' "$repo_dir/templates/short_goal_message.md" >/dev/null
-short_goal_non_empty_lines=$(grep -cv '^[[:space:]]*$' "$repo_dir/templates/short_goal_message.md")
-if [ "$short_goal_non_empty_lines" -ne 2 ]; then
-  printf 'short_goal_message.md must contain only /goal and the two control-file paths\n' >&2
-  exit 1
-fi
-if grep -F -e 'Confirm receipt' \
-          -e 'state your plan' \
-          -e 'prompt_for_supervisor' \
-          -e 'gen-' \
-          "$repo_dir/templates/short_goal_message.md" >/dev/null; then
-  printf 'short_goal_message.md contains extra startup instructions\n' >&2
+expected_short_goal="$tmp_dir/expected_short_goal.md"
+printf '/goal\ncontrol/goal.md\ncontrol/constraint.md\n' >"$expected_short_goal"
+if ! cmp -s "$expected_short_goal" "$repo_dir/templates/short_goal_message.md"; then
+  printf 'short_goal_message.md must contain exactly /goal and the two control-file paths\n' >&2
   exit 1
 fi
 grep -F 'This is not the execution phase.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null

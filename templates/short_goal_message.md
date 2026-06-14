@@ -1,2 +1,3 @@
 /goal
-Read control/goal.md and control/constraint.md.
+control/goal.md
+control/constraint.md
