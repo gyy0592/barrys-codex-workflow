@@ -102,16 +102,7 @@ if grep -F -e 'ask the user' -e 'wait for user review' -e 'user approval needed'
   printf 'run files and run-prep prompt must not encode user review or approval gates\n' >&2
   exit 1
 fi
-semantic_gate_templates=(
-  "$repo_dir/templates/prompt_for_run_prep.md"
-  "$repo_dir/templates/prompt_for_supervisor.md"
-  "$repo_dir/templates/constraint.md"
-  "$repo_dir/templates/run_goal.md"
-  "$repo_dir/templates/source_discovery.md"
-  "$repo_dir/templates/abstract_plan.md"
-  "$repo_dir/templates/spec_status.md"
-  "$repo_dir/templates/specs.md"
-)
+semantic_gate_templates=("$repo_dir"/templates/*.md)
 for semantic_gate_template in "${semantic_gate_templates[@]}"; do
   if grep -F -e 'user approves' \
              -e 'asking the user' \
