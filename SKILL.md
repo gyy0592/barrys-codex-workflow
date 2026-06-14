@@ -75,7 +75,7 @@ Write:
 - checkpoint commit rules,
 - no-context review rules,
 - autonomous execution boundaries,
-- definitions for `allowed external sources` and `conservative choice`,
+- definitions for `allowed external sources` and `conservative option`,
 - self-check rules.
 
 Do not put the whole workflow document into `control/constraint.md`. Write only constraints and checks the controlled Codex must obey.
@@ -98,11 +98,11 @@ If the user already specified a data field, setting, output, or constraint, writ
 
 Clarifying questions are allowed only before final run files are written, only when missing information prevents writing executable goal/specs, and only for the missing point. Do not ask again about user-decided content.
 
-After final run files are written, do not ask the user for choices, approvals, or review. During execution, missing information must send the controlled Codex back to source discovery, local inspection, allowed external sources, conservative choices within constraints, evidence, and continuation.
+After final run files are written, do not ask the user for choices, approvals, or review. During execution, missing information must send the controlled Codex back to source discovery, local inspection, allowed external sources, conservative options within constraints, evidence, and continuation.
 
 Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
 
-Conservative choice means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
+Conservative option means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
 
 Do not trigger this helper while the controlled Codex is executing the current spec. If a running spec fails, update the current spec or create a fix spec instead of regenerating all specs.
 
@@ -136,7 +136,7 @@ Check:
 - supervisor-only files are not sent to the controlled Codex,
 - controlled files do not depend on supervisor chat memory,
 - `control/goal.md`, `control/constraint.md`, `specs.md`, and `run_goal.md` do not conflict,
-- runtime terms such as `allowed external sources` and `conservative choice` are defined in `control/constraint.md` or in the same durable run file that uses them,
+- runtime terms such as `allowed external sources` and `conservative option` are defined in `control/constraint.md` or in the same durable run file that uses them,
 - lower-priority files cannot override higher-priority control files.
 
 Return `PASS` only when the files are sufficient for autonomous execution. Return `FAIL` and fix the run files before execution when any check fails.
@@ -166,7 +166,7 @@ The supervisor must not read full project source code and must not implement tas
 
 If the controlled Codex is stable and working within the current task step, do not interrupt it frequently. Stable means it is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step. When stable, monitor at a low frequency, usually once every 2 to 10 minutes.
 
-If the controlled Codex reports blocked, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed external sources, conservative choice when a choice is unavoidable, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
+If the controlled Codex reports blocked, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed external sources, conservative option when an option is unavoidable, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
 
 ## Helper: persist-user-requirement
 

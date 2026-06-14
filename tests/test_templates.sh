@@ -105,6 +105,8 @@ for semantic_gate_template in "${semantic_gate_templates[@]}"; do
              -e 'do not execute until' \
              -e 'what must be checked later' \
              -e 'internet or paper search when needed' \
+             -e 'conservative choice' \
+             -e 'Conservative choice' \
              "$semantic_gate_template" >/dev/null; then
     printf 'template has a user-waiting or undefined-search gate: %s\n' "$semantic_gate_template" >&2
     exit 1

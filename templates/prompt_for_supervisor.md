@@ -53,7 +53,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - The supervisor must keep supervising until the completion standard in `control/goal.md` is proved or the user explicitly says to stop.
 - Do not mark the supervisor goal complete or blocked because a metric gate fails, a run is bad, information is missing, or the executor reports a stop condition.
 - A stop condition means stop the bad run or bad path, record evidence, update the current spec or create the next fix spec, then continue.
-- If MFU, ETA, GPU use, tests, benchmarks, or required evidence fail, force the executor to continue the fix loop: source discovery, local inspection by the executor, allowed external sources as defined in `control/constraint.md`, conservative choice when a choice is unavoidable, concrete fix, test, benchmark, evidence, review, and next action.
+- If MFU, ETA, GPU use, tests, benchmarks, or required evidence fail, force the executor to continue the fix loop: source discovery, local inspection by the executor, allowed external sources as defined in `control/constraint.md`, conservative option as defined in `control/constraint.md` when an option is unavoidable, concrete fix, test, benchmark, evidence, review, and next action.
 - The supervisor may report a temporary stop to the user, but must also continue supervising the next allowed corrective action unless the user explicitly says to stop.
 
 ## Supervisor Evidence Boundary
