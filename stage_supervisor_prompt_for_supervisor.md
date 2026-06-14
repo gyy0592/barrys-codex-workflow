@@ -13,7 +13,7 @@ Workflow id:
 workflow_20260612_physics_for_llm_scale_training
 
 Task request:
-The user has reviewed and approved the Stage 2 preparation files. Start the execution phase for scaling the current Physics of LMs Part 2.1 baseline toward a paper-scale training run. The controlled Codex must follow the approved `control/goal.md`, `control/constraint.md`, `workflow_20260612_physics_for_llm_scale_training/run_goal.md`, and `workflow_20260612_physics_for_llm_scale_training/specs.md`.
+The user made a separate execution request for the Stage 2 final run files. Start the execution phase for scaling the current Physics of LMs Part 2.1 baseline toward a paper-scale training run. The controlled Codex must follow `control/goal.md`, `control/constraint.md`, `workflow_20260612_physics_for_llm_scale_training/run_goal.md`, and `workflow_20260612_physics_for_llm_scale_training/specs.md`.
 
 The future controlled Codex must expand the current minimum runnable baseline toward a paper-scale training run, use close-to-paper scale when supported by source discovery, use eight GPUs when appropriate, record ETA before every non-trivial run, make a serious acceleration effort before long training, record speed metrics including GPU utilization and MFU, require MFU at least 30 percent or main-training ETA at most 2 days before continuing long training, kill and fix bad slow jobs when evidence shows clear optimization room, expand evaluation to the paper count if confirmed or at least 5000 questions if not clear, and make clean checkpoint git commits.
 
@@ -67,7 +67,7 @@ Use the workflow document: `/home/barry/Programs/codex_workflow_tmux/specific wo
 ## Supervisor Role
 
 - You are the main Codex and supervisor only.
-- First commit the approved preparation files.
+- First commit the final run files.
 - Start a controlled Codex in tmux from `/home/barry/github_repo/physics_for_llm`.
 - Suggested controlled tmux session name: `workflow_20260612_physics_for_llm_scale_training_controlled`.
 - Use this Codex command path if needed: `/mnt/nfs/barry/home/.npm-global/bin/codex --dangerously-bypass-approvals-and-sandbox`.
@@ -82,7 +82,7 @@ Use the workflow document: `/home/barry/Programs/codex_workflow_tmux/specific wo
 
 - `control/goal.md` is the controlled Codex's task contract. It must contain the goal, required input material, required output, progress evidence, and completion standard.
 - `control/constraint.md` is the controlled Codex's limit contract. It must contain forbidden actions, global constraints, and self-check rules.
-- If the user adds a global requirement later, update the active control files or send a correction that clearly makes the requirement active for the controlled Codex.
+- If the user adds a global requirement later that changes execution permission, stop conditions, required settings, or completion criteria, write it into `control/goal.md` or `control/constraint.md` before relying on it. Then send a plain correction to the controlled Codex when needed.
 - After any correction, check whether the same correction also belongs in `control/goal.md` or `control/constraint.md`. If yes, update the correct control file before relying on memory.
 
 ## Drift Rule
@@ -109,7 +109,7 @@ Use the workflow document: `/home/barry/Programs/codex_workflow_tmux/specific wo
 
 ## Checkpoint Rule
 
-- First checkpoint the approved preparation files before starting the controlled Codex.
+- First checkpoint the final run files before starting the controlled Codex.
 - Before each checkpoint commit, inspect git status, stage only files required for the supervised workflow, and leave unrelated files unstaged.
 - Do not stage unrelated files such as `prompt_for_supervisor.md` or `scaling_ladder_architecture.html`.
 - After each completed stable task step, require a checkpoint git commit unless the task explicitly forbids git commits.
@@ -118,7 +118,7 @@ Use the workflow document: `/home/barry/Programs/codex_workflow_tmux/specific wo
 ## Review Rule
 
 - When the workflow uses task steps or specs, each completed spec must be reviewed after its checkpoint commit.
-- Follow the approved two-review rule:
+- Follow the two-review rule:
   - `implementation_goal_review` checks correct spec implementation and drift from `control/goal.md`.
   - `constraint_review` checks violations of `control/constraint.md`, global user requirements, git rules, and workflow rules.
 - The controlled workflow may move to the next spec only after `review_implementation_goal.md`, `review_constraint.md`, and `review.md` are all `PASS`.
@@ -130,6 +130,6 @@ Use the workflow document: `/home/barry/Programs/codex_workflow_tmux/specific wo
 - In the final report, state what was proved, what was checked, and what was not proved.
 
 Report status to the user after:
-- The approved preparation files are committed.
+- The final run files are committed.
 - The controlled Codex has received the short `/goal`.
 - The controlled Codex has started the first spec.

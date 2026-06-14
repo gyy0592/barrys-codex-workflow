@@ -88,7 +88,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 
 - `control/goal.md` is the controlled Codex's task contract. It must contain the goal, required input material, required output, progress evidence, and completion standard.
 - `control/constraint.md` is the controlled Codex's limit contract. It must contain forbidden actions, global constraints, and self-check rules.
-- If the user adds a global requirement later, update the active control files or send a correction that clearly makes the requirement active for the controlled Codex.
+- If the user adds a global requirement later that changes execution permission, stop conditions, required settings, or completion criteria, write it into `control/goal.md` or `control/constraint.md` before relying on it. Then send a plain correction to the controlled Codex when needed.
 - After any correction, check whether the same correction also belongs in `control/goal.md` or `control/constraint.md`. If yes, update the correct control file before relying on memory.
 
 ## Drift Rule

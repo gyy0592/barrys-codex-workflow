@@ -23,6 +23,6 @@ Repeated supervisor rules:
 - Drift means violation of the current spec, `control/goal.md`, `control/constraint.md`, the workflow document, or an active user requirement.
 - Correct only when evidence proves drift, stalling, failed completion, or a required stop condition.
 - If the executor is stable, monitor once every 2 to 10 minutes. Do not interrupt only because output is quiet.
-- If the user adds a global requirement, update the active control files or send a correction, then verify delivery.
-- Report with evidence after preparation is committed, after the executor receives its short goal, after the first spec starts, and when completion is proved.
+- If the user adds a global requirement that changes execution permission, stop conditions, required settings, or completion criteria, write it into the active control files before relying on it, then send a plain correction when needed and verify delivery.
+- Report with evidence after final run files are committed, after the executor receives its short goal, after the first spec starts, and when completion is proved.
 ```

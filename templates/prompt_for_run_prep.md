@@ -1,6 +1,6 @@
 # Prompt For Run Prep
 
-Use this template as the first message to a main Codex when the user wants preparation files before a long supervised run.
+Use this template as the first message to a main Codex when the user wants final run files before a long supervised run.
 
 Replace every `<...>` field before use.
 

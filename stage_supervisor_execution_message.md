@@ -1,5 +1,5 @@
 /goal
-The user has reviewed and approved the preparation files for:
+The user made a separate execution request for the final run files for:
 
 ```text
 /home/barry/github_repo/physics_for_llm
@@ -8,7 +8,7 @@ workflow_20260612_physics_for_llm_scale_training
 
 You are the supervisor only. Start the execution phase now.
 
-Use the tmux-codex-supervisor skill and the approved preparation files:
+Use the tmux-codex-supervisor skill and the final run files:
 
 - `/home/barry/github_repo/physics_for_llm/control/goal.md`
 - `/home/barry/github_repo/physics_for_llm/control/constraint.md`
@@ -19,11 +19,11 @@ Use the tmux-codex-supervisor skill and the approved preparation files:
 
 Execution requirements:
 
-1. First checkpoint the approved preparation files.
+1. First checkpoint the final run files.
    - Inspect `git status --short`.
-   - Stage only approved preparation files and any needed workflow files.
+   - Stage only final run files and any needed workflow files.
    - Do not stage unrelated files such as `prompt_for_supervisor.md` or `scaling_ladder_architecture.html`.
-   - Create a git commit for the approved Stage 2 preparation files.
+   - Create a git commit for the Stage 2 final run files.
 2. Start one controlled Codex in tmux from `/home/barry/github_repo/physics_for_llm`.
    - Suggested tmux session name: `workflow_20260612_physics_for_llm_scale_training_controlled`.
    - Use the working Codex command path if needed: `/mnt/nfs/barry/home/.npm-global/bin/codex --dangerously-bypass-approvals-and-sandbox`.
@@ -31,6 +31,7 @@ Execution requirements:
 4. Verify the controlled Codex received the message.
 5. Supervise only. Do not personally edit task code, run experiments, submit jobs, or create final task deliverables.
 6. Correct only when evidence proves drift, stalling, failed completion, missing required evidence, or a violation of `control/constraint.md`.
+7. Do not mark the supervisor goal complete or blocked because the controlled Codex reports blocked, a run fails, information is missing, or a review fails. Keep supervising until completion is proved or the user explicitly stops.
 
 Monitoring cadence requirement:
 
@@ -50,6 +51,6 @@ Specific workflow rule:
 
 Report status to the user after:
 
-- The approved preparation files are committed.
+- The final run files are committed.
 - The controlled Codex has received the short `/goal`.
 - The controlled Codex has started the first spec.
