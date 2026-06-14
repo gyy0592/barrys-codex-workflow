@@ -25,8 +25,8 @@ Required repository areas:
 
 Use this workflow in two phases:
 
-1. Preparation phase: the main Codex turns the user's task into preparation files and waits for user review.
-2. Execution phase: after user approval, the main Codex starts and supervises the controlled Codex in tmux.
+1. Run-file creation phase: the main Codex turns the user's task into final run files, checks that they do not contain later user-review gates, and stops before execution.
+2. Execution phase: after a separate execution request, the main Codex starts and supervises the controlled Codex in tmux.
 
 Install the skill once:
 
@@ -41,21 +41,21 @@ cd /path/to/your/project
 codex
 ```
 
-For preparation, send this request to Codex:
+For run-file creation, send this request to Codex:
 
 ```text
 Use the tmux-codex-supervisor skill.
 Use templates/prompt_for_run_prep.md.
 
 The current directory is the task project.
-Generate preparation files only.
+Generate final run files only.
 Do not start the controlled Codex.
 Do not start long-running work.
 
 My task is: write the real task here.
 ```
 
-Review the generated preparation files. Then, for execution, send this request to Codex:
+Then, for execution, send this request to Codex:
 
 ```text
 Use the tmux-codex-supervisor skill.
@@ -72,4 +72,4 @@ Act as the main Codex:
 My task is: write the real task here.
 ```
 
-For execution after preparation review, start from `templates/prompt_for_supervisor.md`. That template is for the main Codex, not the controlled Codex. It exists so the supervisor role, drift rule, checkpoint rule, and control-file update rule are written before the run starts.
+For execution after run-file creation, start from `templates/prompt_for_supervisor.md`. That template is for the main Codex, not the controlled Codex. It exists so the supervisor role, drift rule, checkpoint rule, file-priority rule, and control-file update rule are written before the run starts.

@@ -24,6 +24,20 @@ State what proves the whole run succeeded. Each item must be checkable from file
 
 List work that must not be done in this run.
 
-## User Review Points
+## Runtime Autonomy
 
-List the parts the user must review before execution starts.
+After execution starts, complete the run autonomously using the final control files, current specs, source discovery, and evidence.
+
+If a choice is missing during execution, choose a conservative option allowed by the active constraints, write the choice and reason into evidence, and continue.
+
+## File Ownership And Priority
+
+This file is a shared run description. The main Codex writes it during run-file creation. The supervisor and controlled Codex may read it. The supervisor checks it for consistency with higher-priority files.
+
+For execution, use this priority:
+
+```text
+latest user instruction written into control files > control/constraint.md > control/goal.md > current spec.md > specs.md > run_goal.md
+```
+
+If this file appears to require stopping but a higher-priority control file authorizes continuation, continue and record the reason in evidence.

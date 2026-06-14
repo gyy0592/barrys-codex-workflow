@@ -31,7 +31,22 @@ Use the workflow document: <absolute path to workflow document>.
 - `control/goal.md` and `control/constraint.md` are for the controlled Codex, also called the executor.
 - `control/goal.md` tells the executor what task to complete and what proves completion.
 - `control/constraint.md` tells the executor what limits and self-checks it must obey.
+- Current spec files are controlled-execution files.
+- `run_goal.md`, `specs.md`, `evidence.md`, `status.md`, and review files are shared evidence files.
+- The supervisor reads and checks shared evidence files. The controlled Codex may read and write the shared evidence files required by the active spec.
 - The control files are not permission for the supervisor to do the executor's task, read full source code, or stop supervising.
+
+## File Conflict Priority Rule
+
+For execution, use this priority:
+
+```text
+latest user instruction written into control files > control/constraint.md > control/goal.md > current spec.md > specs.md > run_goal.md
+```
+
+Task-preparation notes mean task-internal work such as collecting data, downloading files, checking environment state, or reading sources. They do not mean asking the user.
+
+If a lower-priority file appears to require stopping but a higher-priority control file authorizes continuation, require the controlled Codex to continue and record the reason in evidence.
 
 ## Supervisor Persistence Rule
 
@@ -60,7 +75,7 @@ Use the workflow document: <absolute path to workflow document>.
 ## Supervisor Role
 
 - Create and maintain exactly two control files in the task directory: `control/goal.md` and `control/constraint.md`.
-- First commit any approved preparation files required for this execution before starting the controlled Codex.
+- First commit any final run files required for this execution before starting the controlled Codex.
 - Start a controlled Codex in tmux.
 - Send the controlled Codex only the short `/goal` message that points to `control/goal.md` and `control/constraint.md`.
 - Verify that the short `/goal` message arrived.

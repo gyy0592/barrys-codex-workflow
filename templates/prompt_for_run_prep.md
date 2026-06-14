@@ -6,7 +6,7 @@ Replace every `<...>` field before use.
 
 ```text
 /goal
-You are preparing a supervised run. This is the preparation phase only.
+You are writing final run files for a supervised run. This is not the execution phase.
 
 Task directory:
 <absolute task directory>
@@ -23,16 +23,16 @@ Task material:
 Workflow root:
 <absolute path to codex_workflow_tmux>
 
-Preparation rule:
-- Create preparation files only.
+Run-file creation rule:
+- Create final run files only.
 - Do not start the controlled Codex.
 - Do not send the short /goal message to a controlled Codex.
 - Do not start long training, benchmark, experiment, data generation, or cloud jobs.
 - Do not submit queue jobs.
-- Do not make final task deliverables unless they are explicitly preparation files.
-- Stop after the preparation files are written and report what the user must review.
+- Do not make final task deliverables unless they are explicitly run files.
+- Stop after the run files are written and report the file list and autonomy checks.
 
-Required preparation files:
+Required run files:
 - control/goal.md
 - control/constraint.md
 - workflow_<workflow id>/run_goal.md
@@ -50,7 +50,7 @@ Use these templates from the workflow root:
 - templates/review.md
 - templates/bitter_lesson.md
 
-Preparation content rules:
+Run-file content rules:
 - control/goal.md must tell the future controlled Codex what to do, what materials to read, what outputs to produce, what progress evidence to update, and what proves completion.
 - control/constraint.md must contain all active user constraints, forbidden actions, checkpoint rules, review rules, and stop rules.
 - workflow_<workflow id>/run_goal.md must preserve the user's task as a stable run description.
@@ -59,15 +59,31 @@ Preparation content rules:
 - If a task step needs a per-step folder during execution, define the expected folder name and expected files in specs.md. Do not create execution evidence before the step actually runs.
 - If the user gave a global requirement, put it in control/constraint.md and also mention which specs it affects.
 - If source discovery finds missing information, record what is missing and what must be checked later. Do not guess.
+- Do not write user-review, user-choice, or user-approval gates into durable run files.
+- Final run files must be complete enough for autonomous execution.
+- After execution starts, the controlled Codex must not ask for choices, approvals, or review. If information is missing, it must return to source discovery, inspect files and outputs, use allowed external sources, choose a conservative option within constraints, record the reason in evidence, and continue.
+
+File ownership and priority rules:
+- Supervisor-only files are `prompt_for_supervisor.md`, `prompt_for_supervisor_goal.md`, and staged paste files.
+- Controlled-execution files are `control/goal.md`, `control/constraint.md`, and current spec files.
+- Shared evidence files are `run_goal.md`, `specs.md`, `evidence.md`, `status.md`, and review files.
+- For execution, use this priority: latest user instruction written into control files > control/constraint.md > control/goal.md > current spec.md > specs.md > run_goal.md.
+- Task-preparation notes mean task-internal work such as collecting data, downloading files, checking environment state, or reading sources. They do not mean asking the user.
+
+Template heading risk check:
+- Check every heading in the generated run files before reporting.
+- Remove or rewrite any heading that can be treated as a runtime stop condition.
+- Remove or rewrite any heading that conflicts with control/constraint.md.
+- Remove or rewrite any heading that asks for user review, choices, or approval after durable run files are written.
 
 Checkpoint rule:
 - If there is existing completed work that must be preserved before the next run, inspect git status, stage only relevant stable files, and create a checkpoint commit before writing new run-prep files.
 - Do not stage unrelated files.
 - If unrelated files cannot be separated safely, stop and report the exact paths.
 
-Review-before-execution rule:
-- After writing the preparation files, stop.
+Run-file finalization rule:
+- After writing the run files, stop.
 - Do not start execution.
-- Report the file list and the specific parts the user should review.
-- The long run may start only after the user explicitly approves the preparation files.
+- Report the file list and the autonomy checks performed.
+- A later execution request starts the long run. Do not encode a review or approval gate in durable run files.
 ```
