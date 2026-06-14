@@ -18,6 +18,19 @@ test ! -e "$tmp_dir/task/control/done.md"
 
 grep -F 'control/goal.md' "$repo_dir/templates/short_goal_message.md" >/dev/null
 grep -F 'control/constraint.md' "$repo_dir/templates/short_goal_message.md" >/dev/null
+short_goal_non_empty_lines=$(grep -cv '^[[:space:]]*$' "$repo_dir/templates/short_goal_message.md")
+if [ "$short_goal_non_empty_lines" -ne 2 ]; then
+  printf 'short_goal_message.md must contain only /goal and the two control-file paths\n' >&2
+  exit 1
+fi
+if grep -F -e 'Confirm receipt' \
+          -e 'state your plan' \
+          -e 'prompt_for_supervisor' \
+          -e 'gen-' \
+          "$repo_dir/templates/short_goal_message.md" >/dev/null; then
+  printf 'short_goal_message.md contains extra startup instructions\n' >&2
+  exit 1
+fi
 grep -F 'This is not the execution phase.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Do not start the controlled Codex.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Do not start long training' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
@@ -102,6 +115,9 @@ semantic_gate_templates=(
 for semantic_gate_template in "${semantic_gate_templates[@]}"; do
   if grep -F -e 'user approves' \
              -e 'asking the user' \
+             -e 'ask the user' \
+             -e 'wait for user review' \
+             -e 'user approval needed' \
              -e 'user decision needed' \
              -e 'do not execute until' \
              -e 'what must be checked later' \
