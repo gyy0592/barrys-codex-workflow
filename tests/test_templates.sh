@@ -50,7 +50,8 @@ grep -F 'The supervisor must not read full project source code' "$repo_dir/templ
 grep -F 'Supervisor Persistence Rule' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Supervisor Evidence Boundary' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'force the executor to continue the fix loop' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
-grep -F 'allowed external sources, conservative choice when a choice is unavoidable' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'runtime autonomy definitions' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'allowed external sources as defined in `control/constraint.md`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Use at least two fresh no-context reviewers for an ordinary completed spec' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Use three to five fresh no-context reviewers for a high-risk completed spec' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 if grep -x '/goal' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null; then
@@ -63,19 +64,23 @@ grep -F 'GPU utilization' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'first inspect whether the code or command can be made faster' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'stop or kill the run' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'Create checkpoint git commits' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'Runtime Autonomy Definitions' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'Allowed external sources means sources permitted by the user, the task, and the available tools.' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'Conservative option means the option that is reversible, smallest in scope' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'Specs run one at a time, in order' "$repo_dir/templates/specs.md" >/dev/null
 grep -F 'must not review multiple specs at once' "$repo_dir/templates/review.md" >/dev/null
 grep -F 'During execution, do not wait for a user response.' "$repo_dir/templates/source_discovery.md" >/dev/null
-grep -F 'Resolve each missing item through more local inspection, allowed external sources, or a conservative choice' "$repo_dir/templates/source_discovery.md" >/dev/null
-grep -F 'choosing a conservative option allowed by the active constraints' "$repo_dir/templates/abstract_plan.md" >/dev/null
+grep -F 'allowed external sources as defined in `control/constraint.md`' "$repo_dir/templates/source_discovery.md" >/dev/null
+grep -F 'choosing a conservative option defined in `control/constraint.md`' "$repo_dir/templates/abstract_plan.md" >/dev/null
 grep -F 'Do not write a user-decision blocker after final run files are written.' "$repo_dir/templates/spec_status.md" >/dev/null
 grep -F 'Runtime Autonomy' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'After execution starts, complete the run autonomously' "$repo_dir/templates/run_goal.md" >/dev/null
-grep -F 'If a choice is missing during execution, choose a conservative option' "$repo_dir/templates/run_goal.md" >/dev/null
+grep -F 'If a choice is missing during execution, choose a conservative option as defined in `control/constraint.md`' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'File Ownership And Priority' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'autonomous resolution path for that spec' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Allowed external sources means sources permitted by the user, the task, and the available tools.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Conservative option means the option that is reversible, smallest in scope' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'Write those two definitions into control/constraint.md when generating run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 if grep -F 'User Review Points' "$repo_dir/templates/run_goal.md" >/dev/null; then
   printf 'run_goal.md must not contain User Review Points\n' >&2
   exit 1
@@ -84,22 +89,24 @@ if grep -F -e 'ask the user' -e 'wait for user review' -e 'user approval needed'
   printf 'run files and run-prep prompt must not encode user review or approval gates\n' >&2
   exit 1
 fi
-runtime_templates=(
+semantic_gate_templates=(
+  "$repo_dir/templates/prompt_for_run_prep.md"
+  "$repo_dir/templates/prompt_for_supervisor.md"
   "$repo_dir/templates/run_goal.md"
   "$repo_dir/templates/source_discovery.md"
   "$repo_dir/templates/abstract_plan.md"
   "$repo_dir/templates/spec_status.md"
   "$repo_dir/templates/specs.md"
 )
-for runtime_template in "${runtime_templates[@]}"; do
+for semantic_gate_template in "${semantic_gate_templates[@]}"; do
   if grep -F -e 'user approves' \
              -e 'asking the user' \
              -e 'user decision needed' \
              -e 'do not execute until' \
              -e 'what must be checked later' \
              -e 'internet or paper search when needed' \
-             "$runtime_template" >/dev/null; then
-    printf 'runtime template has a user-waiting or undefined-search gate: %s\n' "$runtime_template" >&2
+             "$semantic_gate_template" >/dev/null; then
+    printf 'template has a user-waiting or undefined-search gate: %s\n' "$semantic_gate_template" >&2
     exit 1
   fi
 done

@@ -24,7 +24,7 @@ List facts that are directly supported by the sources above.
 
 ## Missing Information
 
-List missing information that would require guessing. During execution, do not wait for a user response. Resolve each missing item through more local inspection, allowed external sources, or a conservative choice allowed by the active constraints, then record the resolution.
+List missing information that would require guessing. During execution, do not wait for a user response. Resolve each missing item through more local inspection, allowed external sources as defined in `control/constraint.md`, or a conservative choice allowed by the active constraints, then record the resolution.
 
 ## Decision For This Spec
 

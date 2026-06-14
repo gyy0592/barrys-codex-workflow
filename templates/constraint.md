@@ -8,6 +8,12 @@ The controlled Codex executes the assigned task. The main Codex supervises and v
 
 List actions the controlled Codex must not take. Write "none" if there are no task-specific forbidden actions.
 
+## Runtime Autonomy Definitions
+
+Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
+
+Conservative option means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
+
 ## Default Runtime Rules
 
 These rules apply to every task unless the user explicitly removes them.

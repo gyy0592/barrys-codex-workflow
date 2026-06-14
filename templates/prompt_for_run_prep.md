@@ -52,7 +52,7 @@ Use these templates from the workflow root:
 
 Run-file content rules:
 - control/goal.md must tell the future controlled Codex what to do, what materials to read, what outputs to produce, what progress evidence to update, and what proves completion.
-- control/constraint.md must contain all active user constraints, forbidden actions, checkpoint rules, review rules, and stop rules.
+- control/constraint.md must contain all active user constraints, forbidden actions, checkpoint rules, review rules, stop rules, and runtime autonomy definitions.
 - workflow_<workflow id>/run_goal.md must preserve the user's task as a stable run description.
 - workflow_<workflow id>/specs.md must split the task into checkable steps. Each step must have a purpose, required information, expected outputs, observable success evidence, and stop conditions.
 - workflow_<workflow id>/specs.md must state that specs run one at a time, in order, and the next spec cannot start until the current spec has evidence, status, checkpoint commit, and required review.
@@ -64,13 +64,14 @@ Run-file content rules:
 - After execution starts, the controlled Codex must not ask for choices, approvals, or review. If information is missing, it must return to source discovery, inspect files and outputs, use allowed external sources, choose a conservative option within constraints, record the reason in evidence, and continue.
 - Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
 - Conservative option means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
+- Write those two definitions into control/constraint.md when generating run files.
 
 File ownership and priority rules:
 - Supervisor-only files are `prompt_for_supervisor.md`, `prompt_for_supervisor_goal.md`, and staged paste files.
 - Controlled-execution files are `control/goal.md`, `control/constraint.md`, and current spec files.
 - Shared evidence files are `run_goal.md`, `specs.md`, `evidence.md`, `status.md`, and review files.
 - For execution, use this priority: latest user instruction written into control files > control/constraint.md > control/goal.md > current spec.md > specs.md > run_goal.md.
-- Task-preparation notes mean task-internal work such as collecting data, downloading files, checking environment state, or reading sources. They do not mean asking the user.
+- Task-preparation notes mean task-internal work such as collecting data, downloading files, checking environment state, or reading sources. They do not mean requesting a user response.
 
 Template heading risk check:
 - Check every heading in the generated run files before reporting.

@@ -75,6 +75,7 @@ Write:
 - checkpoint commit rules,
 - no-context review rules,
 - autonomous execution boundaries,
+- definitions for `allowed external sources` and `conservative choice`,
 - self-check rules.
 
 Do not put the whole workflow document into `control/constraint.md`. Write only constraints and checks the controlled Codex must obey.
@@ -135,6 +136,7 @@ Check:
 - supervisor-only files are not sent to the controlled Codex,
 - controlled files do not depend on supervisor chat memory,
 - `control/goal.md`, `control/constraint.md`, `specs.md`, and `run_goal.md` do not conflict,
+- runtime terms such as `allowed external sources` and `conservative choice` are defined in `control/constraint.md` or in the same durable run file that uses them,
 - lower-priority files cannot override higher-priority control files.
 
 Return `PASS` only when the files are sufficient for autonomous execution. Return `FAIL` and fix the run files before execution when any check fails.

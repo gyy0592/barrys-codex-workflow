@@ -78,6 +78,7 @@ require 'Do not trigger this helper while the controlled Codex is executing a sp
 require 'Do not trigger this helper when the controlled Codex is doing ordinary execution'
 require 'Do not trigger this helper while the controlled Codex is executing the current spec'
 require 'Do not trigger this helper when the user only asks for status'
+require 'definitions for `allowed external sources` and `conservative choice`'
 
 # gen-specs must preserve already-decided user content and forbid re-opening it.
 require 'If the user already specified a data field, setting, output, or constraint, write it directly into goal/specs. Do not create a spec whose purpose is to decide it again.'
@@ -93,6 +94,7 @@ require 'no user-decided requirement is rewritten as undecided'
 require 'durable run files contain no `ask the user`, `wait for user review`, or `user approval needed` gates'
 require 'controlled files do not depend on supervisor chat memory'
 require '`control/goal.md`, `control/constraint.md`, `specs.md`, and `run_goal.md` do not conflict'
+require 'runtime terms such as `allowed external sources` and `conservative choice` are defined in `control/constraint.md` or in the same durable run file that uses them'
 require 'lower-priority files cannot override higher-priority control files'
 
 # Persistence and later-user-requirement handling.

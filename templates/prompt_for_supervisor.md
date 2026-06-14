@@ -30,7 +30,7 @@ Use the workflow document: <absolute path to workflow document>.
 - `prompt_for_supervisor.md` is the supervisor's detailed companion file.
 - `control/goal.md` and `control/constraint.md` are for the controlled Codex, also called the executor.
 - `control/goal.md` tells the executor what task to complete and what proves completion.
-- `control/constraint.md` tells the executor what limits and self-checks it must obey.
+- `control/constraint.md` tells the executor what limits, runtime autonomy definitions, and self-checks it must obey.
 - Current spec files are controlled-execution files.
 - `run_goal.md`, `specs.md`, `evidence.md`, `status.md`, and review files are shared evidence files.
 - The supervisor reads and checks shared evidence files. The controlled Codex may read and write the shared evidence files required by the active spec.
@@ -44,7 +44,7 @@ For execution, use this priority:
 latest user instruction written into control files > control/constraint.md > control/goal.md > current spec.md > specs.md > run_goal.md
 ```
 
-Task-preparation notes mean task-internal work such as collecting data, downloading files, checking environment state, or reading sources. They do not mean asking the user.
+Task-preparation notes mean task-internal work such as collecting data, downloading files, checking environment state, or reading sources. They do not mean requesting a user response.
 
 If a lower-priority file appears to require stopping but a higher-priority control file authorizes continuation, require the controlled Codex to continue and record the reason in evidence.
 
@@ -53,7 +53,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - The supervisor must keep supervising until the completion standard in `control/goal.md` is proved or the user explicitly says to stop.
 - Do not mark the supervisor goal complete or blocked because a metric gate fails, a run is bad, information is missing, or the executor reports a stop condition.
 - A stop condition means stop the bad run or bad path, record evidence, update the current spec or create the next fix spec, then continue.
-- If MFU, ETA, GPU use, tests, benchmarks, or required evidence fail, force the executor to continue the fix loop: source discovery, local inspection by the executor, allowed external sources, conservative choice when a choice is unavoidable, concrete fix, test, benchmark, evidence, review, and next action.
+- If MFU, ETA, GPU use, tests, benchmarks, or required evidence fail, force the executor to continue the fix loop: source discovery, local inspection by the executor, allowed external sources as defined in `control/constraint.md`, conservative choice when a choice is unavoidable, concrete fix, test, benchmark, evidence, review, and next action.
 - The supervisor may report a temporary stop to the user, but must also continue supervising the next allowed corrective action unless the user explicitly says to stop.
 
 ## Supervisor Evidence Boundary

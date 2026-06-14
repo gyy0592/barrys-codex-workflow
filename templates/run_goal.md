@@ -28,7 +28,7 @@ List work that must not be done in this run.
 
 After execution starts, complete the run autonomously using the final control files, current specs, source discovery, and evidence.
 
-If a choice is missing during execution, choose a conservative option allowed by the active constraints, write the choice and reason into evidence, and continue.
+If a choice is missing during execution, choose a conservative option as defined in `control/constraint.md` and allowed by the active constraints, write the choice and reason into evidence, and continue.
 
 ## File Ownership And Priority
 
