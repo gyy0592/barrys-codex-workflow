@@ -1,13 +1,13 @@
 ---
 name: tmux-codex-supervisor
-description: "Use when the main Codex must prepare final run files, start, or supervise one controlled Codex in tmux. Do not use inside the controlled Codex; the controlled Codex only reads control/goal.md and control/constraint.md."
+description: "Use when the main Codex must prepare final run files, start, or supervise one controlled Codex in tmux. Do not use inside the controlled Codex; the startup message to the controlled Codex only points to control/goal.md and control/constraint.md."
 ---
 
 # tmux Codex Supervisor
 
 Use this skill only when the current Codex is the main Codex acting as supervisor.
 
-Codex is the AI assistant. The main Codex is the supervisor in the current chat. The controlled Codex is the executor in a tmux window. tmux is a terminal tool that keeps sessions running. A control file is a task file read by the controlled Codex. A run file is a durable file written before execution, such as `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, and `workflow_<workflow id>/specs.md`.
+Codex is the AI assistant. The main Codex is the supervisor in the current chat. The controlled Codex is the executor in a tmux window. tmux is a terminal tool that keeps sessions running. A control file is a task file read first by the controlled Codex. A run file is a durable file written before execution, such as `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, and `workflow_<workflow id>/specs.md`. The controlled Codex receives only the two control-file paths in its startup message, then reads the spec, source discovery, evidence, or status files named by those control files and the active spec.
 
 Workflow root is `__WORKFLOW_ROOT__`. Use this absolute path even when the current task is in another directory.
 
@@ -24,7 +24,7 @@ The controlled Codex must not use this skill. It receives only the short `/goal`
 - Use exactly two active control files for the controlled Codex: `control/goal.md` and `control/constraint.md`.
 - `control/goal.md` contains the task goal, input material, output requirement, progress requirement, and completion standard.
 - `control/constraint.md` contains limits, forbidden actions, self-check rules, checkpoint rules, review rules, and autonomous execution boundaries.
-- The short `/goal` message only points the controlled Codex to the two control files.
+- The short `/goal` message only points the controlled Codex to the two control files. Those control files may point to the active spec and required evidence files.
 - The main Codex supervises; the controlled Codex executes.
 - Run-file creation writes final run files and checks that they support autonomous execution. It does not start the controlled Codex or long-running task work.
 - Execution starts only after a separate execution request. Do not encode user-review, user-choice, or user-approval gates in durable run files.
@@ -38,7 +38,7 @@ Before acting, classify the latest user request and select one helper path:
 - Use `monitor-run` when a controlled Codex is already running and the user asks to supervise, continue supervising, check progress, correct drift, or verify completion.
 - Use `persist-user-requirement` when a later user message changes execution permission, stop conditions, required settings, or completion criteria.
 
-The router must not send internal helper names to the controlled Codex. The controlled Codex should receive only control-file paths.
+The router must not send internal helper names to the controlled Codex. The controlled Codex startup message should contain only control-file paths.
 
 ## Helper: gen-goal
 
@@ -98,6 +98,10 @@ If the user already specified a data field, setting, output, or constraint, writ
 Clarifying questions are allowed only before final run files are written, only when missing information prevents writing executable goal/specs, and only for the missing point. Do not ask again about user-decided content.
 
 After final run files are written, do not ask the user for choices, approvals, or review. During execution, missing information must send the controlled Codex back to source discovery, local inspection, allowed external sources, conservative choices within constraints, evidence, and continuation.
+
+Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
+
+Conservative choice means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
 
 Do not trigger this helper while the controlled Codex is executing the current spec. If a running spec fails, update the current spec or create a fix spec instead of regenerating all specs.
 
@@ -160,7 +164,7 @@ The supervisor must not read full project source code and must not implement tas
 
 If the controlled Codex is stable and working within the current task step, do not interrupt it frequently. Stable means it is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step. When stable, monitor at a low frequency, usually once every 2 to 10 minutes.
 
-If the controlled Codex reports blocked, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed internet or paper search, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
+If the controlled Codex reports blocked, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed external sources, conservative choice when a choice is unavoidable, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
 
 ## Helper: persist-user-requirement
 
@@ -207,6 +211,8 @@ Default review count:
 
 - ordinary spec: at least two no-context reviewers,
 - high-risk spec: three to five no-context reviewers when correctness, constraints, git scope, tests, or failure risk need separate review.
+
+High-risk spec means the completed step touches destructive operations, git history, user data, paid or cloud resources, security or permissions, broad refactors, long expensive runs, ambiguous requirements, or weak test coverage.
 
 The reviewers must receive only the current spec, relevant goal/constraint excerpts, source discovery, abstract plan, evidence, status, latest git evidence, relevant diff, and explicit review instructions.
 

@@ -24,8 +24,8 @@ List facts that are directly supported by the sources above.
 
 ## Missing Information
 
-List missing information that would require guessing. If this section is not empty, do not execute until the missing information is resolved or the user approves the risk.
+List missing information that would require guessing. During execution, do not wait for a user response. Resolve each missing item through more local inspection, allowed external sources, or a conservative choice allowed by the active constraints, then record the resolution.
 
 ## Decision For This Spec
 
-State whether the current information is enough to proceed.
+State whether the current information is enough to proceed, and name the next allowed action.

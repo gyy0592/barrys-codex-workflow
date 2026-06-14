@@ -58,10 +58,12 @@ Run-file content rules:
 - workflow_<workflow id>/specs.md must state that specs run one at a time, in order, and the next spec cannot start until the current spec has evidence, status, checkpoint commit, and required review.
 - If a task step needs a per-step folder during execution, define the expected folder name and expected files in specs.md. Do not create execution evidence before the step actually runs.
 - If the user gave a global requirement, put it in control/constraint.md and also mention which specs it affects.
-- If source discovery finds missing information, record what is missing and what must be checked later. Do not guess.
+- If source discovery finds missing information, record what is missing and the autonomous resolution path for that spec. Do not guess and do not create a runtime user-response gate.
 - Do not write user-review, user-choice, or user-approval gates into durable run files.
 - Final run files must be complete enough for autonomous execution.
 - After execution starts, the controlled Codex must not ask for choices, approvals, or review. If information is missing, it must return to source discovery, inspect files and outputs, use allowed external sources, choose a conservative option within constraints, record the reason in evidence, and continue.
+- Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
+- Conservative option means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
 
 File ownership and priority rules:
 - Supervisor-only files are `prompt_for_supervisor.md`, `prompt_for_supervisor_goal.md`, and staged paste files.

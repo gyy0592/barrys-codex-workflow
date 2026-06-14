@@ -22,4 +22,4 @@ List the evidence files, command outputs, logs, metrics, or commits this spec mu
 
 ## Stop Or Replan Conditions
 
-List conditions that require stopping, returning to source discovery, or asking the user.
+List conditions that require stopping the bad path, returning to source discovery, or choosing a conservative option allowed by the active constraints.

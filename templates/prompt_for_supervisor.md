@@ -53,7 +53,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - The supervisor must keep supervising until the completion standard in `control/goal.md` is proved or the user explicitly says to stop.
 - Do not mark the supervisor goal complete or blocked because a metric gate fails, a run is bad, information is missing, or the executor reports a stop condition.
 - A stop condition means stop the bad run or bad path, record evidence, update the current spec or create the next fix spec, then continue.
-- If MFU, ETA, GPU use, tests, benchmarks, or required evidence fail, force the executor to continue the fix loop: source discovery, local inspection by the executor, internet or paper search when needed, concrete fix, test, benchmark, evidence, review, and next action.
+- If MFU, ETA, GPU use, tests, benchmarks, or required evidence fail, force the executor to continue the fix loop: source discovery, local inspection by the executor, allowed external sources, conservative choice when a choice is unavoidable, concrete fix, test, benchmark, evidence, review, and next action.
 - The supervisor may report a temporary stop to the user, but must also continue supervising the next allowed corrective action unless the user explicitly says to stop.
 
 ## Supervisor Evidence Boundary
@@ -122,7 +122,8 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 ## Review Rule
 
 - When the workflow uses task steps or specs, each completed spec must be reviewed after its checkpoint commit.
-- Use two fresh no-context reviewers when the workflow requires a goal review and a constraint review.
+- Use at least two fresh no-context reviewers for an ordinary completed spec: one implementation reviewer and one constraint reviewer.
+- Use three to five fresh no-context reviewers for a high-risk completed spec. High-risk means the spec touches destructive operations, git history, user data, paid or cloud resources, security or permissions, broad refactors, long expensive runs, ambiguous requirements, or weak test coverage.
 - The implementation reviewer checks correct spec implementation and drift from `control/goal.md`.
 - The constraint reviewer checks violations of `control/constraint.md`, global user requirements, git rules, and workflow rules.
 - The reviewers must receive only the current spec files, the relevant requirements, and latest git evidence.

@@ -20,7 +20,7 @@ Write the latest evidence checked and the result.
 
 ## Current Blocker
 
-Write "none" or the exact missing information, failed command, failed check, or user decision needed.
+Write "none" or the exact missing information, failed command, failed check, or control-file conflict. Do not write a user-decision blocker after final run files are written.
 
 ## Next Action
 

@@ -24,6 +24,7 @@ test -f "$skill_file"
 # Description must front-load the trigger scope and boundary because implicit
 # skill matching can use a shortened description.
 require 'description: "Use when the main Codex must prepare final run files, start, or supervise one controlled Codex in tmux.'
+require 'startup message to the controlled Codex only points to control/goal.md and control/constraint.md'
 require 'Do not use inside the controlled Codex'
 
 # The old user-review model must not survive in executable skill/start paths.
@@ -47,7 +48,9 @@ require 'Use exactly two active control files for the controlled Codex'
 require 'control/goal.md'
 require 'control/constraint.md'
 require 'The controlled Codex must not use this skill'
-require 'The controlled Codex should receive only control-file paths.'
+require 'The controlled Codex startup message should contain only control-file paths.'
+require 'Those control files may point to the active spec and required evidence files.'
+reject 'the controlled Codex only reads control/goal.md and control/constraint.md'
 if grep -F -e 'control/self_check.md' -e 'control/progress.md' -e 'control/done.md' "$skill_file" >/dev/null; then
   printf 'SKILL.md references extra control files\n' >&2
   exit 1
@@ -80,6 +83,9 @@ require 'Do not trigger this helper when the user only asks for status'
 require 'If the user already specified a data field, setting, output, or constraint, write it directly into goal/specs. Do not create a spec whose purpose is to decide it again.'
 require 'Clarifying questions are allowed only before final run files are written'
 require 'After final run files are written, do not ask the user for choices, approvals, or review.'
+require 'Allowed external sources means sources permitted by the user, the task, and the available tools.'
+require 'Conservative choice means the option that is reversible, smallest in scope'
+reject 'allowed internet or paper search'
 
 # Run-file autonomy review must check real failure modes, not only a heading.
 require '## Helper: review-run-files-for-autonomy'
@@ -118,6 +124,7 @@ require '## No-Context Review Rule'
 require 'After each checkpoint commit, the supervisor must run no-context review'
 require 'ordinary spec: at least two no-context reviewers'
 require 'high-risk spec: three to five no-context reviewers'
+require 'High-risk spec means the completed step touches destructive operations, git history, user data, paid or cloud resources'
 require 'If a reviewer finds a real problem, fix the current spec, make a new checkpoint commit, and run fresh no-context review.'
 
 # Actual supervisor start paths must carry the persistence idea or directly point
