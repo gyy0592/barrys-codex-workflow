@@ -43,7 +43,8 @@ is_checkout() {
   local dir=$1
   test -f "$dir/SKILL.md" &&
     test -x "$dir/scripts/install_skill.sh" &&
-    test -f "$dir/templates/short_goal_message.md"
+    test -f "$dir/templates/short_goal_message.md" &&
+    test -f "$dir/skills/workflow-error-transition/SKILL.md"
 }
 
 require_command() {
@@ -99,9 +100,11 @@ fi
 
 codex_home=${CODEX_HOME:-"$HOME/.codex"}
 skill_dir="$codex_home/skills/tmux-codex-supervisor"
+error_skill_dir="$codex_home/skills/workflow-error-transition"
 test -f "$skill_dir/SKILL.md"
 test -f "$skill_dir/templates/short_goal_message.md"
 test -x "$skill_dir/scripts/send_tmux_message.sh"
+test -f "$error_skill_dir/SKILL.md"
 grep -F 'CODEX_WORKFLOW_TMUX_SUBAGENT_RULES_BEGIN' "$codex_home/AGENTS.md" >/dev/null
 
 printf 'ONE_CLICK_INSTALL_OK %s\n' "$skill_dir"

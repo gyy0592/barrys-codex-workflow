@@ -153,6 +153,7 @@ require "$executor_duty_text" "$repo_dir/stage_supervisor_filled_goal.md"
 
 # Script references still exist after the refactor.
 require '__WORKFLOW_ROOT__/scripts/init_control_files.sh'
+require '__WORKFLOW_ROOT__/scripts/init_run_templates.sh'
 require '__WORKFLOW_ROOT__/scripts/send_tmux_message.sh'
 require '__WORKFLOW_ROOT__/scripts/capture_tmux_screen.sh'
 require '__WORKFLOW_ROOT__/scripts/verify_delivery.sh'

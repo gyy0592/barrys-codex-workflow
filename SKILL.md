@@ -255,11 +255,14 @@ Use these templates for fixed prompt and run-file shapes:
 - `__WORKFLOW_ROOT__/templates/short_goal_message.md` is the only short `/goal` text sent to the controlled Codex.
 - `__WORKFLOW_ROOT__/templates/run_goal.md`, `__WORKFLOW_ROOT__/templates/specs.md`, `__WORKFLOW_ROOT__/templates/source_discovery.md`, `__WORKFLOW_ROOT__/templates/abstract_plan.md`, `__WORKFLOW_ROOT__/templates/evidence.md`, `__WORKFLOW_ROOT__/templates/review.md`, and `__WORKFLOW_ROOT__/templates/bitter_lesson.md` define run evidence files.
 
+Before writing any templated run file, run `__WORKFLOW_ROOT__/scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]`. It copies every missing templated run file and leaves existing files unchanged. After that, edit the copied files in place. Do not recreate templated run files from memory.
+
 ## Script Policy
 
 Use scripts for fixed operations:
 
 - `__WORKFLOW_ROOT__/scripts/init_control_files.sh` creates the two control files in the task directory.
+- `__WORKFLOW_ROOT__/scripts/init_run_templates.sh` creates every missing templated run file and leaves existing files unchanged.
 - `__WORKFLOW_ROOT__/scripts/send_tmux_message.sh` sends a file's text to tmux.
 - `__WORKFLOW_ROOT__/scripts/capture_tmux_screen.sh` reads recent tmux screen text.
 - `__WORKFLOW_ROOT__/scripts/verify_delivery.sh` checks that expected text appears on screen.

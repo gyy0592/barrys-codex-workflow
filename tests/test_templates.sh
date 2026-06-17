@@ -16,6 +16,28 @@ test ! -e "$tmp_dir/task/control/self_check.md"
 test ! -e "$tmp_dir/task/control/progress.md"
 test ! -e "$tmp_dir/task/control/done.md"
 
+"$repo_dir/scripts/init_run_templates.sh" "$tmp_dir/run_task" demo 001_first spec_002_second >"$tmp_dir/init_run.out"
+grep -F "CREATED $tmp_dir/run_task/control/goal.md" "$tmp_dir/init_run.out" >/dev/null
+grep -F "CREATED $tmp_dir/run_task/workflow_demo/run_goal.md" "$tmp_dir/init_run.out" >/dev/null
+grep -F "CREATED $tmp_dir/run_task/workflow_demo/spec_001_first/status.md" "$tmp_dir/init_run.out" >/dev/null
+grep -F "CREATED $tmp_dir/run_task/workflow_demo/spec_002_second/status.md" "$tmp_dir/init_run.out" >/dev/null
+test -f "$tmp_dir/run_task/control/goal.md"
+test -f "$tmp_dir/run_task/control/constraint.md"
+test -f "$tmp_dir/run_task/workflow_demo/run_goal.md"
+test -f "$tmp_dir/run_task/workflow_demo/specs.md"
+for spec_dir in "$tmp_dir/run_task/workflow_demo/spec_001_first" "$tmp_dir/run_task/workflow_demo/spec_002_second"; do
+  test -f "$spec_dir/status.md"
+  test -f "$spec_dir/source_discovery.md"
+  test -f "$spec_dir/abstract_plan.md"
+  test -f "$spec_dir/evidence.md"
+  test -f "$spec_dir/review.md"
+  test -f "$spec_dir/bitter_lesson.md"
+done
+printf 'custom status\n' >"$tmp_dir/run_task/workflow_demo/spec_001_first/status.md"
+"$repo_dir/scripts/init_run_templates.sh" "$tmp_dir/run_task" workflow_demo 001_first >"$tmp_dir/init_run_again.out"
+grep -F "EXISTS $tmp_dir/run_task/workflow_demo/spec_001_first/status.md" "$tmp_dir/init_run_again.out" >/dev/null
+grep -F 'custom status' "$tmp_dir/run_task/workflow_demo/spec_001_first/status.md" >/dev/null
+
 expected_short_goal="$tmp_dir/expected_short_goal.md"
 printf '/goal\ncontrol/goal.md\ncontrol/constraint.md\n' >"$expected_short_goal"
 if ! cmp -s "$expected_short_goal" "$repo_dir/templates/short_goal_message.md"; then
@@ -30,6 +52,9 @@ grep -F 'They must not be copied into executor runtime files as a ban on executo
 grep -F 'the controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'checks that they will not make the long run wait for later user review or user choice' "$repo_dir/README.md" >/dev/null
 grep -F 'Do not write user-review, user-choice, or user-approval gates into durable run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]' "$repo_dir/SKILL.md" >/dev/null
+grep -F 'copies every missing templated run file and leaves existing files unchanged' "$repo_dir/SKILL.md" >/dev/null
+grep -F 'Do not recreate templated run files from memory.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Template heading risk check' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Remove or rewrite any heading that can be treated as a runtime stop condition.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Remove or rewrite any heading that conflicts with control/constraint.md.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null

@@ -52,6 +52,14 @@ Use these templates from the workflow root:
 - templates/review.md
 - templates/bitter_lesson.md
 
+Before writing any templated run file, run:
+
+```bash
+<workflow root>/scripts/init_run_templates.sh <task directory> <workflow id> [spec-name ...]
+```
+
+The script copies every missing templated run file and leaves existing files unchanged. After that, edit the copied files in place. Do not recreate templated run files from memory. Preserve template headings unless a heading conflicts with the task, `control/constraint.md`, or the heading risk checks below.
+
 Run-file content rules:
 - control/goal.md must tell the future controlled Codex what to do, what materials to read, what outputs to produce, what progress evidence to update, and what proves completion.
 - control/constraint.md must contain all active user constraints, forbidden actions, checkpoint rules, review rules, stop rules, and runtime autonomy definitions.
