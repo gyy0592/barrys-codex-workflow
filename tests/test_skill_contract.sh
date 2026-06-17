@@ -103,6 +103,7 @@ require 'lower-priority files cannot override higher-priority control files'
 require 'must not mark its own goal complete or blocked because the controlled Codex reports blocked'
 require 'a run fails, information is missing, or a review fails'
 require 'later user message changes execution permission, stop conditions, required settings, or completion criteria'
+require 'the controlled Codex does the controlled task, must produce required outputs, and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them'
 require 'Write it into the durable control file before relying on it.'
 require 'Do not rely only on chat memory.'
 for persistence_file in \
@@ -134,6 +135,7 @@ require 'If a reviewer finds a real problem, fix the current spec, make a new ch
 # Actual supervisor start paths must carry the persistence idea or directly point
 # to a file that carries it.
 persistence_text='Do not mark the supervisor goal complete or blocked'
+executor_duty_text='may run or submit jobs when `control/goal.md` and `control/constraint.md` require them'
 require "$persistence_text" "$repo_dir/templates/prompt_for_supervisor_goal.md"
 require "$persistence_text" "$repo_dir/templates/prompt_for_supervisor.md"
 require "$persistence_text" "$repo_dir/stage_supervisor_execution_message.md"
@@ -141,6 +143,13 @@ require "$persistence_text" "$repo_dir/stage_supervisor_execution_read_file.md"
 require "$persistence_text" "$repo_dir/stage_supervisor_prompt_for_supervisor_goal.md"
 require "$persistence_text" "$repo_dir/stage_supervisor_prompt_for_supervisor.md"
 require "$persistence_text" "$repo_dir/stage_supervisor_filled_goal.md"
+require "$executor_duty_text" "$repo_dir/templates/prompt_for_supervisor_goal.md"
+require "$executor_duty_text" "$repo_dir/templates/prompt_for_supervisor.md"
+require "$executor_duty_text" "$repo_dir/stage_supervisor_execution_message.md"
+require "$executor_duty_text" "$repo_dir/stage_supervisor_execution_read_file.md"
+require "$executor_duty_text" "$repo_dir/stage_supervisor_prompt_for_supervisor_goal.md"
+require "$executor_duty_text" "$repo_dir/stage_supervisor_prompt_for_supervisor.md"
+require "$executor_duty_text" "$repo_dir/stage_supervisor_filled_goal.md"
 
 # Script references still exist after the refactor.
 require '__WORKFLOW_ROOT__/scripts/init_control_files.sh'

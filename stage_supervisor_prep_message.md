@@ -18,6 +18,8 @@ Run-file creation boundary:
 - Do not generate large datasets.
 - Do not submit SLURM jobs.
 - Do not start any long-running command.
+- These prep-phase bans apply only to this main Codex while creating run files. Do not copy them into controlled execution files as a ban on the future controlled Codex.
+- If the final run requires training, jobs, experiments, final outputs, or other task submissions, the future controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`.
 - Stop after the final run files are written and report the file list plus autonomy checks.
 
 First action: preserve Stage 1.

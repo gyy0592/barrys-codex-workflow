@@ -1,6 +1,8 @@
 # Prompt For Supervisor
 
-This is the detailed companion file for the supervisor Codex.
+This is the detailed companion file for the supervisor Codex. This file is for the supervisor, not the executor.
+
+Supervisor boundary: the supervisor must not create the controlled task's final deliverables, run the controlled task's experiments or jobs, or submit the controlled task's work. Executor duty: the controlled Codex must produce the required outputs and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them.
 
 Do not paste this whole file as `/goal`. Paste `prompt_for_supervisor_goal.md` as the short repeated goal. The short goal tells the supervisor to read this file for details.
 
@@ -77,6 +79,7 @@ Use the workflow document: `/home/barry/Programs/codex_workflow_tmux/specific wo
 - Do not create the controlled task's final deliverables yourself.
 - Do not edit task code yourself unless the user explicitly changes your role.
 - Do not run experiments, submit jobs, or start training yourself.
+- The controlled Codex must create the controlled task's required deliverables and may run experiments, jobs, or task submissions when `control/goal.md` and `control/constraint.md` require them.
 
 ## Control-File Rule
 

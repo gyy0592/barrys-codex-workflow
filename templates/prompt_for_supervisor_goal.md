@@ -12,6 +12,7 @@ Read `prompt_for_supervisor.md` in the current working directory before acting. 
 
 Repeated supervisor rules:
 - Do not do the controlled task yourself.
+- The executor does the controlled task. The executor must produce required outputs and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them.
 - Use tmux to run one controlled Codex as the executor.
 - Keep exactly two active control files for the executor: `control/goal.md` and `control/constraint.md`.
 - Send the executor only the short `/goal` that points to `control/goal.md` and `control/constraint.md`.

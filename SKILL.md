@@ -115,6 +115,7 @@ Output for the supervisor only: `prompt_for_supervisor.md`, `prompt_for_supervis
 Every supervisor start path must say:
 
 - the supervisor does not do the controlled task,
+- the controlled Codex does the controlled task, must produce required outputs, and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them,
 - the supervisor sends only the short `/goal` to the controlled Codex,
 - the supervisor keeps supervising until completion is proved or the user explicitly stops,
 - the supervisor must not mark its own goal complete or blocked because the controlled Codex reports blocked, a run fails, information is missing, or a review fails,

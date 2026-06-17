@@ -25,10 +25,30 @@ Required repository areas:
 
 Use this workflow in two phases:
 
-1. Run-file creation phase: the main Codex turns the user's task into final run files, checks that they do not contain later user-review gates, and stops before execution.
+1. Run-file creation phase: the main Codex turns the user's task into final run files, checks that they will not make the long run wait for later user review or user choice, and stops before execution.
 2. Execution phase: after a separate execution request, the main Codex starts and supervises the controlled Codex in tmux.
 
-Install the skill once:
+Install the skill once from a checkout:
+
+```bash
+./install.sh
+```
+
+Install on a new cloud machine after the repository is published:
+
+```bash
+git clone <repo-url> ~/codex_workflow_tmux && ~/codex_workflow_tmux/install.sh
+```
+
+Install from a downloaded installer script:
+
+```bash
+curl -fsSL <raw-install.sh-url> | bash -s -- <repo-url>
+```
+
+`install.sh` requires `git` and `tmux`, warns if the Codex CLI is not available, installs the skill into `~/.codex/skills/tmux-codex-supervisor`, and verifies the required installed files.
+
+The lower-level installer is still available:
 
 ```bash
 ~/Programs/codex_workflow_tmux/scripts/install_skill.sh
@@ -55,7 +75,7 @@ Do not start long-running work.
 My task is: write the real task here.
 ```
 
-Then, for execution, send this request to Codex:
+After Codex reports that the final run files were written, send a separate execution request. This request enters the execution phase. Before starting the controlled Codex, the supervisor Codex may run the final autonomy check and fix run files if needed. This is not user approval and does not ask the user to read the files.
 
 ```text
 Use the tmux-codex-supervisor skill.
@@ -63,11 +83,13 @@ Use templates/prompt_for_supervisor.md.
 
 The current directory is the task project.
 Act as the main Codex:
-1. Create and fill control/goal.md and control/constraint.md.
-2. Start a controlled Codex inside tmux.
-3. Send the short /goal message to the controlled Codex.
-4. Verify that the message arrived.
-5. Supervise, correct drift, and verify completion. Do not directly do the controlled Codex task.
+1. Confirm the final run files exist.
+2. Confirm review-run-files-for-autonomy passed, or run it and fix the files before execution.
+3. Checkpoint the final run files if they must be preserved.
+4. Start a controlled Codex inside tmux.
+5. Send only the short /goal message from templates/short_goal_message.md to the controlled Codex.
+6. Verify that the message arrived.
+7. Supervise, correct drift, require checkpoint commits and no-context reviews after completed specs, and verify completion. Do not directly do the controlled Codex task.
 
 My task is: write the real task here.
 ```

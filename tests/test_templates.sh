@@ -25,7 +25,10 @@ fi
 grep -F 'This is not the execution phase.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Do not start the controlled Codex.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Do not start long training' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
-grep -F 'checks that they do not contain later user-review gates' "$repo_dir/README.md" >/dev/null
+grep -F 'These "do not start" and "do not submit" rules apply only to the main Codex during run-file creation.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'They must not be copied into executor runtime files as a ban on executor work.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'the controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'checks that they will not make the long run wait for later user review or user choice' "$repo_dir/README.md" >/dev/null
 grep -F 'Do not write user-review, user-choice, or user-approval gates into durable run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Template heading risk check' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Remove or rewrite any heading that can be treated as a runtime stop condition.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
@@ -33,6 +36,9 @@ grep -F 'Remove or rewrite any heading that conflicts with control/constraint.md
 grep -F 'Remove or rewrite any heading that asks for user review, choices, or approval after durable run files are written.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'latest user instruction written into control files > control/constraint.md > control/goal.md > current spec.md > specs.md > run_goal.md' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Do not paste this whole file as `/goal`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'This file is for the supervisor, not the executor.' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'the supervisor must not create the controlled task' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'Executor duty: the controlled Codex must produce the required outputs and may run or submit jobs' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'control/goal.md' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'control/constraint.md' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'File Conflict Priority Rule' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
@@ -46,6 +52,7 @@ grep -F 'doing future-spec work before the current spec has passed' "$repo_dir/t
 grep -F 'First commit any final run files' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'You are the supervisor only.' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Read `prompt_for_supervisor.md` in the current working directory before acting' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
+grep -F 'The executor does the controlled task. The executor must produce required outputs and may run or submit jobs' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Work and monitor one spec at a time' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'If the executor is stable, monitor once every 2 to 10 minutes' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'They are not permission for the supervisor to stop supervising' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
@@ -81,6 +88,8 @@ grep -F 'Runtime Autonomy' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'After execution starts, complete the run autonomously' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'If a choice is missing during execution, choose a conservative option as defined in `control/constraint.md`' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'File Ownership And Priority' "$repo_dir/templates/run_goal.md" >/dev/null
+grep -F 'Supervisor-only restrictions in supervisor prompt files do not become executor restrictions here.' "$repo_dir/templates/run_goal.md" >/dev/null
+grep -F 'the controlled Codex must do them during execution.' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'autonomous resolution path for that spec' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Allowed external sources means sources permitted by the user, the task, and the available tools.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Conservative option means the option that is reversible, smallest in scope' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
@@ -118,5 +127,10 @@ if grep -F -e 'control/self_check.md' -e 'control/progress.md' -e 'control/done.
   printf 'short_goal_message.md references extra control files\n' >&2
   exit 1
 fi
+
+grep -F 'These prep-phase bans apply only to this main Codex while creating run files.' "$repo_dir/stage_supervisor_prep_message.md" >/dev/null
+grep -F 'This is not a ban on the future controlled Codex' "$repo_dir/stage_supervisor_read_file_message.md" >/dev/null
+grep -F 'For this correction message only: do not start execution' "$repo_dir/stage_supervisor_review_rule_correction.md" >/dev/null
+grep -F 'This is not a ban on the future controlled Codex' "$repo_dir/stage_supervisor_review_rule_correction.md" >/dev/null
 
 printf 'test_templates PASS\n'

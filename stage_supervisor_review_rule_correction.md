@@ -15,4 +15,4 @@ The expected files for each completed spec must include:
 
 `review.md` must summarize both subreviews. The next spec can start only if both subreviews are PASS and the summary `review.md` is PASS.
 
-Update only final run files such as `control/goal.md`, `control/constraint.md`, and `workflow_20260612_physics_for_llm_scale_training/specs.md`. Do not start execution, do not start training, do not submit jobs, and do not start a controlled Codex. Stop after updating and verifying the final run files.
+Update only final run files such as `control/goal.md`, `control/constraint.md`, and `workflow_20260612_physics_for_llm_scale_training/specs.md`. For this correction message only: do not start execution, do not start training, do not submit jobs, and do not start a controlled Codex. Stop after updating and verifying the final run files. This is not a ban on the future controlled Codex; if `control/goal.md` and `control/constraint.md` require jobs or task submissions, the controlled Codex must do them during execution.

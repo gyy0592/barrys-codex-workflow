@@ -29,7 +29,7 @@ Execution requirements:
    - Use the working Codex command path if needed: `/mnt/nfs/barry/home/.npm-global/bin/codex --dangerously-bypass-approvals-and-sandbox`.
 3. Send the controlled Codex only the short `/goal` message that points to `control/goal.md` and `control/constraint.md`.
 4. Verify the controlled Codex received the message.
-5. Supervise only. Do not personally edit task code, run experiments, submit jobs, or create final task deliverables.
+5. Supervise only. Do not personally edit task code, run experiments, submit jobs, or create final task deliverables. The controlled Codex must create required deliverables and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them.
 6. Correct only when evidence proves drift, stalling, failed completion, missing required evidence, or a violation of `control/constraint.md`.
 7. Do not mark the supervisor goal complete or blocked because the controlled Codex reports blocked, a run fails, information is missing, or a review fails. Keep supervising until completion is proved or the user explicitly stops.
 

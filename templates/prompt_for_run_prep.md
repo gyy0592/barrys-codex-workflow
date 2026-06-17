@@ -30,6 +30,8 @@ Run-file creation rule:
 - Do not start long training, benchmark, experiment, data generation, or cloud jobs.
 - Do not submit queue jobs.
 - Do not make final task deliverables unless they are explicitly run files.
+- These "do not start" and "do not submit" rules apply only to the main Codex during run-file creation. They must not be copied into executor runtime files as a ban on executor work.
+- If the future task requires training, jobs, experiments, final outputs, or other task submissions, write that the controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`.
 - Stop after the run files are written and report the file list and autonomy checks.
 
 Required run files:

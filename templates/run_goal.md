@@ -34,6 +34,8 @@ If a choice is missing during execution, choose a conservative option as defined
 
 This file is a shared run description. The main Codex writes it during run-file creation. The supervisor and controlled Codex may read it. The supervisor checks it for consistency with higher-priority files.
 
+Supervisor-only restrictions in supervisor prompt files do not become executor restrictions here. If higher-priority files require outputs, jobs, experiments, or task submissions, the controlled Codex must do them during execution.
+
 For execution, use this priority:
 
 ```text
