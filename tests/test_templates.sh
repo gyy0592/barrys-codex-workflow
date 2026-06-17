@@ -74,6 +74,12 @@ grep -F 'do not interrupt it frequently' "$repo_dir/templates/prompt_for_supervi
 grep -F 'execute one spec at a time' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'must not batch multiple specs into one checkpoint commit or one review' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'doing future-spec work before the current spec has passed' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'Specific Workflow Enforcement Rule' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'must record the files inspected, command outputs inspected, external sources inspected when needed' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'If the next action would require guessing a fact, file purpose, API behavior, data format, user requirement, benchmark meaning, or external rule' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'must record what was checked, which file or command was used, expected result, actual result, and conclusion' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'may be marked `done` only after source discovery, abstract plan, implementation evidence, checkpoint evidence, and required review' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'Enforce the specific workflow stages from `prompt_for_supervisor.md`' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'First commit any final run files' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'You are the supervisor only.' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Read `prompt_for_supervisor.md` in the current working directory before acting' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null

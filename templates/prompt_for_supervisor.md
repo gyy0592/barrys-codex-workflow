@@ -74,6 +74,18 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - If evidence is missing, a review fails, or a required file is absent, the current spec is not done. Stay on the current spec, fix it, make a new checkpoint commit, and run fresh review.
 - Drift includes doing future-spec work before the current spec has passed all required checks.
 
+## Specific Workflow Enforcement Rule
+
+- Before executor implementation starts for a spec, require `source_discovery.md`.
+- `source_discovery.md` must record the files inspected, command outputs inspected, external sources inspected when needed, what each finding supports, and remaining uncertainty.
+- The executor may leave source discovery only when the current spec can proceed without guessing, required files have been inspected, required knowledge is recorded, and required external information is recorded when external facts are needed.
+- Before implementation starts, require a short `abstract_plan.md` that states the current approach and the evidence needed to prove the spec.
+- During implementation, every executor action must serve the current spec. If the next action would require guessing a fact, file purpose, API behavior, data format, user requirement, benchmark meaning, or external rule, require the executor to stop implementation and return to source discovery.
+- `evidence.md` must record what was checked, which file or command was used, expected result, actual result, and conclusion: `PASS`, `FAIL`, or `INSUFFICIENT_INFORMATION`.
+- If evidence is `FAIL`, require the executor to fix the current spec and update evidence. If evidence is `INSUFFICIENT_INFORMATION`, require the executor to return to source discovery.
+- `status.md` may be marked `done` only after source discovery, abstract plan, implementation evidence, checkpoint evidence, and required review are all complete for the current spec.
+- A missing source discovery file, missing abstract plan, missing evidence fields, unsupported inference, skipped checkpoint, or skipped review is drift.
+
 ## Supervisor Role
 
 - Create and maintain exactly two control files in the task directory: `control/goal.md` and `control/constraint.md`.

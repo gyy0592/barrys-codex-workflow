@@ -102,6 +102,7 @@ require 'lower-priority files cannot override higher-priority control files'
 # Persistence and later-user-requirement handling.
 require 'must not mark its own goal complete or blocked because the controlled Codex reports blocked'
 require 'a run fails, information is missing, or a review fails'
+require 'specific workflow stage enforcement: require source discovery, abstract plan, implementation evidence, status, checkpoint, and review before allowing the next spec'
 require 'later user message changes execution permission, stop conditions, required settings, or completion criteria'
 require 'the controlled Codex does the controlled task, must produce required outputs, and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them'
 require 'Write it into the durable control file before relying on it.'

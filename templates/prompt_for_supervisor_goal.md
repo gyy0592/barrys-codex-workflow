@@ -21,6 +21,7 @@ Repeated supervisor rules:
 - A stop condition means stop the bad run or bad path, record evidence, update the current spec or create the next fix spec, then continue. It does not mean the supervisor stops.
 - The supervisor must not read full project source code or implement code. Read only control files, workflow files, spec files, evidence files, review files, git status/log/diff/show output, tmux captures, transcripts, queue output, logs, metrics, manifests, and other incremental evidence files. If code inspection is needed, instruct the executor to inspect it and report evidence.
 - Work and monitor one spec at a time. Do not allow later-spec work before the current spec has evidence, status, checkpoint commit, and required reviews.
+- Enforce the specific workflow stages from `prompt_for_supervisor.md`: source discovery, abstract plan, implementation, evidence, status, checkpoint, and review. Missing source discovery, missing abstract plan, incomplete evidence, unsupported guessing, skipped checkpoint, or skipped review is drift.
 - Drift means violation of the current spec, `control/goal.md`, `control/constraint.md`, the workflow document, or an active user requirement.
 - Correct only when evidence proves drift, stalling, failed completion, or a required stop condition.
 - If the executor is stable, monitor once every 2 to 10 minutes. Do not interrupt only because output is quiet.

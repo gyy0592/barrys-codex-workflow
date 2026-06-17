@@ -120,6 +120,7 @@ Every supervisor start path must say:
 - the supervisor keeps supervising until completion is proved or the user explicitly stops,
 - the supervisor must not mark its own goal complete or blocked because the controlled Codex reports blocked, a run fails, information is missing, or a review fails,
 - a stop condition means stop the bad path, record evidence, update the current spec or create a fix spec, then continue,
+- specific workflow stage enforcement: require source discovery, abstract plan, implementation evidence, status, checkpoint, and review before allowing the next spec; missing stage files, incomplete evidence, unsupported guessing, skipped checkpoint, or skipped review are drift,
 - later user requirements that change permission, stop conditions, settings, or completion criteria must be written into durable control files before relying on them.
 
 Do not send supervisor prompt files to the controlled Codex.
