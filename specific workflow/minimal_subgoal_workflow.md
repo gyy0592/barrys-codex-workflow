@@ -1,50 +1,50 @@
 # Minimal Subgoal Workflow
 
-这个文件是一个最小 specific workflow（针对某一类任务的具体工作流程说明）。它不是新的 skill。主控 Codex 读取这个文件后，用已经存在的 `tmux-codex-supervisor` 工具去控制 tmux 里的受控 Codex。
+This file is a minimal specific workflow for one class of tasks. It is not a new skill. After the main Codex reads this file, it uses the existing `tmux-codex-supervisor` tooling to control the controlled Codex running inside tmux.
 
-## 1. 这个需求是否足够清楚
+## 1. Whether The Requirement Is Clear Enough
 
-足够清楚，可以做最小版本。
+The requirement is clear enough for a minimal version.
 
-当前明确的信息是：
+The current known facts are:
 
-- 用户会给一个总目标。
-- 总目标会被拆成多个 spec。
-- spec 是一个可独立完成的小目标，也可以理解成 subgoal。
-- 每个 spec 必须有可观测变量。
-- 可观测变量是能被主控 Codex 检查的证据，例如文件是否存在、测试是否通过、命令输出是否包含某段文字、屏幕输出是否显示某个状态。
-- 不需要提前写死完整 plan，因为 `/goal` 会让受控 Codex 动态生成计划。
-- 每个 spec 开工前必须先做 source discovery。
-- source discovery 是信息收集阶段，目标是尽力收集完成该 spec 需要的文件、项目知识和互联网信息。
-- source discovery 的结果必须写进本次 run 的目录。
-- 每个 spec 需要一个简短 high level abstract plan。
-- high level abstract plan 是高层步骤，只写方向，不写容易错的细节。
-- 如果发现信息不足，必须回到 source discovery，不能靠猜。
-- 如果遇到有复用价值的错误或理解偏差，必须写进 bitter lesson。
-- 每个 spec 只有在证据通过后才能打勾，然后进入下一个 spec。
-- 每个 spec 完成后，必须做 checkpoint commit。
-- 每个 checkpoint commit 后，必须并行开两个无上下文 subagent 审查 git 状态、git diff、git commit、spec 证据、goal 和 constraint。
-- 审查通过后才能进入下一个 spec。
+- The user will provide one overall goal.
+- The overall goal will be split into multiple specs.
+- A spec is a small goal that can be completed independently. It can also be understood as a subgoal.
+- Each spec must have an observable variable.
+- An observable variable is evidence that the main Codex can check, such as whether a file exists, whether a test passes, whether command output contains specific text, or whether screen output shows a specific state.
+- A full plan does not need to be fixed in advance, because `/goal` lets the controlled Codex generate a plan dynamically.
+- Before each spec starts, source discovery is required.
+- Source discovery is the information collection stage. Its goal is to collect the files, project knowledge, and internet information needed to complete that spec.
+- Source discovery results must be written into the current run directory.
+- Each spec needs a short high-level abstract plan.
+- A high-level abstract plan is a set of high-level steps. It gives direction without writing fragile details.
+- If information is insufficient, the workflow must return to source discovery instead of guessing.
+- If a reusable error or misunderstanding is found, it must be written as a bitter lesson.
+- A spec can be checked off only after evidence passes. Then the workflow may move to the next spec.
+- After each spec is complete, a checkpoint commit is required.
+- After each checkpoint commit, the main Codex must start two parallel no-context subagents to review git status, git diff, git commit, spec evidence, goal, and constraint.
+- The workflow may move to the next spec only after review passes.
 
-当前还需要每次运行时由主控 Codex 动态决定的信息是：
+The main Codex must decide these facts dynamically for each run:
 
-- run id 怎么命名。
-- 总目标拆成哪些 spec。
-- 每个 spec 的可观测变量是什么。
-- 每个 spec 要收集哪些文件、项目知识或互联网信息。
-- 每个 spec 的完成检查命令是什么。
+- How to name the run id.
+- Which specs the overall goal should be split into.
+- What observable variable each spec should use.
+- Which files, project knowledge, or internet information each spec must collect.
+- Which completion check command each spec should use.
 
-## 2. 角色
+## 2. Roles
 
-主控 Codex 是当前聊天里的监督者。主控 Codex 负责读这个 workflow 文件、准备控制文件、启动或控制 tmux、检查证据、纠正偏离、决定是否进入下一个 spec。
+The main Codex is the supervisor in the current chat. The main Codex reads this workflow file, prepares control files, starts or controls tmux, checks evidence, corrects drift, and decides whether the run may move to the next spec.
 
-受控 Codex 是 tmux 窗口里的执行者。受控 Codex 负责按照当前 spec 做真实工作。
+The controlled Codex is the executor inside the tmux window. The controlled Codex does the real work required by the current spec.
 
-主控 Codex 不直接完成受控 Codex 被分配的任务。主控 Codex 只监督、纠偏和验收。
+The main Codex does not directly complete tasks assigned to the controlled Codex. The main Codex only supervises, corrects, and accepts or rejects completion.
 
-## 3. 目录结构
+## 3. Directory Layout
 
-每次运行创建一个 run 目录：
+Each run creates one run directory:
 
 ```text
 workflow_<run_id>/
@@ -67,179 +67,179 @@ workflow_<run_id>/
     lesson_<short_name>.md
 ```
 
-`workflow_<run_id>/run_goal.md` 写本次总目标和 spec 列表。
+`workflow_<run_id>/run_goal.md` records the overall goal and spec list for this run.
 
-`spec.md` 写当前 spec 的目标、限制和可观测变量。
+`spec.md` records the current spec goal, constraints, and observable variable.
 
-`source_discovery.md` 写为了完成当前 spec 收集到的信息。
+`source_discovery.md` records information collected to complete the current spec.
 
-`abstract_plan.md` 写当前 spec 的简短高层计划。
+`abstract_plan.md` records the current spec's short high-level plan.
 
-`evidence.md` 写当前 spec 的证据、检查方法、检查结果。
+`evidence.md` records the current spec's evidence, check method, and check result.
 
-`status.md` 写当前 spec 是否完成。只能写 `pending`、`in_progress`、`blocked_missing_information`、`done`。
+`status.md` records whether the current spec is complete. It may contain only `pending`, `in_progress`, `blocked_missing_information`, or `done`.
 
-`review.md` 写无上下文 subagent 对当前 spec、git diff、git commit 和证据的审查结果。
+`review.md` records no-context subagent review results for the current spec, git diff, git commit, and evidence.
 
-`bitter_lesson/` 写本次运行中发现的可复用错误知识。
+`bitter_lesson/` records reusable error knowledge found during this run.
 
-## 4. Spec 必须包含什么
+## 4. Required Spec Content
 
-每个 spec 必须写成下面的结构：
+Each spec must use this structure:
 
 ```text
 # Spec
 
 ## Subgoal
-这里写这个 spec 要完成的小目标。
+Write the small goal this spec must complete.
 
 ## Observable Variable
-这里写可观测变量。
+Write the observable variable.
 
 ## Pass Condition
-这里写什么证据算通过。
+Write the evidence that counts as passing.
 
 ## Fail Condition
-这里写什么情况算失败或跑偏。
+Write what counts as failure or drift.
 
 ## Required Source Discovery
-这里写开工前必须收集的信息类型。
+Write the types of information that must be collected before work starts.
 
 ## Completion Check
-这里写主控 Codex 如何检查完成。
+Write how the main Codex checks completion.
 ```
 
-一个 spec 不允许只写“完成某功能”这种无法检查的话。它必须能回答：
+A spec must not only say something uncheckable such as "finish a feature." It must answer:
 
-- 要完成什么？
-- 看什么证据？
-- 什么算通过？
-- 什么算失败？
-- 缺少信息时回到哪里？
+- What must be completed?
+- What evidence must be checked?
+- What counts as passing?
+- What counts as failure?
+- Where should the run return when information is missing?
 
-## 5. 每个 spec 的运行阶段
+## 5. Stages For Each Spec
 
 ### Stage 1: Source Discovery
 
-目标：收集完成当前 spec 必须知道的信息。
+Goal: collect information required to complete the current spec.
 
-主控 Codex 必须要求受控 Codex 先收集信息，不能直接开工。
+The main Codex must require the controlled Codex to collect information first. The controlled Codex must not start implementation directly.
 
-信息来源包括：
+Information sources include:
 
-- 当前项目里的相关文件。
-- 当前项目里的已有测试、脚本、配置和文档。
-- 用户明确给出的材料。
-- 如果任务需要最新或外部事实，则收集互联网信息。
+- Related files in the current project.
+- Existing tests, scripts, configuration, and documentation in the current project.
+- Materials explicitly provided by the user.
+- Internet information when the task requires current or external facts.
 
-收集结果必须写到：
+Collected results must be written to:
 
 ```text
 workflow_<run_id>/spec_<number>_<task_name>/source_discovery.md
 ```
 
-`source_discovery.md` 必须写清楚：
+`source_discovery.md` must state:
 
-- 查了哪些文件。
-- 查了哪些命令输出。
-- 查了哪些外部资料。
-- 每条信息支持什么行动。
-- 还有什么不确定。
+- Which files were inspected.
+- Which command outputs were inspected.
+- Which external sources were inspected.
+- What action each finding supports.
+- What uncertainty remains.
 
-进入下一阶段的条件：
+Conditions for entering the next stage:
 
-- 当前 spec 的行动不需要靠猜。
-- 必要文件已经查过。
-- 必要知识已经记录。
-- 如果需要互联网信息，已经收集并记录。
+- The current spec can proceed without guessing.
+- Required files have been inspected.
+- Required knowledge has been recorded.
+- Required internet information has been collected and recorded when internet information is needed.
 
-如果不满足这些条件，不能进入执行阶段。
+If these conditions are not met, the run must not enter the execution stage.
 
 ### Stage 2: Abstract Plan
 
-目标：写一个简短高层计划，指导当前 spec 怎么做。
+Goal: write a short high-level plan that guides how the current spec will be done.
 
-计划写到：
+The plan is written to:
 
 ```text
 workflow_<run_id>/spec_<number>_<task_name>/abstract_plan.md
 ```
 
-计划必须满足：
+The plan must be:
 
-- 简短。
-- 只写高层步骤。
-- 不写容易过期的细节。
-- 不把猜测写成事实。
-- 每一步都服务当前 spec。
+- Short.
+- High-level.
+- Free of fragile details that may become stale.
+- Clear about what is evidence and what is not known.
+- Focused only on the current spec.
 
-示例：
+Example:
 
 ```text
-1. 根据 source discovery 确认要改的最小范围。
-2. 修改当前 spec 直接要求的文件。
-3. 运行 completion check。
-4. 如果检查失败，根据失败证据回到 source discovery 或修正实现。
+1. Use source discovery to confirm the smallest required change area.
+2. Modify only the files directly required by the current spec.
+3. Run the completion check.
+4. If the check fails, use failure evidence to return to source discovery or fix the implementation.
 ```
 
 ### Stage 3: Execute
 
-目标：受控 Codex 根据当前 spec 和 abstract plan 做真实工作。
+Goal: the controlled Codex does real work based on the current spec and abstract plan.
 
-执行时必须遵守：
+During execution:
 
-- 每个动作都服务当前 spec。
-- 不做当前 spec 之外的任务。
-- 不靠猜测补全缺失信息。
-- 遇到信息不足时立刻回到 Stage 1。
-- 遇到可复用错误时写 bitter lesson。
+- Every action must serve the current spec.
+- The controlled Codex must not do tasks outside the current spec.
+- The controlled Codex must not fill missing information by guessing.
+- When information is insufficient, the run must return to Stage 1 immediately.
+- When a reusable error is found, the controlled Codex must write a bitter lesson.
 
 ### Stage 4: Evidence Check
 
-目标：主控 Codex 检查当前 spec 是否完成。
+Goal: the main Codex checks whether the current spec is complete.
 
-证据写到：
+Evidence is written to:
 
 ```text
 workflow_<run_id>/spec_<number>_<task_name>/evidence.md
 ```
 
-`evidence.md` 必须写清楚：
+`evidence.md` must state:
 
-- 检查了什么。
-- 用什么命令或文件检查。
-- 期望结果是什么。
-- 实际结果是什么。
-- 结论是通过、失败，还是信息不足。
+- What was checked.
+- Which command or file was used for the check.
+- What result was expected.
+- What result actually occurred.
+- Whether the conclusion is pass, fail, or insufficient information.
 
-如果证据通过，主控 Codex 把当前 spec 的 `status.md` 写成：
+If evidence passes, the main Codex writes this value in the current spec's `status.md`:
 
 ```text
 done
 ```
 
-如果证据失败，主控 Codex 让受控 Codex修正。
+If evidence fails, the main Codex requires the controlled Codex to fix the current spec.
 
-如果失败原因是信息不足，主控 Codex 必须让受控 Codex 回到 Stage 1。
+If the failure is caused by insufficient information, the main Codex must require the controlled Codex to return to Stage 1.
 
 ### Stage 5: Checkpoint Commit
 
-目标：把已经完成并且证据通过的当前 spec 保存成 git 记录。
+Goal: save the completed current spec with passing evidence into git history.
 
-checkpoint commit 是阶段性 git commit。它的作用是让长任务在每个稳定阶段都有可恢复、可审查的保存点。
+A checkpoint commit is a stage-level git commit. It gives long tasks a recoverable and reviewable save point after each stable stage.
 
-只有当前 spec 的 evidence 通过后，才可以做 checkpoint commit。
+A checkpoint commit is allowed only after the current spec's evidence passes.
 
-提交前必须做：
+Before committing, the controlled Codex must:
 
-1. 运行 `git status --short`。
-2. 区分当前 spec 需要的文件和无关文件。
-3. 只暂存当前 workflow 需要的文件。
-4. 不暂存还在变化的实验输出。
-5. 不暂存用户无关改动。
-6. 如果文件无法安全分开，停止并报告具体文件。
+1. Run `git status --short`.
+2. Separate files required by the current spec from unrelated files.
+3. Stage only files required by the current workflow.
+4. Avoid staging experiment outputs that are still changing.
+5. Avoid staging unrelated user changes.
+6. Stop and report the exact files if the files cannot be separated safely.
 
-提交后必须把这些证据写入当前 spec 的 `evidence.md`：
+After committing, the controlled Codex must write this evidence to the current spec's `evidence.md`:
 
 ```text
 git status --short
@@ -249,52 +249,52 @@ git show --stat --oneline --name-status HEAD
 
 ### Stage 6: Parallel No-Context Review
 
-目标：让没有当前长上下文的 subagent 审查当前 spec 是否真的完成，避免主控和受控 Codex 因为长上下文漂移而互相放过错误。
+Goal: have subagents without the current long chat context review whether the current spec is truly complete. This prevents the main Codex and controlled Codex from missing errors because both share the same long context.
 
-no-context subagent 是一个新开的审查 agent。它只能拿到当前 spec 需要的文件、git 证据和审查要求，不应该依赖主控 Codex 的聊天上下文。
+A no-context subagent is a fresh review agent. It receives only the files, git evidence, and review instructions required for the current spec. It should not depend on the main Codex's chat context.
 
-每个 checkpoint commit 后，主控 Codex 必须并行开两个 no-context subagent：
+After each checkpoint commit, the main Codex must start two no-context subagents in parallel:
 
-1. `implementation_goal_review`：检查当前 spec 是否正确实现，是否偏离 `control/goal.md` 和当前 spec。
-2. `constraint_review`：检查当前 spec 是否违反 `control/constraint.md`、全局用户要求、git 规则和 workflow 规则。
+1. `implementation_goal_review`: checks whether the current spec was implemented correctly and whether it drifted from `control/goal.md` or the current spec.
+2. `constraint_review`: checks whether the current spec violated `control/constraint.md`, global user requirements, git rules, or workflow rules.
 
-两个 subagent 都必须独立审查。不能让第二个 subagent 读取第一个 subagent 的结论。
+Both subagents must review independently. The second subagent must not read the first subagent's conclusion.
 
-主控 Codex 必须给两个 subagent 这些材料：
+The main Codex must give both subagents these materials:
 
-- 当前 spec 的 `spec.md`。
-- 当前 spec 的 `source_discovery.md`。
-- 当前 spec 的 `abstract_plan.md`。
-- 当前 spec 的 `evidence.md`。
-- 当前 spec 的 `status.md`。
-- `control/goal.md`。
-- `control/constraint.md`。
-- 当前 spec 相关的 changed files。
-- `git status --short`。
-- `git diff HEAD^ HEAD`。
-- `git show --stat --oneline --name-status HEAD`。
-- 必要时提供 `git log --oneline -5`，让 reviewer 看最近 checkpoint 顺序。
+- The current spec's `spec.md`.
+- The current spec's `source_discovery.md`.
+- The current spec's `abstract_plan.md`.
+- The current spec's `evidence.md`.
+- The current spec's `status.md`.
+- `control/goal.md`.
+- `control/constraint.md`.
+- Changed files related to the current spec.
+- `git status --short`.
+- `git diff HEAD^ HEAD`.
+- `git show --stat --oneline --name-status HEAD`.
+- `git log --oneline -5` when needed so the reviewer can inspect recent checkpoint order.
 
-`implementation_goal_review` 必须检查：
+`implementation_goal_review` must check:
 
-- 当前 spec 是否按 `spec.md` 正确实现。
-- 当前 spec 的 source discovery 是否足够支持执行。
-- 当前 spec 的 abstract plan 是否简短且高层。
-- 当前 spec 的 evidence 是否证明 pass condition。
-- 当前 spec 的 status 是否只在证据通过后写成 `done`。
-- 当前 spec 是否偏离 `control/goal.md`。
-- 当前 commit 是否包含当前 spec 应该产生的文件。
+- Whether the current spec was implemented according to `spec.md`.
+- Whether source discovery is sufficient to support execution.
+- Whether the abstract plan is short and high-level.
+- Whether evidence proves the pass condition.
+- Whether status is set to `done` only after evidence passes.
+- Whether the current spec drifted from `control/goal.md`.
+- Whether the current commit contains the files the current spec should produce.
 
-`constraint_review` 必须检查：
+`constraint_review` must check:
 
-- 当前 spec 是否违反 `control/constraint.md`。
-- 当前 spec 是否违反全局用户要求。
-- 当前 commit 是否只包含当前 workflow 需要的文件。
-- 当前 commit 是否混入无关用户改动。
-- 当前 commit 是否暂存还在变化的实验输出。
-- 当前 spec 是否跳过 checkpoint commit、review、source discovery、evidence 或其他 workflow 规则。
+- Whether the current spec violated `control/constraint.md`.
+- Whether the current spec violated global user requirements.
+- Whether the current commit contains only files required by the current workflow.
+- Whether the current commit mixed in unrelated user changes.
+- Whether the current commit staged experiment outputs that are still changing.
+- Whether the current spec skipped checkpoint commit, review, source discovery, evidence, or another workflow rule.
 
-审查结果必须写入：
+Review results must be written to:
 
 ```text
 workflow_<run_id>/spec_<number>_<task_name>/review_implementation_goal.md
@@ -302,146 +302,144 @@ workflow_<run_id>/spec_<number>_<task_name>/review_constraint.md
 workflow_<run_id>/spec_<number>_<task_name>/review.md
 ```
 
-两个子审查文件必须包含：
+Each child review file must contain:
 
 ```text
 # Review
 
 ## Review Type
-implementation_goal_review 或 constraint_review
+implementation_goal_review or constraint_review
 
 ## Result
-PASS 或 FAIL
+PASS or FAIL
 
 ## Checked
-写审查了哪些文件、命令和 commit。
+Write which files, commands, and commit were reviewed.
 
 ## Findings
-写发现的问题。没有问题就写 none。
+Write the findings. If there are no findings, write none.
 
 ## Required Fix
-如果 FAIL，写必须修什么。
+If the result is FAIL, write what must be fixed.
 ```
 
-`review.md` 是主控 Codex 写的汇总文件，必须包含两个子审查的结果、结论和是否允许进入下一个 spec。
+`review.md` is the summary file written by the main Codex. It must include both child review results, the overall conclusion, and whether the workflow may move to the next spec.
 
-如果任意一个子审查是 `FAIL`，总 `review.md` 必须是 `FAIL`。主控 Codex 必须让受控 Codex 修正当前 spec，重新提交 checkpoint commit，并重新并行开两个新的无上下文 subagent 审查。
+If either child review is `FAIL`, the overall `review.md` must be `FAIL`. The main Codex must require the controlled Codex to fix the current spec, create a new checkpoint commit, and run two new no-context subagent reviews in parallel.
 
-只有两个子审查都是 `PASS`，总 `review.md` 才能是 `PASS`，主控 Codex 才能进入下一个 spec。
+Only when both child reviews are `PASS` may the overall `review.md` be `PASS`, and only then may the main Codex move to the next spec.
 
 ## 6. Missing Information Rule
 
-缺少信息的判断标准：
+Information is missing when the next action would require guessing a fact, a file purpose, an interface behavior, or an external rule.
 
-如果下一步行动需要猜测一个事实、猜测一个文件用途、猜测一个接口行为、猜测一个外部规则，当前信息就不足。
+When information is missing:
 
-信息不足时必须做：
+1. Stop the current implementation action.
+2. Write the uncertainty in the current spec's `source_discovery.md`.
+3. Collect information that can resolve the uncertainty.
+4. Update `source_discovery.md`.
+5. Update `abstract_plan.md` when needed.
+6. Continue execution only after that.
 
-1. 停止执行当前实现动作。
-2. 把不确定点写进当前 spec 的 `source_discovery.md`。
-3. 重新收集能消除不确定的信息。
-4. 更新 `source_discovery.md`。
-5. 必要时更新 `abstract_plan.md`。
-6. 再继续执行。
+Forbidden actions:
 
-禁止做：
-
-- 先猜一个实现试试。
-- 因为看起来合理就继续。
-- 把没有证据的推断写成事实。
+- Guess an implementation first and see what happens.
+- Continue only because something looks reasonable.
+- Write unsupported inference as fact.
 
 ## 7. Bitter Lesson Rule
 
-如果出现以下情况，必须写 bitter lesson：
+A bitter lesson must be written when any of these happen:
 
-- 理解错用户要求。
-- 做了 spec 外的事情。
-- 忽略了已有文件或已有规则。
-- 因为没有收集信息导致返工。
-- 某个错误以后很可能重复出现。
-- checkpoint commit 混入无关文件。
-- 无上下文 subagent 审查失败。
+- The user's requirement is misunderstood.
+- Work is done outside the current spec.
+- Existing files or existing rules are ignored.
+- Missing source discovery causes rework.
+- An error is likely to repeat in the future.
+- A checkpoint commit includes unrelated files.
+- A no-context subagent review fails.
 
-写入位置：
+Write it to:
 
 ```text
 workflow_<run_id>/bitter_lesson/lesson_<short_name>.md
 ```
 
-每条 bitter lesson 必须包含：
+Each bitter lesson must contain:
 
 ```text
 # Lesson
 
 ## What Happened
-写发生了什么。
+Write what happened.
 
 ## Why It Happened
-写为什么发生。
+Write why it happened.
 
 ## Prevention
-写以后怎么避免。
+Write how to avoid it in the future.
 ```
 
-## 8. 主控 Codex 怎么监督
+## 8. How The Main Codex Supervises
 
-主控 Codex 用已有 `tmux-codex-supervisor` 做底座。
+The main Codex uses the existing `tmux-codex-supervisor` as the base.
 
-最小监督方式：
+Minimal supervision flow:
 
-1. 主控 Codex 读取本 workflow 文件。
-2. 主控 Codex 把总目标拆成 spec。
-3. 主控 Codex 创建 `workflow_<run_id>/`。
-4. 主控 Codex 为第一个 spec 写 `spec.md`。
-5. 主控 Codex 把当前 spec 和本 workflow 的关键规则写进 `control/goal.md` 和 `control/constraint.md`。
-6. 主控 Codex 启动 tmux 里的受控 Codex。
-7. 主控 Codex 发送短 `/goal`。
-8. 主控 Codex 确认受控 Codex 收到消息。
-9. 主控 Codex 检查受控 Codex 是否先做 source discovery。
-10. 如果受控 Codex 直接开工，主控 Codex 立刻纠正。
-11. 主控 Codex 检查每个 spec 的 evidence。
-12. evidence 通过后，主控 Codex 要求受控 Codex 创建 checkpoint commit。
-13. 主控 Codex 并行开两个无上下文 subagent 审查当前 spec、goal、constraint、git diff、git commit history 和 evidence。
-14. 两个子 review 都通过，并且总 `review.md` 汇总为 `PASS` 后，主控 Codex 标记当前 spec 为 `done`。
-15. 主控 Codex 进入下一个 spec。
-16. 所有 spec 都 `done` 后，主控 Codex 按总目标做最终验收。
+1. The main Codex reads this workflow file.
+2. The main Codex splits the overall goal into specs.
+3. The main Codex creates `workflow_<run_id>/`.
+4. The main Codex writes `spec.md` for the first spec.
+5. The main Codex writes the current spec and this workflow's key rules into `control/goal.md` and `control/constraint.md`.
+6. The main Codex starts the controlled Codex inside tmux.
+7. The main Codex sends the short `/goal`.
+8. The main Codex confirms that the controlled Codex received the message.
+9. The main Codex checks whether the controlled Codex starts with source discovery.
+10. If the controlled Codex starts implementation directly, the main Codex corrects it immediately.
+11. The main Codex checks each spec's evidence.
+12. After evidence passes, the main Codex requires the controlled Codex to create a checkpoint commit.
+13. The main Codex starts two no-context subagents in parallel to review the current spec, goal, constraint, git diff, git commit history, and evidence.
+14. After both child reviews pass and the overall `review.md` is `PASS`, the main Codex marks the current spec as `done`.
+15. The main Codex moves to the next spec.
+16. After all specs are `done`, the main Codex performs final acceptance against the overall goal.
 
-## 9. 写入 control 文件的最小内容
+## 9. Minimal Content For Control Files
 
-`control/goal.md` 至少包含：
+`control/goal.md` must contain at least:
 
-- 本次总目标。
-- 当前 spec。
-- 当前 spec 的可观测变量。
-- 当前 spec 的通过条件。
-- 当前 spec 的失败条件。
-- 当前 spec 的完成检查方式。
-- 当前 run 目录路径。
-- 每个 spec 完成后必须 checkpoint commit。
-- 每个 checkpoint commit 后必须并行开两个无上下文 subagent 审查。
-- 两个子 review 都通过，并且总 `review.md` 汇总为 `PASS` 后才能进入下一个 spec。
+- The overall goal for this run.
+- The current spec.
+- The current spec's observable variable.
+- The current spec's pass condition.
+- The current spec's fail condition.
+- The current spec's completion check.
+- The current run directory path.
+- A checkpoint commit is required after each spec is complete.
+- Two parallel no-context subagent reviews are required after each checkpoint commit.
+- The workflow may move to the next spec only after both child reviews pass and the overall `review.md` summarizes `PASS`.
 
-`control/constraint.md` 至少包含：
+`control/constraint.md` must contain at least:
 
-- 受控 Codex 必须先做 source discovery。
-- 受控 Codex 必须把收集结果写入当前 spec 的 `source_discovery.md`。
-- 受控 Codex 必须写简短 `abstract_plan.md` 后才能执行。
-- 受控 Codex 遇到信息不足必须回到 source discovery。
-- 受控 Codex 发现可复用错误必须写 bitter lesson。
-- 受控 Codex 不能做当前 spec 之外的任务。
-- 受控 Codex 不能把猜测当事实。
-- 受控 Codex 完成当前 spec 后必须创建 checkpoint commit。
-- 受控 Codex 提交前必须只暂存当前 workflow 需要的文件。
-- 受控 Codex 不能暂存无关用户改动。
-- 受控 Codex 不能暂存还在变化的实验输出。
-- 主控 Codex 必须在 checkpoint commit 后并行开两个无上下文 subagent 审查。
-- 一个 subagent 审查 spec 实现是否正确以及是否偏离 `control/goal.md`。
-- 一个 subagent 审查是否违反 `control/constraint.md`、全局用户要求、git 规则和 workflow 规则。
-- 审查失败时，受控 Codex 必须修正并重新提交。
+- The controlled Codex must do source discovery first.
+- The controlled Codex must write collected information to the current spec's `source_discovery.md`.
+- The controlled Codex must write a short `abstract_plan.md` before execution.
+- The controlled Codex must return to source discovery when information is missing.
+- The controlled Codex must write a bitter lesson when it finds a reusable error.
+- The controlled Codex must not do tasks outside the current spec.
+- The controlled Codex must not treat guesses as facts.
+- The controlled Codex must create a checkpoint commit after completing the current spec.
+- Before committing, the controlled Codex must stage only files required by the current workflow.
+- The controlled Codex must not stage unrelated user changes.
+- The controlled Codex must not stage experiment outputs that are still changing.
+- The main Codex must start two no-context subagents in parallel after each checkpoint commit.
+- One subagent reviews whether spec implementation is correct and whether it drifted from `control/goal.md`.
+- One subagent reviews whether the work violated `control/constraint.md`, global user requirements, git rules, or workflow rules.
+- If review fails, the controlled Codex must fix the issue and commit again.
 
-## 10. 最小启动消息
+## 10. Minimal Startup Message
 
-主控 Codex 可以把下面内容作为用户请求的一部分理解：
+The main Codex may understand the following content as part of the user request:
 
 ```text
 Use tmux-codex-supervisor as the base supervisor.
@@ -461,22 +459,22 @@ If a reusable mistake is found, write it to workflow_<run_id>/bitter_lesson/.
 Only mark a spec done when its observable variable proves success.
 ```
 
-## 11. 最小完成标准
+## 11. Minimal Completion Standard
 
-这个 workflow 的一次运行完成，必须同时满足：
+One run of this workflow is complete only when all of these are true:
 
-- `workflow_<run_id>/run_goal.md` 存在。
-- 每个 spec 都有自己的目录。
-- 每个 spec 都有 `spec.md`。
-- 每个 spec 都有 `source_discovery.md`。
-- 每个 spec 都有 `abstract_plan.md`。
-- 每个 spec 都有 `evidence.md`。
-- 每个 spec 都有 `review_implementation_goal.md`。
-- 每个 spec 都有 `review_constraint.md`。
-- 每个 spec 都有 `review.md`。
-- 每个 spec 的 `status.md` 是 `done`。
-- 每个 spec 完成后都有 checkpoint commit 证据。
-- 每个 checkpoint commit 后都有两个无上下文 subagent 的 PASS review。
-- 每个 spec 的总 `review.md` 汇总两个子审查，且结果是 `PASS`。
-- 如果运行中出现可复用错误，`bitter_lesson/` 里有记录。
-- 主控 Codex 的最终汇报引用的是证据，不是猜测。
+- `workflow_<run_id>/run_goal.md` exists.
+- Each spec has its own directory.
+- Each spec has `spec.md`.
+- Each spec has `source_discovery.md`.
+- Each spec has `abstract_plan.md`.
+- Each spec has `evidence.md`.
+- Each spec has `review_implementation_goal.md`.
+- Each spec has `review_constraint.md`.
+- Each spec has `review.md`.
+- Each spec's `status.md` is `done`.
+- Each completed spec has checkpoint commit evidence.
+- Each checkpoint commit has two no-context subagent `PASS` reviews.
+- Each spec's overall `review.md` summarizes both child reviews and has result `PASS`.
+- If a reusable error happened during the run, `bitter_lesson/` contains a record.
+- The main Codex's final report cites evidence instead of guesses.

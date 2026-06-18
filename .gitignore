@@ -3,4 +3,8 @@ tmp/
 *.tar
 *.tar.gz
 *.log
-
+docs/physics_for_llm_supervision_error_report_20260611.md
+docs/supervisor_template_problem_examples_20260614.md
+skill_refactor_plan_v2_2.md
+workflow_modules.html
+docs/supervisor_template_problem_resolution_20260614.html
