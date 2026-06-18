@@ -21,12 +21,11 @@ Required repository areas:
 - `docs/bitter_lessons.md`: repeated mistakes and prevention rules.
 - `docs/usage.md`: how to install the skill and use it from any task directory.
 
-## Two-Phase Usage
+## Usage
 
-Use this workflow in two phases:
+Use this workflow in two phases. First, ask Codex to write and review the run files with you. Second, start a separate Codex inside tmux and give it the short `/goal` message. During run-file creation, the main Codex turns the user's task into final run files, checks that they will not make the long run wait for later user review or user choice, and stops before execution.
 
-1. Run-file creation phase: the main Codex turns the user's task into final run files, checks that they will not make the long run wait for later user review or user choice, and stops before execution.
-2. Execution phase: after a separate execution request, the main Codex starts and supervises the controlled Codex in tmux.
+### 1. Install
 
 Install the skill once from a checkout:
 
@@ -54,6 +53,8 @@ The lower-level installer is still available:
 ~/Programs/codex_workflow_tmux/scripts/install_skill.sh
 ```
 
+### 2. Ask Codex To Prepare The Run Files
+
 Then open Codex from the project where the real task should happen:
 
 ```bash
@@ -61,7 +62,7 @@ cd /path/to/your/project
 codex
 ```
 
-For run-file creation, send this request to Codex:
+Describe your task normally first. Then ask Codex to use the skill and write the run files. A short request can look like this:
 
 ```text
 Use the tmux-codex-supervisor skill.
@@ -71,11 +72,39 @@ The current directory is the task project.
 Generate final run files only.
 Do not start the controlled Codex.
 Do not start long-running work.
+Stop and ask me when a missing choice would change the goal, constraints, or spec list.
+After each run file is written, report:
+- which file was written,
+- a short summary of what it contains,
+- which files still need to be written,
+- what you plan to write next.
+Then ask whether the file is correct before continuing.
 
 My task is: write the real task here.
 ```
 
-After Codex reports that the final run files were written, send a separate execution request. This request enters the execution phase. Before starting the controlled Codex, the supervisor Codex may run the final autonomy check and fix run files if needed. This is not user approval and does not ask the user to read the files.
+Codex should write files such as `control/goal.md`, `control/constraint.md`, `workflow_<run_id>/run_goal.md`, and `workflow_<run_id>/specs.md`. It should stop after the run files are ready and tell you what was written. Review the short summaries and confirm whether they match your task.
+
+### 3. Start The Controlled Codex In tmux
+
+After the run files are ready, start tmux from the task project:
+
+```bash
+tmux new -s codex-run
+codex
+```
+
+In the new Codex, paste the contents of:
+
+```text
+templates/short_goal_message.md
+```
+
+That short message points the controlled Codex to `control/goal.md` and `control/constraint.md`. It is the only startup message the controlled Codex needs.
+
+### 4. Supervise The tmux Run
+
+In the original Codex chat, send a separate execution request. This request enters the execution phase. Before starting the controlled Codex, the supervisor Codex may run the final autonomy check and fix run files if needed. This is not user approval and does not ask the user to read the files.
 
 ```text
 Use the tmux-codex-supervisor skill.
@@ -86,10 +115,9 @@ Act as the main Codex:
 1. Confirm the final run files exist.
 2. Confirm review-run-files-for-autonomy passed, or run it and fix the files before execution.
 3. Checkpoint the final run files if they must be preserved.
-4. Start a controlled Codex inside tmux.
-5. Send only the short /goal message from templates/short_goal_message.md to the controlled Codex.
-6. Verify that the message arrived.
-7. Supervise, correct drift, require checkpoint commits and no-context reviews after completed specs, and verify completion. Do not directly do the controlled Codex task.
+4. If the controlled Codex is already open in tmux, send only the short /goal message from templates/short_goal_message.md to it. If it is not open, tell me to open tmux and start Codex first.
+5. Verify that the message arrived.
+6. Supervise, correct drift, require checkpoint commits and no-context reviews after completed specs, and verify completion. Do not directly do the controlled Codex task.
 
 My task is: write the real task here.
 ```

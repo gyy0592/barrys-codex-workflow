@@ -62,6 +62,18 @@ Do not write:
 
 Do not trigger this helper while the controlled Codex is executing a spec, while merely monitoring evidence, or while sending a correction that does not change the goal file.
 
+## Run-File Creation User Checkpoints
+
+During run-file creation, after writing each durable run file, report to the user:
+
+- the file written,
+- a short summary of what it contains,
+- which run files are already complete,
+- which run files still need to be written,
+- what file or decision will be handled next.
+
+Then ask whether the file is correct before continuing when the user requested step-by-step confirmation, or when a missing choice would change the goal, constraints, or spec list. Keep this checkpoint before execution only. Do not copy these user checkpoints into durable run files as executor stop conditions.
+
 ## Helper: gen-constraint
 
 Use this helper only as the main Codex supervisor while creating or updating final run files.
