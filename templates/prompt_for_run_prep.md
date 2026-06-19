@@ -64,11 +64,12 @@ Run-file content rules:
 - control/goal.md must tell the future controlled Codex what to do, what materials to read, what outputs to produce, what progress evidence to update, and what proves completion.
 - control/constraint.md must contain all active user constraints, forbidden actions, checkpoint rules, review rules, stop rules, and runtime autonomy definitions.
 - workflow_<workflow id>/run_goal.md must preserve the user's task as a stable run description.
-- workflow_<workflow id>/specs.md must split the task into checkable steps. Each step must have a purpose, required information, expected outputs, observable success evidence, and stop conditions.
+- workflow_<workflow id>/specs.md must split the task into checkable steps. Each step must have a purpose, required information, expected outputs, observable success evidence, and correction triggers.
 - workflow_<workflow id>/specs.md must state that specs run one at a time, in order, and the next spec cannot start until the current spec has evidence, status, checkpoint commit, and required review.
 - If a task step needs a per-step folder during execution, define the expected folder name and expected files in specs.md. Do not create execution evidence before the step actually runs.
 - If the user gave a global requirement, put it in control/constraint.md and also mention which specs it affects.
 - If source discovery finds missing information, record what is missing and the autonomous resolution path for that spec. Do not guess and do not create a runtime user-response gate.
+- Do not write `blocked`, `BLOCKED`, `Current Blocker`, or user-response blockers into executor run files. Executor failures must become correction issues with next actions. The supervisor Codex must keep supervising.
 - Do not write user-review, user-choice, or user-approval gates into durable run files.
 - Final run files must be complete enough for autonomous execution.
 - After execution starts, the controlled Codex must not ask for choices, approvals, or review. If information is missing, it must return to source discovery, inspect files and outputs, use allowed external sources, choose a conservative option within constraints, record the reason in evidence, and continue.
@@ -85,7 +86,7 @@ File ownership and priority rules:
 
 Template heading risk check:
 - Check every heading in the generated run files before reporting.
-- Remove or rewrite any heading that can be treated as a runtime stop condition.
+- Remove or rewrite any heading that can be treated as a runtime supervisor stop condition.
 - Remove or rewrite any heading that conflicts with control/constraint.md.
 - Remove or rewrite any heading that asks for user review, choices, or approval after durable run files are written.
 

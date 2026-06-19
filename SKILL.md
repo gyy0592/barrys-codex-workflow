@@ -7,7 +7,7 @@ description: "Use when the main Codex must prepare final run files, start, or su
 
 Use this skill only when the current Codex is the main Codex acting as supervisor.
 
-Codex is the AI assistant. The main Codex is the supervisor in the current chat. The controlled Codex is the executor in a tmux window. tmux is a terminal tool that keeps sessions running. A control file is a task file read first by the controlled Codex. A run file is a durable file written before execution, such as `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, and `workflow_<workflow id>/specs.md`. The controlled Codex receives only the two control-file paths in its startup message, then reads the spec, source discovery, evidence, or status files named by those control files and the active spec.
+Codex is the AI assistant. The main Codex is the supervisor in the current chat; the supervisor Codex is not the user. The controlled Codex is the executor in a tmux window. tmux is a terminal tool that keeps sessions running. A control file is a task file read first by the controlled Codex. A run file is a durable file written before execution, such as `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, and `workflow_<workflow id>/specs.md`. The controlled Codex receives only the two control-file paths in its startup message, then reads the spec, source discovery, evidence, or status files named by those control files and the active spec.
 
 Workflow root is `__WORKFLOW_ROOT__`. Use this absolute path even when the current task is in another directory.
 
@@ -28,6 +28,7 @@ The controlled Codex must not use this skill. It receives only the short `/goal`
 - The main Codex supervises; the controlled Codex executes.
 - Run-file creation writes final run files and checks that they support autonomous execution. It does not start the controlled Codex or long-running task work.
 - Execution starts only after a separate execution request. Do not encode user-review, user-choice, or user-approval gates in durable run files.
+- A controlled Codex blocked report is an executor-local correction issue, not a supervisor blocked state. Durable run files must avoid `blocked`, `BLOCKED`, and `Current Blocker`; use `needs_correction`, `failed`, or `INSUFFICIENT_INFORMATION` with a next action instead.
 
 ## Skill Router
 
@@ -36,7 +37,7 @@ Before acting, classify the latest user request and select one helper path:
 - Use `gen-goal`, `gen-constraint`, `gen-specs`, `gen-supervisor-prompts`, then `review-run-files-for-autonomy` when the user asks to create final run files before execution.
 - Use `start-supervised-run` when the user explicitly asks to start execution and final run files already exist.
 - Use `monitor-run` when a controlled Codex is already running and the user asks to supervise, continue supervising, check progress, correct drift, or verify completion.
-- Use `persist-user-requirement` when a later user message changes execution permission, stop conditions, required settings, or completion criteria.
+- Use `persist-user-requirement` when a later user message changes execution permission, correction triggers, required settings, or completion criteria.
 
 The router must not send internal helper names to the controlled Codex. The controlled Codex startup message should contain only control-file paths.
 
@@ -72,7 +73,7 @@ During run-file creation, after writing each durable run file, report to the use
 - which run files still need to be written,
 - what file or decision will be handled next.
 
-Then ask whether the file is correct before continuing when the user requested step-by-step confirmation, or when a missing choice would change the goal, constraints, or spec list. Keep this checkpoint before execution only. Do not copy these user checkpoints into durable run files as executor stop conditions.
+Then ask whether the file is correct before continuing when the user requested step-by-step confirmation, or when a missing choice would change the goal, constraints, or spec list. Keep this checkpoint before execution only. Do not copy these user checkpoints into durable run files as executor correction triggers or user-response gates.
 
 ## Helper: gen-constraint
 
@@ -130,10 +131,10 @@ Every supervisor start path must say:
 - the controlled Codex does the controlled task, must produce required outputs, and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them,
 - the supervisor sends only the short `/goal` to the controlled Codex,
 - the supervisor keeps supervising until completion is proved or the user explicitly stops,
-- the supervisor must not mark its own goal complete or blocked because the controlled Codex reports blocked, a run fails, information is missing, or a review fails,
-- a stop condition means stop the bad path, record evidence, update the current spec or create a fix spec, then continue,
+- the supervisor must not mark its own goal complete or blocked because the controlled Codex reports a correction issue, a run fails, information is missing, or a review fails,
+- a correction trigger means stop only the bad path, record evidence, update the current spec or create a fix spec, then continue,
 - specific workflow stage enforcement: require source discovery, abstract plan, implementation evidence, status, checkpoint, and review before allowing the next spec; missing stage files, incomplete evidence, unsupported guessing, skipped checkpoint, or skipped review are drift,
-- later user requirements that change permission, stop conditions, settings, or completion criteria must be written into durable control files before relying on them.
+- later user requirements that change permission, correction triggers, settings, or completion criteria must be written into durable control files before relying on them.
 
 Do not send supervisor prompt files to the controlled Codex.
 
@@ -180,11 +181,11 @@ The supervisor must not read full project source code and must not implement tas
 
 If the controlled Codex is stable and working within the current task step, do not interrupt it frequently. Stable means it is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step. When stable, monitor at a low frequency, usually once every 2 to 10 minutes.
 
-If the controlled Codex reports blocked, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed external sources, conservative option when an option is unavoidable, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
+If the controlled Codex reports a correction issue, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed external sources, conservative option when an option is unavoidable, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
 
 ## Helper: persist-user-requirement
 
-Use this helper only when a later user message changes execution permission, stop conditions, required settings, or completion criteria.
+Use this helper only when a later user message changes execution permission, correction triggers, required settings, or completion criteria.
 
 Do not trigger this helper when the user only asks for status, asks what a file means, or asks for an explanation without changing a running rule.
 

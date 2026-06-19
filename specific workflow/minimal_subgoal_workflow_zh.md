@@ -77,7 +77,7 @@ workflow_<run_id>/
 
 `evidence.md` 写当前 spec 的证据、检查方法、检查结果。
 
-`status.md` 写当前 spec 是否完成。只能写 `pending`、`in_progress`、`blocked_missing_information`、`done`。
+`status.md` 写当前 spec 是否完成。只能写 `pending`、`in_progress`、`needs_source_discovery`、`needs_correction`、`done`。`needs_source_discovery` 和 `needs_correction` 是执行者局部继续状态，不是 supervisor Codex 停止状态，也不是等待用户回复。
 
 `review.md` 写无上下文 subagent 对当前 spec、git diff、git commit 和证据的审查结果。
 

@@ -77,7 +77,7 @@ workflow_<run_id>/
 
 `evidence.md` records the current spec's evidence, check method, and check result.
 
-`status.md` records whether the current spec is complete. It may contain only `pending`, `in_progress`, `blocked_missing_information`, or `done`.
+`status.md` records whether the current spec is complete. It may contain only `pending`, `in_progress`, `needs_source_discovery`, `needs_correction`, or `done`. `needs_source_discovery` and `needs_correction` are executor-local continuation states, not supervisor stop states and not user-response gates.
 
 `review.md` records no-context subagent review results for the current spec, git diff, git commit, and evidence.
 

@@ -56,12 +56,13 @@ grep -F 'scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name
 grep -F 'copies every missing templated run file and leaves existing files unchanged' "$repo_dir/SKILL.md" >/dev/null
 grep -F 'Do not recreate templated run files from memory.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Template heading risk check' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
-grep -F 'Remove or rewrite any heading that can be treated as a runtime stop condition.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'Remove or rewrite any heading that can be treated as a runtime supervisor stop condition.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Remove or rewrite any heading that conflicts with control/constraint.md.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Remove or rewrite any heading that asks for user review, choices, or approval after durable run files are written.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'latest user instruction written into control files > control/constraint.md > control/goal.md > current spec.md > specs.md > run_goal.md' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Do not paste this whole file as `/goal`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'This file is for the supervisor, not the executor.' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'Supervisor Codex means the main Codex running in this chat. It is not the user.' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'the supervisor must not create the controlled task' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Executor duty: the controlled Codex must produce the required outputs and may run or submit jobs' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'control/goal.md' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
@@ -88,6 +89,7 @@ grep -F 'Work and monitor one spec at a time' "$repo_dir/templates/prompt_for_su
 grep -F 'If the executor is stable, monitor once every 2 to 10 minutes' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'They are not permission for the supervisor to stop supervising' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Do not mark the supervisor goal complete or blocked' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
+grep -F 'Executor Codex means the controlled Codex running in tmux.' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'The supervisor must not read full project source code' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Supervisor Persistence Rule' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Supervisor Evidence Boundary' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
@@ -114,7 +116,11 @@ grep -F 'must not review multiple specs at once' "$repo_dir/templates/review.md"
 grep -F 'During execution, do not wait for a user response.' "$repo_dir/templates/source_discovery.md" >/dev/null
 grep -F 'allowed external sources as defined in `control/constraint.md`' "$repo_dir/templates/source_discovery.md" >/dev/null
 grep -F 'choosing a conservative option defined in `control/constraint.md`' "$repo_dir/templates/abstract_plan.md" >/dev/null
-grep -F 'Do not write a user-decision blocker after final run files are written.' "$repo_dir/templates/spec_status.md" >/dev/null
+grep -F 'Current Executor Correction Issue' "$repo_dir/templates/spec_status.md" >/dev/null
+grep -F 'This is a local executor issue, not a supervisor stop state and not a request for the user.' "$repo_dir/templates/spec_status.md" >/dev/null
+grep -F 'Write PASS, FAIL, or INSUFFICIENT_INFORMATION. Missing information means return to source discovery and continue.' "$repo_dir/templates/evidence.md" >/dev/null
+grep -F 'Correction triggers:' "$repo_dir/templates/specs.md" >/dev/null
+grep -F 'These are not supervisor stop states and not user-response gates.' "$repo_dir/templates/specs.md" >/dev/null
 grep -F 'Runtime Autonomy' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'After execution starts, complete the run autonomously' "$repo_dir/templates/run_goal.md" >/dev/null
 grep -F 'If a choice is missing during execution, choose a conservative option as defined in `control/constraint.md`' "$repo_dir/templates/run_goal.md" >/dev/null
@@ -156,6 +162,24 @@ for template in run_goal specs spec_status source_discovery abstract_plan eviden
 done
 if grep -F -e 'control/self_check.md' -e 'control/progress.md' -e 'control/done.md' "$repo_dir/templates/short_goal_message.md" >/dev/null; then
   printf 'short_goal_message.md references extra control files\n' >&2
+  exit 1
+fi
+run_file_templates=(
+  "$repo_dir/templates/goal.md"
+  "$repo_dir/templates/constraint.md"
+  "$repo_dir/templates/run_goal.md"
+  "$repo_dir/templates/specs.md"
+  "$repo_dir/templates/spec_status.md"
+  "$repo_dir/templates/source_discovery.md"
+  "$repo_dir/templates/abstract_plan.md"
+  "$repo_dir/templates/evidence.md"
+  "$repo_dir/templates/review.md"
+  "$repo_dir/templates/bitter_lesson.md"
+  "$repo_dir/specific workflow/minimal_subgoal_workflow.md"
+  "$repo_dir/specific workflow/minimal_subgoal_workflow_zh.md"
+)
+if grep -F -e 'Current Blocker' -e 'blocked_missing_information' -e 'BLOCKED' "${run_file_templates[@]}" >/dev/null; then
+  printf 'run-file templates still contain old blocking terms\n' >&2
   exit 1
 fi
 

@@ -2,6 +2,8 @@
 
 Use this as the detailed companion file for a main Codex that will supervise a controlled Codex in tmux. This file is for the supervisor, not the executor.
 
+Supervisor Codex means the main Codex running in this chat. It is not the user. Executor Codex means the controlled Codex running in tmux.
+
 Supervisor boundary: the supervisor must not create the controlled task's final deliverables, run the controlled task's experiments or jobs, or submit the controlled task's work. Executor duty: the controlled Codex must produce the required outputs and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them.
 
 Do not paste this whole file as `/goal`. Paste `prompt_for_supervisor_goal.md` as the short repeated goal. The short goal tells the supervisor to read this file for details.
@@ -53,8 +55,8 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 ## Supervisor Persistence Rule
 
 - The supervisor must keep supervising until the completion standard in `control/goal.md` is proved or the user explicitly says to stop.
-- Do not mark the supervisor goal complete or blocked because a metric gate fails, a run is bad, information is missing, or the executor reports a stop condition.
-- A stop condition means stop the bad run or bad path, record evidence, update the current spec or create the next fix spec, then continue.
+- Do not mark the supervisor goal complete or blocked because a metric gate fails, a run is bad, information is missing, or the executor reports a correction trigger.
+- A correction trigger means stop only the bad run or bad path, record evidence, update the current spec or create the next fix spec, then continue.
 - If MFU, ETA, GPU use, tests, benchmarks, or required evidence fail, force the executor to continue the fix loop: source discovery, local inspection by the executor, allowed external sources as defined in `control/constraint.md`, conservative option as defined in `control/constraint.md` when an option is unavoidable, concrete fix, test, benchmark, evidence, review, and next action.
 - The supervisor may report a temporary stop to the user, but must also continue supervising the next allowed corrective action unless the user explicitly says to stop.
 
@@ -103,7 +105,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 
 - `control/goal.md` is the controlled Codex's task contract. It must contain the goal, required input material, required output, progress evidence, and completion standard.
 - `control/constraint.md` is the controlled Codex's limit contract. It must contain forbidden actions, global constraints, and self-check rules.
-- If the user adds a global requirement later that changes execution permission, stop conditions, required settings, or completion criteria, write it into `control/goal.md` or `control/constraint.md` before relying on it. Then send a plain correction to the controlled Codex when needed.
+- If the user adds a global requirement later that changes execution permission, correction triggers, required settings, or completion criteria, write it into `control/goal.md` or `control/constraint.md` before relying on it. Then send a plain correction to the controlled Codex when needed.
 - After any correction, check whether the same correction also belongs in `control/goal.md` or `control/constraint.md`. If yes, update the correct control file before relying on memory.
 
 ## Drift Rule
@@ -111,6 +113,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - Drift means the controlled Codex violates the current task step, an active global user requirement, or the workflow rule.
 - Missing required evidence is drift.
 - Leaving a completed task step before required checkpoint evidence is recorded is drift.
+- If the executor reports blocked or stuck, interpret it as an executor correction issue. Do not treat it as permission for the supervisor Codex to stop or request user input.
 - Normal work inside the current task step is not drift.
 - Do not interrupt normal work. If there is no evidence of drift, wait before checking again.
 
@@ -125,7 +128,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - If the controlled Codex is stable and working within the current task step, do not interrupt it frequently.
 - Stable means it is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step.
 - When stable, monitor at a low frequency, usually once every 2 to 10 minutes.
-- Use shorter checks only during startup, after sending corrections, while verifying message delivery, or when there is evidence of drift, stalled progress, failed commands, bad ETA, low MFU, poor CPU/GPU use, or another stop condition.
+- Use shorter checks only during startup, after sending corrections, while verifying message delivery, or when there is evidence of drift, stalled progress, failed commands, bad ETA, low MFU, poor CPU/GPU use, or another correction trigger.
 - Do not send a message merely because no new output appeared for a short time.
 
 ## Checkpoint Rule

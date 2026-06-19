@@ -30,7 +30,7 @@ git show --stat --oneline --name-status HEAD
 
 ## Result
 
-Write PASS, FAIL, or BLOCKED.
+Write PASS, FAIL, or INSUFFICIENT_INFORMATION. Missing information means return to source discovery and continue.
 
 ## What This Does Not Prove
 

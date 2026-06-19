@@ -18,8 +18,8 @@ List files, logs, commits, metrics, or other outputs this step should produce.
 Observable success evidence:
 List exact evidence that proves this step worked.
 
-Stop conditions:
-List conditions that require stopping, fixing, or returning to source discovery.
+Correction triggers:
+List conditions that require stopping only the unsafe or wrong executor path, recording evidence, fixing, or returning to source discovery. These are not supervisor stop states and not user-response gates.
 
 Estimated runtime:
 Write the expected runtime or "unknown until source discovery".
