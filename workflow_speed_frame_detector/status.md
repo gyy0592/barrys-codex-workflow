@@ -32,6 +32,29 @@ A	workflow_speed_frame_detector/source_discovery.md
 A	workflow_speed_frame_detector/status.md
 ```
 
+Checkpoint evidence after Spec 02:
+
+```text
+git status --short
+ M install.sh
+ M scripts/install_skill.sh
+ M scripts/uninstall_skill.sh
+ M tests/test_install_skill.sh
+?? external_skills/
+?? remote_transcript_skill_report/
+?? temp.md
+?? temp/
+
+git log -1 --oneline
+38f9c33 Add fixed speed-frame method list
+
+git show --stat --oneline --name-status HEAD
+38f9c33 Add fixed speed-frame method list
+A	workflow_speed_frame_detector/method_list.md
+A	workflow_speed_frame_detector/method_results.csv
+M	workflow_speed_frame_detector/status.md
+```
+
 Spec 03 start requirement:
 
 - Start with M01.
