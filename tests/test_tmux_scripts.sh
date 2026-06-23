@@ -12,11 +12,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
-tmux new-session -d -s "$session" -c "$tmp_dir" bash --noprofile --norc
+tmux new-session -d -s "$session" -c "$tmp_dir" env PS1=$'› ' bash --noprofile --norc -i
 
 marker="TASK_RECEIVED_$session"
 message_file="$tmp_dir/message.txt"
-printf "printf '%s\\n'" "$marker" > "$message_file"
+printf 'echo %s' "$marker" > "$message_file"
 
 STEER_REQUIRE_CODEX=0 STEER_EVIDENCE_DIR="$tmp_dir/evidence" \
   "$repo_dir/scripts/inject_steer.sh" send "$target" "$message_file" >/dev/null
