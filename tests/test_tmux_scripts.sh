@@ -18,9 +18,9 @@ marker="TASK_RECEIVED_$session"
 message_file="$tmp_dir/message.txt"
 printf "printf '%s\\n'\n" "$marker" > "$message_file"
 
-"$repo_dir/scripts/send_tmux_message.sh" "$target" "$message_file" >/dev/null
-"$repo_dir/scripts/verify_delivery.sh" "$target" "$marker" 5 >/dev/null
-"$repo_dir/scripts/capture_tmux_screen.sh" "$target" 80 | grep -F "$marker" >/dev/null
+STEER_REQUIRE_CODEX=0 STEER_EVIDENCE_DIR="$tmp_dir/evidence" \
+  "$repo_dir/scripts/inject_steer.sh" send "$target" "$message_file" >/dev/null
+tmux capture-pane -p -t "$target" -S -80 | grep -F "$marker" >/dev/null
 
 progress_file="$tmp_dir/progress.txt"
 state_file="$tmp_dir/state/progress.sha256"

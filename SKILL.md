@@ -167,7 +167,7 @@ Before starting:
 - checkpoint final run files when they must be preserved,
 - start one controlled Codex in tmux,
 - send only the short `/goal` that points to `control/goal.md` and `control/constraint.md`,
-- verify delivery.
+- send and verify that message through `__WORKFLOW_ROOT__/scripts/inject_steer.sh`.
 
 Do not start execution when the user only asked to create run files, discuss a plan, or review files.
 
@@ -277,9 +277,9 @@ Use scripts for fixed operations:
 
 - `__WORKFLOW_ROOT__/scripts/init_control_files.sh` creates the two control files in the task directory.
 - `__WORKFLOW_ROOT__/scripts/init_run_templates.sh` creates every missing templated run file and leaves existing files unchanged.
-- `__WORKFLOW_ROOT__/scripts/send_tmux_message.sh` sends a file's text to tmux.
-- `__WORKFLOW_ROOT__/scripts/capture_tmux_screen.sh` reads recent tmux screen text.
-- `__WORKFLOW_ROOT__/scripts/verify_delivery.sh` checks that expected text appears on screen.
+- `__WORKFLOW_ROOT__/scripts/locate_codex.sh` lists candidate Codex tmux panes so the supervisor can confirm the target pane before sending.
+- `__WORKFLOW_ROOT__/scripts/inject_steer.sh` is the required and only allowed tmux input path for controlled Codex messages. It verifies the target pane, pastes text from a file, verifies the text landed in the input box, submits it, verifies it left the input box, and saves evidence under `temp/tmux-codex-supervisor` unless `STEER_EVIDENCE_DIR` overrides it.
+- Outside `inject_steer.sh`, do not use any other tmux input path for controlled Codex messages.
 - `__WORKFLOW_ROOT__/scripts/check_progress.sh` compares current progress evidence against the last saved check.
 - `__WORKFLOW_ROOT__/scripts/check_done.sh` runs the completion check command.
 - `__WORKFLOW_ROOT__/scripts/package_outputs.sh` packages output files.

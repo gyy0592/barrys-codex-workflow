@@ -11,6 +11,11 @@ mkdir -p "$error_skill_dir"
 
 "$repo_dir/scripts/install_agents_rules.sh"
 
+rm -f \
+  "$skill_dir/scripts/capture_tmux_screen.sh" \
+  "$skill_dir/scripts/send_tmux_message.sh" \
+  "$skill_dir/scripts/verify_delivery.sh"
+
 sed "s#__WORKFLOW_ROOT__#$repo_dir#g" "$repo_dir/SKILL.md" > "$skill_dir/SKILL.md"
 cp "$repo_dir/templates/"*.md "$skill_dir/templates/"
 cp "$repo_dir/scripts/"*.sh "$skill_dir/scripts/"

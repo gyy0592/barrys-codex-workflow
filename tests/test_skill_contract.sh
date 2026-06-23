@@ -157,9 +157,10 @@ require "$executor_duty_text" "$repo_dir/stage_supervisor_filled_goal.md"
 # Script references still exist after the refactor.
 require '__WORKFLOW_ROOT__/scripts/init_control_files.sh'
 require '__WORKFLOW_ROOT__/scripts/init_run_templates.sh'
-require '__WORKFLOW_ROOT__/scripts/send_tmux_message.sh'
-require '__WORKFLOW_ROOT__/scripts/capture_tmux_screen.sh'
-require '__WORKFLOW_ROOT__/scripts/verify_delivery.sh'
+require '__WORKFLOW_ROOT__/scripts/locate_codex.sh'
+require '__WORKFLOW_ROOT__/scripts/inject_steer.sh'
+require 'required and only allowed tmux input path for controlled Codex messages'
+require 'Outside `inject_steer.sh`, do not use any other tmux input path for controlled Codex messages.'
 require '__WORKFLOW_ROOT__/templates/prompt_for_run_prep.md'
 require '__WORKFLOW_ROOT__/templates/prompt_for_supervisor.md'
 require '__WORKFLOW_ROOT__/templates/short_goal_message.md'

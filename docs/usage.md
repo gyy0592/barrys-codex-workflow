@@ -119,15 +119,15 @@ tmux new -s mytask -c "$PWD" codex
 Send the short `/goal` message from any directory:
 
 ```bash
-~/Programs/codex_workflow_tmux/scripts/send_tmux_message.sh \
+~/Programs/codex_workflow_tmux/scripts/inject_steer.sh send \
   mytask:0 \
   ~/Programs/codex_workflow_tmux/templates/short_goal_message.md
 ```
 
-Read the controlled tmux screen:
+If the tmux target is uncertain, list candidate Codex panes first:
 
 ```bash
-~/Programs/codex_workflow_tmux/scripts/capture_tmux_screen.sh mytask:0
+~/Programs/codex_workflow_tmux/scripts/locate_codex.sh
 ```
 
 The main Codex supervises. The controlled Codex executes the task described in `control/goal.md` while following `control/constraint.md`.

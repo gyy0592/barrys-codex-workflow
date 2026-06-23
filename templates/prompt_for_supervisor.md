@@ -121,7 +121,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 
 - If the controlled Codex already has the correct active goal, send a plain correction message, not a new `/goal`.
 - Use `/goal` only to start or intentionally replace the active goal.
-- After sending any message, capture the tmux pane and verify that the message reached the intended place.
+- Send controlled Codex input only through `scripts/inject_steer.sh`. Outside `scripts/inject_steer.sh`, do not use any other tmux input path for controlled Codex messages. `scripts/inject_steer.sh` must verify the target pane, verify pasted text landed in the input box, submit it, verify it left the input box, and save evidence. Use `scripts/locate_codex.sh` when the target pane is uncertain.
 
 ## Monitoring Cadence Rule
 

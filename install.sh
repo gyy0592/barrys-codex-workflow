@@ -103,7 +103,8 @@ skill_dir="$codex_home/skills/tmux-codex-supervisor"
 error_skill_dir="$codex_home/skills/workflow-error-transition"
 test -f "$skill_dir/SKILL.md"
 test -f "$skill_dir/templates/short_goal_message.md"
-test -x "$skill_dir/scripts/send_tmux_message.sh"
+test -x "$skill_dir/scripts/inject_steer.sh"
+test -x "$skill_dir/scripts/locate_codex.sh"
 test -f "$error_skill_dir/SKILL.md"
 grep -F 'CODEX_WORKFLOW_TMUX_SUBAGENT_RULES_BEGIN' "$codex_home/AGENTS.md" >/dev/null
 

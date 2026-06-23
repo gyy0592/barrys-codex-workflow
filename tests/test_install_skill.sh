@@ -35,7 +35,8 @@ test -f "$skill_dir/templates/short_goal_message.md"
 test -f "$skill_dir/templates/agents_subagent_rules.md"
 test -x "$skill_dir/scripts/init_control_files.sh"
 test -x "$skill_dir/scripts/init_run_templates.sh"
-test -x "$skill_dir/scripts/send_tmux_message.sh"
+test -x "$skill_dir/scripts/inject_steer.sh"
+test -x "$skill_dir/scripts/locate_codex.sh"
 test -x "$skill_dir/scripts/uninstall_skill.sh"
 test -x "$skill_dir/scripts/install_agents_rules.sh"
 test -x "$skill_dir/scripts/uninstall_agents_rules.sh"
@@ -50,6 +51,15 @@ test "$marker_count" -eq 1
 CODEX_HOME="$tmp_dir/codex" "$repo_dir/scripts/install_skill.sh" >/dev/null
 marker_count=$(grep -c 'CODEX_WORKFLOW_TMUX_SUBAGENT_RULES_BEGIN' "$tmp_dir/codex/AGENTS.md")
 test "$marker_count" -eq 1
+
+touch \
+  "$skill_dir/scripts/capture_tmux_screen.sh" \
+  "$skill_dir/scripts/send_tmux_message.sh" \
+  "$skill_dir/scripts/verify_delivery.sh"
+CODEX_HOME="$tmp_dir/codex" "$repo_dir/scripts/install_skill.sh" >/dev/null
+test ! -e "$skill_dir/scripts/capture_tmux_screen.sh"
+test ! -e "$skill_dir/scripts/send_tmux_message.sh"
+test ! -e "$skill_dir/scripts/verify_delivery.sh"
 
 CODEX_HOME="$tmp_dir/codex" "$repo_dir/scripts/uninstall_agents_rules.sh" >/dev/null
 if grep -F 'CODEX_WORKFLOW_TMUX_SUBAGENT_RULES_BEGIN' "$tmp_dir/codex/AGENTS.md" >/dev/null; then
@@ -85,7 +95,8 @@ one_click_skill_dir="$one_click_home/skills/tmux-codex-supervisor"
 one_click_error_skill_dir="$one_click_home/skills/workflow-error-transition"
 test -f "$one_click_skill_dir/SKILL.md"
 test -f "$one_click_skill_dir/templates/short_goal_message.md"
-test -x "$one_click_skill_dir/scripts/send_tmux_message.sh"
+test -x "$one_click_skill_dir/scripts/inject_steer.sh"
+test -x "$one_click_skill_dir/scripts/locate_codex.sh"
 test -x "$one_click_skill_dir/scripts/uninstall_skill.sh"
 test -f "$one_click_error_skill_dir/SKILL.md"
 grep -F 'CODEX_WORKFLOW_TMUX_SUBAGENT_RULES_BEGIN' "$one_click_home/AGENTS.md" >/dev/null
@@ -115,7 +126,8 @@ piped_error_skill_dir="$piped_home/skills/workflow-error-transition"
 test -d "$piped_checkout/.git"
 test -f "$piped_skill_dir/SKILL.md"
 test -f "$piped_skill_dir/templates/short_goal_message.md"
-test -x "$piped_skill_dir/scripts/send_tmux_message.sh"
+test -x "$piped_skill_dir/scripts/inject_steer.sh"
+test -x "$piped_skill_dir/scripts/locate_codex.sh"
 test -f "$piped_error_skill_dir/SKILL.md"
 grep -F 'CODEX_WORKFLOW_TMUX_SUBAGENT_RULES_BEGIN' "$piped_home/AGENTS.md" >/dev/null
 
