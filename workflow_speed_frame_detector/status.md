@@ -89,3 +89,28 @@ A	simulator/algos/speed_frame/m01_fixed_window.py
 M	simulator/simulator.py
 A	tests/test_speed_frame_m01.py
 ```
+
+Workflow checkpoint after M01 results:
+
+```text
+git status --short
+ M install.sh
+ M scripts/install_skill.sh
+ M scripts/uninstall_skill.sh
+ M tests/test_install_skill.sh
+?? external_skills/
+?? remote_transcript_skill_report/
+?? temp.md
+?? temp/
+
+git log -1 --oneline
+0b9d1bc Record M01 speed-frame results
+
+git show --stat --oneline --name-status HEAD
+0b9d1bc Record M01 speed-frame results
+A	workflow_speed_frame_detector/failure_analysis.md
+A	workflow_speed_frame_detector/final_analysis.md
+M	workflow_speed_frame_detector/method_results.csv
+A	workflow_speed_frame_detector/method_results.md
+M	workflow_speed_frame_detector/status.md
+```
