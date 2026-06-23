@@ -1,14 +1,17 @@
 # Status
 
-Current spec: `spec_02_method_list.md`.
+Current spec: `spec_04_final_analysis.md`.
 
-Status: fixed method list and result table initialized; implementation has not started.
+Status: final analysis written; M01 repaired and beats A2; diagnostics show no meaningful remaining M01 repair supported by evidence.
 
 Evidence written:
 
 - `source_discovery.md`
 - `method_list.md`
 - `method_results.csv`
+- `method_results.md`
+- `failure_analysis.md`
+- `final_analysis.md`
 
 Checkpoint evidence after Spec 01:
 
@@ -59,3 +62,30 @@ Spec 03 start requirement:
 
 - Start with M01.
 - Implement only M01 before any later method.
+
+Current method:
+
+- M01 initial row recorded.
+- M01 repaired row recorded.
+- Next action: checkpoint commits and review.
+
+Project checkpoint after M01 implementation:
+
+```text
+git status --short
+?? prompt_for_supervisor.md
+?? prompt_for_supervisor_goal.md
+?? report/fast_cfg_report.md
+
+git log -1 --oneline
+19f4f5a Add M01 speed-frame detector
+
+git show --stat --oneline --name-status HEAD
+19f4f5a Add M01 speed-frame detector
+M	run_demo.py
+A	simulator/algos/m01.py
+A	simulator/algos/speed_frame/__init__.py
+A	simulator/algos/speed_frame/m01_fixed_window.py
+M	simulator/simulator.py
+A	tests/test_speed_frame_m01.py
+```
