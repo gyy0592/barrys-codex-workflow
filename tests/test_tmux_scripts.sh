@@ -16,7 +16,7 @@ tmux new-session -d -s "$session" -c "$tmp_dir" bash --noprofile --norc
 
 marker="TASK_RECEIVED_$session"
 message_file="$tmp_dir/message.txt"
-printf "printf '%s\\n'\n" "$marker" > "$message_file"
+printf "printf '%s\\n'" "$marker" > "$message_file"
 
 STEER_REQUIRE_CODEX=0 STEER_EVIDENCE_DIR="$tmp_dir/evidence" \
   "$repo_dir/scripts/inject_steer.sh" send "$target" "$message_file" >/dev/null
