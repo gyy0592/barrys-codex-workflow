@@ -1,12 +1,14 @@
 # Status
 
-Current spec: `spec_01_source_discovery.md`.
+Current spec: `spec_02_method_list.md`.
 
-Status: source discovery completed; implementation has not started.
+Status: fixed method list and result table initialized; implementation has not started.
 
 Evidence written:
 
 - `source_discovery.md`
+- `method_list.md`
+- `method_results.csv`
 
 Checkpoint evidence after Spec 01:
 
@@ -30,6 +32,7 @@ A	workflow_speed_frame_detector/source_discovery.md
 A	workflow_speed_frame_detector/status.md
 ```
 
-Next required spec:
+Spec 03 start requirement:
 
-- `spec_02_method_list.md`
+- Start with M01.
+- Implement only M01 before any later method.
