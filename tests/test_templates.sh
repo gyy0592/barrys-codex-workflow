@@ -19,12 +19,18 @@ test ! -e "$tmp_dir/task/control/done.md"
 "$repo_dir/scripts/init_run_templates.sh" "$tmp_dir/run_task" demo 001_first spec_002_second >"$tmp_dir/init_run.out"
 grep -F "CREATED $tmp_dir/run_task/control/goal.md" "$tmp_dir/init_run.out" >/dev/null
 grep -F "CREATED $tmp_dir/run_task/workflow_demo/run_goal.md" "$tmp_dir/init_run.out" >/dev/null
+grep -F "REBUILT $tmp_dir/run_task/workflow_demo/prompt_for_supervisor.md" "$tmp_dir/init_run.out" >/dev/null
+grep -F "REBUILT $tmp_dir/run_task/workflow_demo/prompt_for_supervisor_goal.md" "$tmp_dir/init_run.out" >/dev/null
 grep -F "CREATED $tmp_dir/run_task/workflow_demo/spec_001_first/status.md" "$tmp_dir/init_run.out" >/dev/null
 grep -F "CREATED $tmp_dir/run_task/workflow_demo/spec_002_second/status.md" "$tmp_dir/init_run.out" >/dev/null
 test -f "$tmp_dir/run_task/control/goal.md"
 test -f "$tmp_dir/run_task/control/constraint.md"
 test -f "$tmp_dir/run_task/workflow_demo/run_goal.md"
 test -f "$tmp_dir/run_task/workflow_demo/specs.md"
+test -f "$tmp_dir/run_task/workflow_demo/prompt_for_supervisor.md"
+test -f "$tmp_dir/run_task/workflow_demo/prompt_for_supervisor_goal.md"
+test ! -e "$tmp_dir/run_task/prompt_for_supervisor.md"
+test ! -e "$tmp_dir/run_task/prompt_for_supervisor_goal.md"
 for spec_dir in "$tmp_dir/run_task/workflow_demo/spec_001_first" "$tmp_dir/run_task/workflow_demo/spec_002_second"; do
   test -f "$spec_dir/status.md"
   test -f "$spec_dir/source_discovery.md"
@@ -34,9 +40,21 @@ for spec_dir in "$tmp_dir/run_task/workflow_demo/spec_001_first" "$tmp_dir/run_t
   test -f "$spec_dir/bitter_lesson.md"
 done
 printf 'custom status\n' >"$tmp_dir/run_task/workflow_demo/spec_001_first/status.md"
+printf 'stale supervisor prompt\n' >"$tmp_dir/run_task/workflow_demo/prompt_for_supervisor.md"
+printf 'stale supervisor goal\n' >"$tmp_dir/run_task/workflow_demo/prompt_for_supervisor_goal.md"
 "$repo_dir/scripts/init_run_templates.sh" "$tmp_dir/run_task" workflow_demo 001_first >"$tmp_dir/init_run_again.out"
 grep -F "EXISTS $tmp_dir/run_task/workflow_demo/spec_001_first/status.md" "$tmp_dir/init_run_again.out" >/dev/null
+grep -F "REBUILT $tmp_dir/run_task/workflow_demo/prompt_for_supervisor.md" "$tmp_dir/init_run_again.out" >/dev/null
+grep -F "REBUILT $tmp_dir/run_task/workflow_demo/prompt_for_supervisor_goal.md" "$tmp_dir/init_run_again.out" >/dev/null
 grep -F 'custom status' "$tmp_dir/run_task/workflow_demo/spec_001_first/status.md" >/dev/null
+if grep -F 'stale supervisor prompt' "$tmp_dir/run_task/workflow_demo/prompt_for_supervisor.md" >/dev/null; then
+  printf 'prompt_for_supervisor.md must be rebuilt for the workflow id\n' >&2
+  exit 1
+fi
+if grep -F 'stale supervisor goal' "$tmp_dir/run_task/workflow_demo/prompt_for_supervisor_goal.md" >/dev/null; then
+  printf 'prompt_for_supervisor_goal.md must be rebuilt for the workflow id\n' >&2
+  exit 1
+fi
 
 expected_short_goal="$tmp_dir/expected_short_goal.md"
 printf '/goal\ncontrol/goal.md\ncontrol/constraint.md\n' >"$expected_short_goal"
@@ -50,10 +68,15 @@ grep -F 'Do not start long training' "$repo_dir/templates/prompt_for_run_prep.md
 grep -F 'These "do not start" and "do not submit" rules apply only to the main Codex during run-file creation.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'They must not be copied into executor runtime files as a ban on executor work.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'the controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
-grep -F 'checks that they will not make the long run wait for later user review or user choice' "$repo_dir/README.md" >/dev/null
+grep -F 'use the `run-file-writer` skill to write and review the run files' "$repo_dir/README.md" >/dev/null
+grep -F 'The installed workflow skills are `tmux-codex-supervisor`, `run-file-writer`, `workflow-error-transition`, and `monitor-codex-goal`.' "$repo_dir/README.md" >/dev/null
+grep -F 'Use the run-file-writer skill.' "$repo_dir/README.md" >/dev/null
+grep -F 'Use the run-file-writer skill.' "$repo_dir/docs/usage.md" >/dev/null
+grep -F 'Future Codex sessions can discover the workflow skills from `~/.codex/skills/`.' "$repo_dir/docs/usage.md" >/dev/null
 grep -F 'Do not write user-review, user-choice, or user-approval gates into durable run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]' "$repo_dir/SKILL.md" >/dev/null
-grep -F 'copies every missing templated run file and leaves existing files unchanged' "$repo_dir/SKILL.md" >/dev/null
+grep -F 'copies every missing executor run file, leaves existing executor files unchanged, and always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md`' "$repo_dir/SKILL.md" >/dev/null
+grep -F 'It always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md` and `workflow_<workflow id>/prompt_for_supervisor_goal.md` from templates.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Do not recreate templated run files from memory.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Template heading risk check' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Remove or rewrite any heading that can be treated as a runtime supervisor stop condition.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
@@ -98,6 +121,7 @@ grep -F 'runtime autonomy definitions' "$repo_dir/templates/prompt_for_superviso
 grep -F 'allowed external sources as defined in `control/constraint.md`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Use at least two fresh no-context reviewers for an ordinary completed spec' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Use three to five fresh no-context reviewers for a high-risk completed spec' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'fresh no-context Codex subagent review of the current `git diff` using `gpt5.4 high`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 if grep -x '/goal' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null; then
   printf 'prompt_for_supervisor.md must not be the pasted /goal file\n' >&2
   exit 1

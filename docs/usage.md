@@ -4,7 +4,7 @@ This workflow can be used from any task directory. Do not change into the workfl
 
 ## One-Time Install
 
-Install the Codex skill package from a checkout:
+Install the Codex workflow skills from a checkout:
 
 ```bash
 ./install.sh
@@ -22,7 +22,7 @@ Install from a downloaded installer script:
 curl -fsSL <raw-install.sh-url> | bash -s -- <repo-url>
 ```
 
-`install.sh` requires `git` and `tmux`, warns if the Codex CLI is not available, installs the skill, and verifies the required installed files.
+`install.sh` requires `git` and `tmux`, warns if the Codex CLI is not available, installs the workflow skills, and verifies the required installed files.
 
 The lower-level installer is still available:
 
@@ -36,17 +36,21 @@ This creates:
 ~/.codex/skills/tmux-codex-supervisor/SKILL.md
 ~/.codex/skills/tmux-codex-supervisor/templates/
 ~/.codex/skills/tmux-codex-supervisor/scripts/
+~/.codex/skills/run-file-writer/SKILL.md
+~/.codex/skills/run-file-writer/templates/
+~/.codex/skills/run-file-writer/scripts/
+~/.codex/skills/workflow-error-transition/SKILL.md
+~/.codex/skills/monitor-codex-goal/SKILL.md
 ```
 
-Future Codex sessions can discover the skill from `~/.codex/skills/tmux-codex-supervisor`.
+Future Codex sessions can discover the workflow skills from `~/.codex/skills/`.
 
 ## Create Final Run Files Before Execution
 
 From the directory where the real task should happen, ask the main Codex to create final run files only:
 
 ```text
-Use the tmux-codex-supervisor skill.
-Use ~/Programs/codex_workflow_tmux/templates/prompt_for_run_prep.md.
+Use the run-file-writer skill.
 
 The current directory is the task project.
 Generate final run files only.
@@ -56,15 +60,15 @@ Do not start long-running work.
 My task is: write the real task here.
 ```
 
-The run-file template makes the main Codex create `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, and `workflow_<workflow id>/specs.md`. It must not start a controlled Codex or long-running work.
+The `run-file-writer` skill makes the main Codex create `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, `workflow_<workflow id>/specs.md`, per-spec evidence files, and workflow-local supervisor prompt files. It must not start a controlled Codex or long-running work.
 
-Before stopping, the main Codex must run `review-run-files-for-autonomy`. This means the supervisor checks that the files used during the long run do not tell Codex to ask the user, wait for user review, wait for user choice, follow stale file names, or depend only on chat history.
+Before stopping, the main Codex must run the `run-file-writer` autonomy review. This means it checks that the files used during the long run do not tell Codex to ask the user, wait for user review, wait for user choice, follow stale file names, or depend only on chat history.
 
 ## Start Execution After Run-File Creation
 
 Start execution with a separate user request after final run files exist. This request enters the execution phase. Before starting the controlled Codex, the supervisor Codex may run the final autonomy check and fix run files if needed. This is not user approval and does not ask the user to read the files.
 
-From the directory where the real task should happen, ask the main Codex to use the supervisor template:
+From the directory where the real task should happen, ask the main Codex to use the supervisor skill:
 
 ```text
 Use the tmux-codex-supervisor skill.
@@ -73,7 +77,7 @@ Use ~/Programs/codex_workflow_tmux/templates/prompt_for_supervisor.md.
 The current directory is the task project.
 Act as the main Codex:
 1. Confirm the final run files exist.
-2. Confirm review-run-files-for-autonomy passed, or run it and fix the files before execution.
+2. Confirm the run-file-writer autonomy review passed, or inspect and fix the files before execution.
 3. Checkpoint the final run files if they must be preserved.
 4. Start a controlled Codex inside tmux.
 5. Send only the short /goal message from ~/Programs/codex_workflow_tmux/templates/short_goal_message.md to the controlled Codex.
@@ -95,7 +99,7 @@ The controlled Codex receives only those two paths in the startup message. It re
 
 ## Manual Script Reference
 
-The supervisor template normally performs these steps, but the scripts can still be used directly when debugging.
+The skills normally perform these steps, but the scripts can still be used directly when debugging.
 
 Create the two control files in the current task directory:
 
@@ -113,8 +117,10 @@ control/constraint.md
 Start the controlled Codex in tmux:
 
 ```bash
-tmux new -s mytask -c "$PWD" codex
+tmux new -s mytask -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
 ```
+
+Put the yolo flag directly in the tmux start command. After startup, inspect the tmux screen and confirm the intended permissions mode before sending the short `/goal`.
 
 Send the short `/goal` message from any directory:
 

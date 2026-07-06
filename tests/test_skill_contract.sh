@@ -59,56 +59,37 @@ fi
 # Router and helper boundaries. This protects against accidental independent
 # helper-trigger behavior when helper names appear inside controlled files.
 require '## Trigger Strategy'
-require 'Only the outer `tmux-codex-supervisor` skill should be implicitly triggered.'
-require 'helper names below are internal sections, not independent skills'
+require 'Only the outer `tmux-codex-supervisor` skill should be implicitly triggered for supervision work.'
+require 'Run-file creation belongs to the separate `run-file-writer` skill.'
 require '## Skill Router'
-for helper in \
-  '## Helper: gen-goal' \
-  '## Helper: gen-constraint' \
-  '## Helper: gen-specs' \
-  '## Helper: gen-supervisor-prompts' \
-  '## Helper: review-run-files-for-autonomy' \
-  '## Helper: start-supervised-run' \
-  '## Helper: monitor-run' \
-  '## Helper: persist-user-requirement'
-do
-  require "$helper"
-done
-require 'Do not trigger this helper while the controlled Codex is executing a spec'
-require 'Do not trigger this helper when the controlled Codex is doing ordinary execution'
-require 'Do not trigger this helper while the controlled Codex is executing the current spec'
+require 'Use the `run-file-writer` skill when the user asks to create final run files before execution.'
+reject '## Helper: gen-goal'
+reject '## Helper: gen-constraint'
+reject '## Helper: gen-specs'
+reject '## Helper: gen-supervisor-prompts'
+reject '## Helper: review-run-files-for-autonomy'
+require '## Helper: start-supervised-run'
+require '## Helper: monitor-run'
+require '## Helper: persist-user-requirement'
 require 'Do not trigger this helper when the user only asks for status'
-require 'definitions for `allowed external sources` and `conservative option`'
 
-# gen-specs must preserve already-decided user content and forbid re-opening it.
-require 'If the user already specified a data field, setting, output, or constraint, write it directly into goal/specs. Do not create a spec whose purpose is to decide it again.'
-require 'Clarifying questions are allowed only before final run files are written'
-require 'After final run files are written, do not ask the user for choices, approvals, or review.'
-require 'Allowed external sources means sources permitted by the user, the task, and the available tools.'
-require 'Conservative option means the option that is reversible, smallest in scope'
-reject 'allowed internet or paper search'
-reject 'conservative choice'
-reject 'Conservative choice'
-
-# Run-file autonomy review must check real failure modes, not only a heading.
-require '## Helper: review-run-files-for-autonomy'
-require 'no user-decided requirement is rewritten as undecided'
-require 'durable run files contain no `ask the user`, `wait for user review`, or `user approval needed` gates'
-require 'controlled files do not depend on supervisor chat memory'
-require '`control/goal.md`, `control/constraint.md`, `specs.md`, and `run_goal.md` do not conflict'
-require 'runtime terms such as `allowed external sources` and `conservative option` are defined in `control/constraint.md` or in the same durable run file that uses them'
-require 'lower-priority files cannot override higher-priority control files'
+# run-file-writer must preserve already-decided user content and forbid user-waiting gates.
+run_file_writer_skill="$repo_dir/skills/run-file-writer/SKILL.md"
+test -f "$run_file_writer_skill"
+require 'If the user already specified a method, tool, function, setting, output, metric, or constraint, write it directly into goal/specs.' "$run_file_writer_skill"
+require 'Do not encode user-review, user-choice, or user-approval gates in durable run files.' "$run_file_writer_skill"
+require 'Allowed external sources means sources permitted by the user, the task, and the available tools.' "$run_file_writer_skill"
+require 'Conservative option means the option that is reversible, smallest in scope' "$run_file_writer_skill"
 
 # Persistence and later-user-requirement handling.
 require 'supervisor Codex is not the user'
 require 'A controlled Codex blocked report is an executor-local correction issue, not a supervisor blocked state.'
-require 'must not mark its own goal complete or blocked because the controlled Codex reports a correction issue'
-require 'a run fails, information is missing, or a review fails'
-require 'specific workflow stage enforcement: require source discovery, abstract plan, implementation evidence, status, checkpoint, and review before allowing the next spec'
 require 'later user message changes execution permission, correction triggers, required settings, or completion criteria'
-require 'the controlled Codex does the controlled task, must produce required outputs, and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them'
 require 'Write it into the durable control file before relying on it.'
 require 'Do not rely only on chat memory.'
+require 'Do not mark the supervisor goal complete or blocked' "$repo_dir/templates/prompt_for_supervisor.md"
+require 'source discovery, a short high-level abstract plan, implementation, evidence, status update' "$repo_dir/templates/prompt_for_supervisor.md"
+require 'may run or submit jobs when `control/goal.md` and `control/constraint.md` require them' "$repo_dir/templates/prompt_for_supervisor.md"
 for persistence_file in \
   "$repo_dir/templates/prompt_for_supervisor.md" \
   "$repo_dir/templates/prompt_for_supervisor_goal.md" \
@@ -129,11 +110,19 @@ require 'git status --short'
 require 'git log -1 --oneline'
 require 'git show --stat --oneline --name-status HEAD'
 require '## No-Context Review Rule'
-require 'After each checkpoint commit, the supervisor must run no-context review'
+require 'After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` to fresh no-context Codex subagent reviewers using `gpt5.4 high`'
+require 'The checkpoint commit is allowed only after the required reviewers PASS'
 require 'ordinary spec: at least two no-context reviewers'
 require 'high-risk spec: three to five no-context reviewers'
 require 'High-risk spec means the completed step touches destructive operations, git history, user data, paid or cloud resources'
-require 'If a reviewer finds a real problem, fix the current spec, make a new checkpoint commit, and run fresh no-context review.'
+require 'If a reviewer finds a real problem, fix the current spec, rerun fresh no-context Codex subagent review on the new `git diff`, and commit only after PASS.'
+
+# Controlled Codex startup must explicitly request yolo mode. Do not depend on a
+# user-specific shell wrapper because wrapper flags can conflict or be absent.
+require 'codex --dangerously-bypass-approvals-and-sandbox'
+require 'do not start the controlled Codex with bare `codex` or through a shell wrapper'
+require 'confirm the controlled Codex shows the intended permissions mode'
+reject 'bash -ic'
 
 # Actual supervisor start paths must carry the persistence idea or directly point
 # to a file that carries it.
@@ -153,16 +142,31 @@ require "$executor_duty_text" "$repo_dir/stage_supervisor_execution_read_file.md
 require "$executor_duty_text" "$repo_dir/stage_supervisor_prompt_for_supervisor_goal.md"
 require "$executor_duty_text" "$repo_dir/stage_supervisor_prompt_for_supervisor.md"
 require "$executor_duty_text" "$repo_dir/stage_supervisor_filled_goal.md"
+require 'codex --dangerously-bypass-approvals-and-sandbox' "$repo_dir/templates/prompt_for_supervisor.md"
+require 'codex --dangerously-bypass-approvals-and-sandbox' "$repo_dir/templates/prompt_for_supervisor_goal.md"
 
 # Script references still exist after the refactor.
-require '__WORKFLOW_ROOT__/scripts/init_control_files.sh'
-require '__WORKFLOW_ROOT__/scripts/init_run_templates.sh'
+require 'run-file-writer'
+require 'scripts/init_run_templates.sh'
+require 'The `run-file-writer` skill owns `init_control_files.sh` and `init_run_templates.sh`.'
 require '__WORKFLOW_ROOT__/scripts/locate_codex.sh'
 require '__WORKFLOW_ROOT__/scripts/inject_steer.sh'
 require 'required and only allowed tmux input path for controlled Codex messages'
 require 'Outside `inject_steer.sh`, do not use any other tmux input path for controlled Codex messages.'
-require '__WORKFLOW_ROOT__/templates/prompt_for_run_prep.md'
 require '__WORKFLOW_ROOT__/templates/prompt_for_supervisor.md'
 require '__WORKFLOW_ROOT__/templates/short_goal_message.md'
+
+run_file_writer_skill="$repo_dir/skills/run-file-writer/SKILL.md"
+test -f "$run_file_writer_skill"
+require 'name: run-file-writer' "$run_file_writer_skill"
+require 'Create final run files for a supervised Codex tmux workflow before execution.' "$run_file_writer_skill"
+require 'scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]' "$run_file_writer_skill"
+require 'always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md` and `workflow_<workflow id>/prompt_for_supervisor_goal.md` from templates' "$run_file_writer_skill"
+require 'Do not write supervisor prompt files at the task root.' "$run_file_writer_skill"
+test -x "$repo_dir/skills/run-file-writer/scripts/init_control_files.sh"
+test -x "$repo_dir/skills/run-file-writer/scripts/init_run_templates.sh"
+test -f "$repo_dir/skills/run-file-writer/templates/prompt_for_run_prep.md"
+test -f "$repo_dir/skills/run-file-writer/templates/prompt_for_supervisor.md"
+test -f "$repo_dir/skills/run-file-writer/templates/prompt_for_supervisor_goal.md"
 
 printf 'test_skill_contract PASS\n'

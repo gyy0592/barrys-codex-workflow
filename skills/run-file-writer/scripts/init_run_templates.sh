@@ -15,7 +15,7 @@ workflow_id=$2
 shift 2
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-repo_dir=$(CDPATH= cd -- "$script_dir/.." && pwd)
+skill_dir=$(CDPATH= cd -- "$script_dir/.." && pwd)
 
 case "$workflow_id" in
   workflow_*) workflow_dir="$task_dir/$workflow_id" ;;
@@ -25,7 +25,7 @@ esac
 copy_if_missing() {
   local template=$1
   local dest=$2
-  local src="$repo_dir/templates/$template"
+  local src="$skill_dir/templates/$template"
 
   if [ ! -f "$src" ]; then
     printf 'MISSING_TEMPLATE %s\n' "$src" >&2
@@ -45,7 +45,7 @@ copy_if_missing() {
 copy_always() {
   local template=$1
   local dest=$2
-  local src="$repo_dir/templates/$template"
+  local src="$skill_dir/templates/$template"
 
   if [ ! -f "$src" ]; then
     printf 'MISSING_TEMPLATE %s\n' "$src" >&2

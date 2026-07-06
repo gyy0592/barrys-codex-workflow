@@ -44,7 +44,9 @@ is_checkout() {
   test -f "$dir/SKILL.md" &&
     test -x "$dir/scripts/install_skill.sh" &&
     test -f "$dir/templates/short_goal_message.md" &&
-    test -f "$dir/skills/workflow-error-transition/SKILL.md"
+    test -f "$dir/skills/run-file-writer/SKILL.md" &&
+    test -f "$dir/skills/workflow-error-transition/SKILL.md" &&
+    test -f "$dir/external_skills/SihaoLiu-skills/monitor-codex-goal/SKILL.md"
 }
 
 require_command() {
@@ -100,12 +102,26 @@ fi
 
 codex_home=${CODEX_HOME:-"$HOME/.codex"}
 skill_dir="$codex_home/skills/tmux-codex-supervisor"
+run_file_writer_dir="$codex_home/skills/run-file-writer"
 error_skill_dir="$codex_home/skills/workflow-error-transition"
+monitor_skill_dir="$codex_home/skills/monitor-codex-goal"
 test -f "$skill_dir/SKILL.md"
 test -f "$skill_dir/templates/short_goal_message.md"
 test -x "$skill_dir/scripts/inject_steer.sh"
 test -x "$skill_dir/scripts/locate_codex.sh"
+test -f "$run_file_writer_dir/SKILL.md"
+test -x "$run_file_writer_dir/scripts/init_run_templates.sh"
 test -f "$error_skill_dir/SKILL.md"
+test -f "$monitor_skill_dir/SKILL.md"
+test -x "$monitor_skill_dir/scripts/inject-steer.sh"
+test -x "$monitor_skill_dir/scripts/locate-codex.sh"
+grep -F 'codex --dangerously-bypass-approvals-and-sandbox' "$skill_dir/SKILL.md" >/dev/null
+grep -F 'codex --dangerously-bypass-approvals-and-sandbox' "$skill_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'codex --dangerously-bypass-approvals-and-sandbox' "$skill_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
+if grep -F 'bash -ic' "$skill_dir/SKILL.md" "$skill_dir/templates/prompt_for_supervisor.md" "$skill_dir/templates/prompt_for_supervisor_goal.md" >/dev/null; then
+  printf 'Installed tmux-codex-supervisor still contains bash -ic startup guidance\n' >&2
+  exit 1
+fi
 grep -F 'CODEX_WORKFLOW_TMUX_SUBAGENT_RULES_BEGIN' "$codex_home/AGENTS.md" >/dev/null
 
 printf 'ONE_CLICK_INSTALL_OK %s\n' "$skill_dir"

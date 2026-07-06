@@ -13,9 +13,7 @@ Workflow root is `__WORKFLOW_ROOT__`. Use this absolute path even when the curre
 
 ## Trigger Strategy
 
-Only the outer `tmux-codex-supervisor` skill should be implicitly triggered.
-
-The helper names below are internal sections, not independent skills. Do not create separate implicitly triggered skills for `gen-goal`, `gen-constraint`, `gen-specs`, `gen-supervisor-prompts`, `review-run-files-for-autonomy`, `start-supervised-run`, `monitor-run`, or `persist-user-requirement` unless a later implementation disables their implicit invocation.
+Only the outer `tmux-codex-supervisor` skill should be implicitly triggered for supervision work. Run-file creation belongs to the separate `run-file-writer` skill.
 
 The controlled Codex must not use this skill. It receives only the short `/goal` message that points to `control/goal.md` and `control/constraint.md`.
 
@@ -34,127 +32,12 @@ The controlled Codex must not use this skill. It receives only the short `/goal`
 
 Before acting, classify the latest user request and select one helper path:
 
-- Use `gen-goal`, `gen-constraint`, `gen-specs`, `gen-supervisor-prompts`, then `review-run-files-for-autonomy` when the user asks to create final run files before execution.
+- Use the `run-file-writer` skill when the user asks to create final run files before execution.
 - Use `start-supervised-run` when the user explicitly asks to start execution and final run files already exist.
 - Use `monitor-run` when a controlled Codex is already running and the user asks to supervise, continue supervising, check progress, correct drift, or verify completion.
 - Use `persist-user-requirement` when a later user message changes execution permission, correction triggers, required settings, or completion criteria.
 
 The router must not send internal helper names to the controlled Codex. The controlled Codex startup message should contain only control-file paths.
-
-## Helper: gen-goal
-
-Use this helper only as the main Codex supervisor while creating or updating final run files.
-
-Output for the controlled Codex: `control/goal.md`.
-
-Write:
-
-- the task goal,
-- required input material,
-- required outputs,
-- progress evidence,
-- completion standard.
-
-Do not write:
-
-- user-review gates,
-- "wait for user confirmation",
-- requirements that exist only in supervisor chat memory.
-
-Do not trigger this helper while the controlled Codex is executing a spec, while merely monitoring evidence, or while sending a correction that does not change the goal file.
-
-## Run-File Creation User Checkpoints
-
-During run-file creation, after writing each durable run file, report to the user:
-
-- the file written,
-- a short summary of what it contains,
-- which run files are already complete,
-- which run files still need to be written,
-- what file or decision will be handled next.
-
-Then ask whether the file is correct before continuing when the user requested step-by-step confirmation, or when a missing choice would change the goal, constraints, or spec list. Keep this checkpoint before execution only. Do not copy these user checkpoints into durable run files as executor correction triggers or user-response gates.
-
-## Helper: gen-constraint
-
-Use this helper only as the main Codex supervisor while creating or updating final run files.
-
-Output for the controlled Codex: `control/constraint.md`.
-
-Write:
-
-- user constraints,
-- forbidden actions,
-- checkpoint commit rules,
-- no-context review rules,
-- autonomous execution boundaries,
-- definitions for `allowed external sources` and `conservative option`,
-- self-check rules.
-
-Do not put the whole workflow document into `control/constraint.md`. Write only constraints and checks the controlled Codex must obey.
-
-Do not trigger this helper when the controlled Codex is doing ordinary execution or when the supervisor only needs to read evidence or status.
-
-## Helper: gen-specs
-
-Use this helper only as the main Codex supervisor while turning the total goal into checkable specs.
-
-Output for the supervisor and controlled Codex: `workflow_<workflow id>/specs.md` and current spec files.
-
-Each spec must include purpose, required information, expected outputs, observable success evidence, fail conditions, and completion checks.
-
-Hard rule for already-decided user content:
-
-```text
-If the user already specified a data field, setting, output, or constraint, write it directly into goal/specs. Do not create a spec whose purpose is to decide it again.
-```
-
-Clarifying questions are allowed only before final run files are written, only when missing information prevents writing executable goal/specs, and only for the missing point. Do not ask again about user-decided content.
-
-After final run files are written, do not ask the user for choices, approvals, or review. During execution, missing information must send the controlled Codex back to source discovery, local inspection, allowed external sources, conservative options within constraints, evidence, and continuation.
-
-Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
-
-Conservative option means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
-
-Do not trigger this helper while the controlled Codex is executing the current spec. If a running spec fails, update the current spec or create a fix spec instead of regenerating all specs.
-
-## Helper: gen-supervisor-prompts
-
-Use this helper only as the main Codex supervisor while creating or updating supervisor start files.
-
-Output for the supervisor only: `prompt_for_supervisor.md`, `prompt_for_supervisor_goal.md`, and staged supervisor paste files.
-
-Every supervisor start path must say:
-
-- the supervisor does not do the controlled task,
-- the controlled Codex does the controlled task, must produce required outputs, and may run or submit jobs when `control/goal.md` and `control/constraint.md` require them,
-- the supervisor sends only the short `/goal` to the controlled Codex,
-- the supervisor keeps supervising until completion is proved or the user explicitly stops,
-- the supervisor must not mark its own goal complete or blocked because the controlled Codex reports a correction issue, a run fails, information is missing, or a review fails,
-- a correction trigger means stop only the bad path, record evidence, update the current spec or create a fix spec, then continue,
-- specific workflow stage enforcement: require source discovery, abstract plan, implementation evidence, status, checkpoint, and review before allowing the next spec; missing stage files, incomplete evidence, unsupported guessing, skipped checkpoint, or skipped review are drift,
-- later user requirements that change permission, correction triggers, settings, or completion criteria must be written into durable control files before relying on them.
-
-Do not send supervisor prompt files to the controlled Codex.
-
-## Helper: review-run-files-for-autonomy
-
-Use this helper only after final run files are written and before execution starts.
-
-Check:
-
-- no user-decided requirement is rewritten as undecided,
-- durable run files contain no `ask the user`, `wait for user review`, or `user approval needed` gates,
-- durable run files do not ask for user review, choices, or approval,
-- file ownership is clear,
-- supervisor-only files are not sent to the controlled Codex,
-- controlled files do not depend on supervisor chat memory,
-- `control/goal.md`, `control/constraint.md`, `specs.md`, and `run_goal.md` do not conflict,
-- runtime terms such as `allowed external sources` and `conservative option` are defined in `control/constraint.md` or in the same durable run file that uses them,
-- lower-priority files cannot override higher-priority control files.
-
-Return `PASS` only when the files are sufficient for autonomous execution. Return `FAIL` and fix the run files before execution when any check fails.
 
 ## Helper: start-supervised-run
 
@@ -163,9 +46,11 @@ Use this helper only after the user explicitly asks to start execution.
 Before starting:
 
 - confirm final run files exist,
-- confirm `review-run-files-for-autonomy` passed,
+- confirm the `run-file-writer` autonomy review passed, or inspect and fix the run files before execution,
 - checkpoint final run files when they must be preserved,
-- start one controlled Codex in tmux,
+- start one controlled Codex in tmux with explicit yolo mode, for example `tmux new-session -d -s <session-name> -c <task-directory> 'codex --dangerously-bypass-approvals-and-sandbox'`,
+- do not start the controlled Codex with bare `codex` or through a shell wrapper; the yolo flag must be in the tmux start command itself,
+- after startup, inspect the tmux screen and confirm the controlled Codex shows the intended permissions mode before sending the short `/goal`,
 - send only the short `/goal` that points to `control/goal.md` and `control/constraint.md`,
 - send and verify that message through `__WORKFLOW_ROOT__/scripts/inject_steer.sh`.
 
@@ -209,6 +94,7 @@ Before each checkpoint commit, require:
 - staging only files required for the current workflow/spec,
 - no unrelated user files,
 - no still-changing experiment outputs.
+- current `git diff` sent to fresh no-context Codex subagent reviewers using `gpt5.4 high`, with PASS required before commit.
 
 If relevant and unrelated files cannot be separated safely, stop the commit and report the exact paths.
 
@@ -222,7 +108,7 @@ git show --stat --oneline --name-status HEAD
 
 ## No-Context Review Rule
 
-After each checkpoint commit, the supervisor must run no-context review before the workflow can move to the next spec.
+After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` to fresh no-context Codex subagent reviewers using `gpt5.4 high`. The checkpoint commit is allowed only after the required reviewers PASS, and the workflow can move to the next spec only after that checkpoint commit exists.
 
 Default review count:
 
@@ -236,6 +122,7 @@ The reviewers must receive only the current spec, relevant goal/constraint excer
 The reviewers must check:
 
 - whether the current spec is truly complete,
+- whether any user-required method, tool, function, metric, output, or constraint was changed, weakened, bypassed, replaced, or reinterpreted without evidence proving the original requirement does not exist or cannot work as stated and the failure is not caused by executor implementation error,
 - drift from `control/goal.md`,
 - violations of `control/constraint.md`,
 - unrelated files in the commit,
@@ -243,7 +130,7 @@ The reviewers must check:
 - unnecessary extra work,
 - failure risk.
 
-If a reviewer finds a real problem, fix the current spec, make a new checkpoint commit, and run fresh no-context review. If a reviewer only gives style preference, unsupported nitpicking, or a claim contradicted by file evidence, record why it is ignored and continue.
+If a reviewer finds a real problem, fix the current spec, rerun fresh no-context Codex subagent review on the new `git diff`, and commit only after PASS. If a reviewer only gives style preference, unsupported nitpicking, or a claim contradicted by file evidence, record why it is ignored and continue.
 
 ## File Ownership And Priority
 
@@ -261,22 +148,19 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 
 ## Template Policy
 
-Use these templates for fixed prompt and run-file shapes:
+Run-file templates and run-file initialization scripts belong to the `run-file-writer` skill. Use these supervisor templates and legacy fallback paths only when needed:
 
-- `__WORKFLOW_ROOT__/templates/prompt_for_run_prep.md` is the main-Codex template for final run-file creation.
 - `__WORKFLOW_ROOT__/templates/prompt_for_supervisor.md` is the supervisor's long companion file.
 - `__WORKFLOW_ROOT__/templates/prompt_for_supervisor_goal.md` is the supervisor's short `/goal` text.
 - `__WORKFLOW_ROOT__/templates/short_goal_message.md` is the only short `/goal` text sent to the controlled Codex.
-- `__WORKFLOW_ROOT__/templates/run_goal.md`, `__WORKFLOW_ROOT__/templates/specs.md`, `__WORKFLOW_ROOT__/templates/source_discovery.md`, `__WORKFLOW_ROOT__/templates/abstract_plan.md`, `__WORKFLOW_ROOT__/templates/evidence.md`, `__WORKFLOW_ROOT__/templates/review.md`, and `__WORKFLOW_ROOT__/templates/bitter_lesson.md` define run evidence files.
 
-Before writing any templated run file, run `__WORKFLOW_ROOT__/scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]`. It copies every missing templated run file and leaves existing files unchanged. After that, edit the copied files in place. Do not recreate templated run files from memory.
+Before writing any templated run file, use the `run-file-writer` skill and its `scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]`. It copies every missing executor run file, leaves existing executor files unchanged, and always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md` and `workflow_<workflow id>/prompt_for_supervisor_goal.md` from templates. After that, edit the copied or rebuilt files in place. Do not recreate templated run files from memory.
 
 ## Script Policy
 
 Use scripts for fixed operations:
 
-- `__WORKFLOW_ROOT__/scripts/init_control_files.sh` creates the two control files in the task directory.
-- `__WORKFLOW_ROOT__/scripts/init_run_templates.sh` creates every missing templated run file and leaves existing files unchanged.
+- The `run-file-writer` skill owns `init_control_files.sh` and `init_run_templates.sh`.
 - `__WORKFLOW_ROOT__/scripts/locate_codex.sh` lists candidate Codex tmux panes so the supervisor can confirm the target pane before sending.
 - `__WORKFLOW_ROOT__/scripts/inject_steer.sh` is the required and only allowed tmux input path for controlled Codex messages. It verifies the target pane, pastes text from a file, verifies the text landed in the input box, submits it, verifies it left the input box, and saves evidence under `temp/tmux-codex-supervisor` unless `STEER_EVIDENCE_DIR` overrides it.
 - Outside `inject_steer.sh`, do not use any other tmux input path for controlled Codex messages.
