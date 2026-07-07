@@ -2,7 +2,7 @@
 
 Current spec: `spec_04_final_analysis.md`.
 
-Status: final closure evidence recorded. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 beats A2. Two fresh no-context reviews passed for the latest evidence state and found no substantive blocker. Next required action: commit this closure evidence checkpoint, then run the final completion audit.
+Status: final closure evidence checkpoint committed. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 beats A2. Two fresh no-context reviews passed for the latest evidence state and found no substantive blocker. Next required action: run the final completion audit.
 
 Evidence written:
 
@@ -361,3 +361,24 @@ Final closure review pair after evidence cleanup:
 - Shared conclusion: M01 now updates speed only from valid updated deltas, still uses compensated motion for unchanged classification, uses no forbidden truth data, records required diagnostics, beats `sleep` and `a2`, stays inside the 5 ms budget, and supports stopping after M01 under stop rule 1.
 - Residual risk: the stop proof is based on the required seed-42 comparison, not a broader seed sweep.
 - Evidence file: `review_final_closure.md`.
+
+Workflow checkpoint evidence after final closure reviews:
+
+```text
+git status --short
+ M control/constraint.md
+?? remote_transcript_skill_report/
+?? temp.md
+?? temp/
+
+git log -1 --oneline
+79d3d9d Record final M01 closure reviews
+
+git show --stat --oneline --name-status HEAD
+79d3d9d Record final M01 closure reviews
+M	workflow_speed_frame_detector/final_analysis.md
+A	workflow_speed_frame_detector/review_final_closure.md
+M	workflow_speed_frame_detector/status.md
+```
+
+Unrelated dirty workflow files were not included in the closure evidence checkpoint.
