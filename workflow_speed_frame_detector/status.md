@@ -2,7 +2,7 @@
 
 Current spec: `spec_04_final_analysis.md`.
 
-Status: final closure evidence checkpoint committed. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 beats A2. Two fresh no-context reviews passed for the latest evidence state and found no substantive blocker. Next required action: run the final completion audit.
+Status: complete. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 beats A2. Two fresh no-context reviews passed for the latest evidence state and found no substantive blocker. Final completion audit passed.
 
 Evidence written:
 
@@ -382,3 +382,18 @@ M	workflow_speed_frame_detector/status.md
 ```
 
 Unrelated dirty workflow files were not included in the closure evidence checkpoint.
+
+Final completion audit:
+
+- Project HEAD: `d061ad1 Do not bootstrap M01 speed window`.
+- Workflow HEAD before this status update: `dc33161 Record final closure checkpoint status`.
+- Required evidence files exist: `source_discovery.md`, `method_list.md`, `method_results.csv`, `method_results.md`, `failure_analysis.md`, `status.md`, `final_analysis.md`, `review_final_closure.md`.
+- Latest M01 comparison run: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`.
+- Latest M01 result: `median_abs_e=27.680817196046235`, `final_quarter_median=27.5070398240764`, `diverged=false`, `p99_wall_time_ns=2838.0000000000055`.
+- A2 result in same comparison: `median_abs_e=38.18579621000873`, `final_quarter_median=36.45623357509305`, `diverged=false`.
+- Step-0 no-bootstrap check: `velocity_valid_update_count=0.0`.
+- Algorithm contract check: passed.
+- Focused M01 tests: 5 tests passed.
+- Full test suite: 23 tests passed.
+- Final closure reviews: two fresh no-context reviews passed.
+- Completion decision: stop rule 1 is satisfied; the workflow is complete after M01 and does not proceed to M02.
