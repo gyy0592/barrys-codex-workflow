@@ -1,4 +1,6 @@
-# No-Context Review: Final M01 Workflow
+# Historical No-Context Review: Final M01 Workflow
+
+Current status: this PASS review is historical and is superseded by later FAIL reviews and repairs recorded in `correction_no_context_review.md` and `review_valid_updates_repair.md`. Do not use this file as current completion proof.
 
 ## Review Inputs
 

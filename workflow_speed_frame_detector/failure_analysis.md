@@ -107,3 +107,54 @@ Remaining diagnostics after repair:
 - Command clipping happened twice, so clipping is not the dominant remaining bottleneck.
 
 Current M01 stop evidence: after the valid-updates-only repair, M01 still beats A2 and stays inside the compute budget. The workflow still requires two fresh no-context PASS reviews and a workflow evidence checkpoint before final completion can be claimed.
+
+## M01 - Fresh Review Bootstrap-Sample Failure
+
+Program affected: `/home/yguo173/Programs/game/fps/fps_mock/simulator/algos/speed_frame/m01_fixed_window.py`.
+
+Expected behavior: M01 must not update the speed window until an observation delta has been classified as a valid updated observation.
+
+Actual behavior found by fresh no-context review: the first observation appended a bootstrap `0.0` into `velocity_samples` before any frame delta existed. The latest run before this fix showed `velocity_valid_update_count=1.0` at step 0.
+
+Metric or check that proved failure: code review showed `self.velocity_samples.append(0.0)` in the `prev_x is None` branch; artifact review showed step 0 had `velocity_valid_update_count=1.0`.
+
+Cause category: speed-estimation evidence count was wrong. The bootstrap sample did not use simulator truth, but it was not a valid updated observation.
+
+Smallest supported repair: remove the bootstrap append and add a focused test proving the first observation leaves `velocity_valid_update_count=0.0`.
+
+Repair commit: `d061ad1 Do not bootstrap M01 speed window`.
+
+Repair checks:
+
+```text
+python -m tools.algo_contract_check
+```
+
+Result: passed.
+
+```text
+python -m unittest tests.test_speed_frame_m01 -v
+```
+
+Result: 5 tests passed.
+
+```text
+python -m unittest discover -s tests -v
+```
+
+Result: 23 tests passed.
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Result: M01 still beats A2 after the no-bootstrap repair. M01 `median_abs_e=27.680817196046235`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.5070398240764`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`; M01 `p99_wall_time_ns=2838.0000000000055`.
+
+Step-0 diagnostic after repair:
+
+- `velocity_estimate=0.0`.
+- `velocity_valid_update_count=0.0`.
+- `unchanged_frame_count=0.0`.
+- `suspected_dropped_frame_count=0.0`.
+
+Current M01 stop evidence: after the no-bootstrap repair, M01 still beats A2, stays inside the compute budget, and the first observation no longer pollutes the valid-update count. The workflow still requires two fresh no-context PASS reviews and a workflow evidence checkpoint before final completion can be claimed.

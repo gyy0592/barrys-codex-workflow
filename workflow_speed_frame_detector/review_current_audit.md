@@ -1,4 +1,6 @@
-# Current Audit Review
+# Historical Current Audit Review
+
+Current status: this no-blocking-issue review is historical and is superseded by later FAIL reviews and repairs recorded in `correction_no_context_review.md` and `review_valid_updates_repair.md`. Do not use this file as current completion proof.
 
 Date: 2026-07-07.
 

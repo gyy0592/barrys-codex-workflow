@@ -2,7 +2,7 @@
 
 ## Stop Rule Status
 
-Algorithm evidence currently supports stop rule 1 because the latest valid-updates-only M01 still beats `a2`, does not diverge, stays inside the compute budget, and records the required diagnostics. Workflow completion is not yet closed because two fresh no-context PASS reviews of the latest repaired state and a workflow evidence checkpoint are still required.
+Algorithm evidence currently supports stop rule 1 because the latest no-bootstrap M01 still beats `a2`, does not diverge, stays inside the compute budget, and records the required diagnostics. Workflow completion is not yet closed because two fresh no-context PASS reviews of the latest repaired state and a workflow evidence checkpoint are still required.
 
 ## Best Method
 
@@ -10,9 +10,9 @@ Best method by `median_abs_e`: M01 compensated-motion repair, `median_abs_e=24.0
 
 Best method by `final_quarter_median`: M01 compensated-motion repair, `final_quarter_median=21.720944919122644`.
 
-Latest valid-updates-only M01 audit run path:
+Latest no-bootstrap M01 audit run path:
 
-`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`
+`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`
 
 Required comparison command:
 
@@ -24,21 +24,21 @@ Comparison result:
 
 | algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
 |---|---:|---:|---|---:|---:|
-| sleep | 60.00000000000003 | 60.0 | false | 97.1923076923077 | 434.75 |
-| a2 | 38.18579621000873 | 36.45623357509305 | false | 351.83690987124464 | 1278.6800000000007 |
-| a4 | 46.619232307654215 | 45.80179802610053 | false | 1202.2789699570815 | 3769.520000000003 |
-| c1 | 54.42964595780069 | 54.319352835616655 | false | 149.31330472103005 | 523.3600000000021 |
-| m01 | 27.52582626861647 | 27.52582626861647 | false | 977.2789699570816 | 2846.280000000006 |
+| sleep | 60.00000000000003 | 60.0 | false | 102.1923076923077 | 503.0 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 381.72103004291847 | 1623.6400000000003 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1293.3218884120172 | 2878.3200000000043 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 157.07725321888412 | 554.3600000000022 |
+| m01 | 27.680817196046235 | 27.5070398240764 | false | 1024.901287553648 | 2838.0000000000055 |
 
 ## Stability And Budget
 
 Conclusion: M01 repair is stable in the required comparison run.
 
-Evidence: `diverged=false`, `median_abs_e=27.52582626861647`, and `final_quarter_median=27.52582626861647`.
+Evidence: `diverged=false`, `median_abs_e=27.680817196046235`, and `final_quarter_median=27.5070398240764`.
 
 Compute budget: M01 repair is inside the 5 ms budget.
 
-Evidence: valid-updates-only audit recorded `p99_wall_time_ns=2846.280000000006`, which is far below 5,000,000 ns.
+Evidence: no-bootstrap audit recorded `p99_wall_time_ns=2838.0000000000055`, which is far below 5,000,000 ns.
 
 Check scope: This proves the recorded seed-42 comparison run only. It does not prove every possible random seed.
 
@@ -46,7 +46,7 @@ Check scope: This proves the recorded seed-42 comparison run only. It does not p
 
 Speed estimate error: bounded and not the current stop blocker.
 
-Evidence: valid-updates-only M01 recorded `velocity_estimate_mean=-0.7615236886229239`, `velocity_estimate_p50=-0.22294457794748723`, and `velocity_estimate_p90=1.4229387596586434`.
+Evidence: no-bootstrap M01 recorded `velocity_estimate_mean=-0.5771777289462595`, `velocity_estimate_p50=-0.2212126511466977`, and `velocity_estimate_p90=1.9876592749606488`.
 
 Unchanged-frame misclassification: not a meaningful remaining blocker.
 
@@ -54,7 +54,7 @@ Evidence: offline `t_frame` check found `same_t_frame:unchanged=173`, `new_t_fra
 
 Dropped-frame handling: present, but not a stop blocker.
 
-Evidence: valid-updates-only M01 recorded `suspected_dropped_frame_count=36.0`; those samples no longer update the speed window, and M01 still beat A2 and did not diverge.
+Evidence: no-bootstrap M01 recorded `suspected_dropped_frame_count=36.0`; those samples do not update the speed window, and M01 still beat A2 and did not diverge.
 
 Response delay: not a stop blocker.
 
@@ -62,7 +62,7 @@ Evidence: M01 uses `post_command_sleep_s=0.0`, and the required comparison shows
 
 Command instability: not a stop blocker.
 
-Evidence: valid-updates-only M01 did not diverge; command clipping was hit twice in 233 iterations.
+Evidence: no-bootstrap M01 did not diverge; command clipping was hit twice in 233 iterations.
 
 ## Repairs Tried
 
@@ -154,8 +154,19 @@ Second fresh no-context review correction on 2026-07-07:
 - Fix: M01 now counts `dropped_suspected` observations without adding them to `velocity_samples`, and the focused test verifies this rule.
 - Repair run: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`.
 - Result: M01 still beats A2 after the fix. M01 `median_abs_e=27.52582626861647`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.52582626861647`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
+- Later review result: FAIL, because the first observation still added a bootstrap `0.0` speed sample before any valid updated delta existed.
+
+Third fresh no-context review correction on 2026-07-07:
+
+- Review result: FAIL, because M01 inserted a bootstrap `0.0` sample on the first observation.
+- Fix commit: `d061ad1 Do not bootstrap M01 speed window`.
+- Fix: the first observation initializes prior state and command diagnostics without adding to `velocity_samples`.
+- Focused test: `test_first_observation_does_not_update_speed_window`.
+- Repair run: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`.
+- Result: M01 still beats A2 after the fix. M01 `median_abs_e=27.680817196046235`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.5070398240764`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
+- Step-0 check: `velocity_valid_update_count=0.0`, so the first observation no longer pollutes the valid-update count.
 - Remaining gate: two fresh no-context PASS reviews of this repaired state and a workflow evidence checkpoint are still required before final completion can be claimed.
 
 ## Final Conclusion
 
-The speed-detection and frame-update approach is still proved useful by M01 in the required comparison. Because the second fresh review found a real M01 bug and that bug has now been repaired, this file does not yet close the workflow. The next required step is two fresh no-context PASS reviews of the latest repaired state, followed by a workflow evidence checkpoint.
+The speed-detection and frame-update approach is still proved useful by M01 in the required comparison. Because the latest fresh review found a real M01 bootstrap bug and that bug has now been repaired, this file does not yet close the workflow. The next required step is two fresh no-context PASS reviews of the latest repaired state, followed by a workflow evidence checkpoint.

@@ -2,7 +2,7 @@
 
 Current spec: `spec_04_final_analysis.md`.
 
-Status: correction in progress after two fresh no-context reviews found real problems. M01 has been repaired to use compensated motion for unchanged classification and to keep suspected dropped-frame samples out of the speed estimate. Latest rerun evidence shows M01 still beats A2. Next required action: run two fresh no-context PASS reviews on the latest repaired state, then create a workflow evidence checkpoint.
+Status: correction in progress after fresh no-context reviews found real M01 problems. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 still beats A2. Next required action: run two fresh no-context PASS reviews on the latest no-bootstrap repaired state, then create a workflow evidence checkpoint.
 
 Evidence written:
 
@@ -253,6 +253,77 @@ git log -1 --oneline
 
 git show --stat --oneline --name-status HEAD
 8ff61c6 Keep dropped frames out of M01 speed estimate
+M	simulator/algos/speed_frame/m01_fixed_window.py
+M	tests/test_speed_frame_m01.py
+```
+
+Third fresh no-context review on 2026-07-07:
+
+- Reviewer 1 result: FAIL.
+- Reviewer 2 result: FAIL.
+- Real problem: M01 still added a bootstrap `0.0` sample to `velocity_samples` on the first observation, so `velocity_valid_update_count` was `1.0` at step 0 before any valid updated delta existed.
+- Decision: fix M01 again before any final completion claim.
+
+Project fix after third review:
+
+- Commit: `d061ad1 Do not bootstrap M01 speed window`.
+- `simulator/algos/speed_frame/m01_fixed_window.py`: the first observation no longer appends `0.0` to `velocity_samples`.
+- `tests/test_speed_frame_m01.py`: added `test_first_observation_does_not_update_speed_window`.
+
+Repair checks after no-bootstrap fix:
+
+```text
+python -m tools.algo_contract_check
+```
+
+Result: passed.
+
+```text
+python -m unittest tests.test_speed_frame_m01 -v
+```
+
+Result: 5 tests passed.
+
+```text
+python -m unittest discover -s tests -v
+```
+
+Result: 23 tests passed.
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Repair run paths:
+
+- `sleep`: `/home/yguo173/Programs/game/fps/fps_mock/exp/sleep_seed42_20260707_163651_pid2019353_BE-HYE30LAB-02`
+- `a2`: `/home/yguo173/Programs/game/fps/fps_mock/exp/a2_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`
+- `a4`: `/home/yguo173/Programs/game/fps/fps_mock/exp/a4_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`
+- `c1`: `/home/yguo173/Programs/game/fps/fps_mock/exp/c1_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`
+- `m01`: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`
+
+Result: M01 still beats A2 after the no-bootstrap fix. M01 `median_abs_e=27.680817196046235`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.5070398240764`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`; M01 `p99_wall_time_ns=2838.0000000000055`.
+
+Step-0 diagnostic after no-bootstrap fix:
+
+- `velocity_valid_update_count=0.0`.
+- `velocity_estimate=0.0`.
+- `unchanged_frame_count=0.0`.
+- `suspected_dropped_frame_count=0.0`.
+
+Project checkpoint evidence after no-bootstrap fix:
+
+```text
+git status --short
+?? prompt_for_supervisor.md
+?? prompt_for_supervisor_goal.md
+?? report/fast_cfg_report.md
+
+git log -1 --oneline
+d061ad1 Do not bootstrap M01 speed window
+
+git show --stat --oneline --name-status HEAD
+d061ad1 Do not bootstrap M01 speed window
 M	simulator/algos/speed_frame/m01_fixed_window.py
 M	tests/test_speed_frame_m01.py
 ```

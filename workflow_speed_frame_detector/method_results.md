@@ -238,4 +238,62 @@ Offline `t_frame` update cross-check:
 | new_t_frame | updated | 16 |
 | same_t_frame | unchanged | 173 |
 
-Additional diagnostic: command clipping happened twice. Compute time remained inside the 5 ms budget. M01 still beat A2 after enforcing the valid-updates-only speed-learning rule.
+Additional diagnostic: command clipping happened twice. Compute time remained inside the 5 ms budget. M01 still beat A2 after enforcing the valid-updates-only speed-learning rule. Later fresh no-context review found one remaining valid-updates-only issue: the first observation still inserted a bootstrap `0.0` sample before any frame delta existed. That issue is repaired in the no-bootstrap section below.
+
+### M01 repair - no-bootstrap speed window after fresh review on 2026-07-07
+
+Fresh no-context review found that the first observation appended `0.0` into `velocity_samples` before any observation had been classified as a real update. That polluted `velocity_valid_update_count` at step 0. The implementation was repaired so the first observation initializes `prev_x` and command diagnostics but does not update the speed window.
+
+Project repair commit: `d061ad1 Do not bootstrap M01 speed window`.
+
+Run path: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_163652_pid2019353_BE-HYE30LAB-02`
+
+Comparison command:
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Comparison metrics from `summary.json`:
+
+| algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
+|---|---:|---:|---|---:|---:|
+| sleep | 60.00000000000003 | 60.0 | false | 102.1923076923077 | 503.0 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 381.72103004291847 | 1623.6400000000003 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1293.3218884120172 | 2878.3200000000043 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 157.07725321888412 | 554.3600000000022 |
+| m01 | 27.680817196046235 | 27.5070398240764 | false | 1024.901287553648 | 2838.0000000000055 |
+
+M01 no-bootstrap diagnostic metrics:
+
+| metric | value |
+|---|---:|
+| velocity_estimate_mean | -0.5771777289462595 |
+| velocity_estimate_p50 | -0.2212126511466977 |
+| velocity_estimate_p90 | 1.9876592749606488 |
+| velocity_valid_update_count | 5.0 |
+| unchanged_frame_count | 180.0 |
+| handled_unchanged_frame_count | 180.0 |
+| suspected_dropped_frame_count | 36.0 |
+
+Step-0 diagnostic check:
+
+| field | value |
+|---|---:|
+| velocity_estimate | 0.0 |
+| velocity_valid_update_count | 0.0 |
+| unchanged_frame_count | 0.0 |
+| suspected_dropped_frame_count | 0.0 |
+| predicted_frame_update_state_code | 0.0 |
+
+Offline `t_frame` update cross-check:
+
+| `t_frame` relation | predicted_frame_update_state | count |
+|---|---|---:|
+| first | updated | 1 |
+| new_t_frame | dropped_suspected | 36 |
+| new_t_frame | unchanged | 7 |
+| new_t_frame | updated | 16 |
+| same_t_frame | unchanged | 173 |
+
+Additional diagnostic: command clipping happened twice. Compute time remained inside the 5 ms budget. M01 still beat A2 after removing the bootstrap speed-window sample.
