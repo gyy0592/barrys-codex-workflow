@@ -143,3 +143,51 @@ Offline `t_frame` update cross-check:
 | same_t_frame | unchanged | 173 |
 
 Conclusion: the current worktree still proves the repaired M01 beats A2, stays under the 5 ms compute budget, records speed and frame-update diagnostics, and has no new evidence-supported M01 repair.
+
+### M01 repair - compensated-motion fix after fresh review on 2026-07-07
+
+Fresh no-context review found that M01 used raw motion for unchanged classification, while `method_list.md` requires compensated motion. The implementation was repaired so unchanged classification uses the smallest local compensated-motion candidate.
+
+Run path: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_161329_pid1963084_BE-HYE30LAB-02`
+
+Comparison command:
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Comparison metrics from `summary.json`:
+
+| algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
+|---|---:|---:|---|---:|---:|
+| sleep | 60.00000000000003 | 60.0 | false | 102.34615384615384 | 490.25 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 332.53648068669526 | 1323.8800000000012 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1168.8068669527897 | 2782.720000000004 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 158.30042918454936 | 655.6000000000031 |
+| m01 | 24.000517593953077 | 21.720944919122644 | false | 1076.3562231759656 | 3284.960000000006 |
+
+M01 compensated-motion diagnostic metrics:
+
+| metric | value |
+|---|---:|
+| velocity_estimate_mean | 1.6373454801114917 |
+| velocity_estimate_p50 | 0.7758525406833996 |
+| velocity_estimate_p90 | 13.143091844130117 |
+| velocity_valid_update_count | 5.0 |
+| unchanged_frame_count | 174.0 |
+| handled_unchanged_frame_count | 174.0 |
+| suspected_dropped_frame_count | 23.0 |
+
+Offline `t_frame` update cross-check:
+
+| `t_frame` relation | predicted_frame_update_state | count |
+|---|---|---:|
+| first | updated | 1 |
+| new_t_frame | dropped_suspected | 23 |
+| new_t_frame | unchanged | 1 |
+| new_t_frame | updated | 35 |
+| same_t_frame | unchanged | 173 |
+
+Additional diagnostic: command clipping happened once, so command limit is not the remaining bottleneck.
+
+Conclusion: after the compensated-motion fix required by fresh review, M01 still beats A2, stays inside the 5 ms budget, records required diagnostics, and no new evidence-supported M01 repair remains.

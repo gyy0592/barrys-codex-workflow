@@ -10,9 +10,9 @@ Best method by `median_abs_e`: M01 repair, `median_abs_e=24.000517593953077`.
 
 Best method by `final_quarter_median`: M01 repair, `final_quarter_median=21.720944919122644`.
 
-M01 repair current-code audit run path:
+M01 repair compensated-motion audit run path:
 
-`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_160118_pid1940734_BE-HYE30LAB-02`
+`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_161329_pid1963084_BE-HYE30LAB-02`
 
 Required comparison command:
 
@@ -24,11 +24,11 @@ Comparison result:
 
 | algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
 |---|---:|---:|---|---:|---:|
-| sleep | 60.00000000000003 | 60.0 | false | 111.23076923076923 | 422.5 |
-| a2 | 38.18579621000873 | 36.45623357509305 | false | 365.0386266094421 | 1883.8800000000042 |
-| a4 | 46.619232307654215 | 45.80179802610053 | false | 1173.1330472103004 | 5050.400000000021 |
-| c1 | 54.42964595780069 | 54.319352835616655 | false | 145.76394849785407 | 554.6800000000019 |
-| m01 | 24.000517593953077 | 21.720944919122644 | false | 858.4849785407725 | 2404.400000000002 |
+| sleep | 60.00000000000003 | 60.0 | false | 102.34615384615384 | 490.25 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 332.53648068669526 | 1323.8800000000012 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1168.8068669527897 | 2782.720000000004 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 158.30042918454936 | 655.6000000000031 |
+| m01 | 24.000517593953077 | 21.720944919122644 | false | 1076.3562231759656 | 3284.960000000006 |
 
 ## Stability And Budget
 
@@ -38,7 +38,7 @@ Evidence: `diverged=false`, `median_abs_e=24.000517593953077`, and `final_quarte
 
 Compute budget: M01 repair is inside the 5 ms budget.
 
-Evidence: current-code audit recorded `p99_wall_time_ns=2404.400000000002`, which is far below 5,000,000 ns.
+Evidence: compensated-motion audit recorded `p99_wall_time_ns=3284.960000000006`, which is far below 5,000,000 ns.
 
 Check scope: This proves the recorded seed-42 comparison run only. It does not prove every possible random seed.
 
@@ -139,6 +139,13 @@ python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
 ```
 
 Result: passed. M01 `median_abs_e=24.000517593953077`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=21.720944919122644`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
+
+Fresh no-context review correction on 2026-07-07:
+
+- Review result: FAIL, because M01 used raw motion instead of compensated motion for unchanged classification and audit commits lacked required git evidence.
+- Fix: M01 now classifies unchanged through compensated motion candidates, and focused tests verify compensated-motion classification.
+- Repair run: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_161329_pid1963084_BE-HYE30LAB-02`.
+- Result: M01 still beats A2 after the fix. M01 `median_abs_e=24.000517593953077`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=21.720944919122644`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
 
 ## Final Conclusion
 
