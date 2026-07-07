@@ -70,6 +70,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 ## Spec Execution Rule
 
 - If the task uses specs or task steps, execute one spec at a time, in the order written in the active specs file.
+- Each spec's `source_discovery.md` is per-spec evidence, so do not treat source discovery as its own separate spec unless the user explicitly asks for that.
 - The supervisor must always know which spec is current.
 - For the current spec, require source discovery, a short high-level abstract plan, implementation, evidence, status update, fresh no-context Codex subagent review of the current `git diff` using `gpt5.4 high`, and checkpoint commit before moving on.
 - The controlled Codex must not work on a later spec before the current spec passes all required evidence and review files.

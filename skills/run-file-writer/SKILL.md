@@ -1,6 +1,6 @@
 ---
 name: run-file-writer
-description: "Create final run files for a supervised Codex tmux workflow before execution. Use when Codex must write or update control/goal.md, control/constraint.md, workflow_<id>/run_goal.md, workflow_<id>/specs.md, per-spec evidence templates, or supervisor prompt files, and then stop before starting the controlled Codex."
+description: "Create final run files for a supervised Codex tmux workflow before execution. Use when Codex must write or update control/goal.md, control/constraint.md, workflow ID run_goal.md, workflow ID specs.md, per-spec evidence templates, or supervisor prompt files, and then stop before starting the controlled Codex."
 ---
 
 # Run File Writer
@@ -11,7 +11,7 @@ Run files are durable task files read later by the supervisor or executor. The t
 
 ## Workflow
 
-1. Read the user's task and task material.
+1. Read the user's task and task material. For a supervised tmux workflow, read the `tmux-codex-supervisor` skill before designing run files.
 2. Create missing executor templates and rebuild supervisor prompt files with:
 
 ```bash
@@ -34,6 +34,7 @@ __RUN_FILE_WRITER_ROOT__/scripts/init_run_templates.sh <task-directory> <workflo
 ## Required Rules
 
 - Do not encode user-review, user-choice, or user-approval gates in durable run files.
+- For supervised tmux run-file creation, `workflow_<workflow id>/prompt_for_supervisor.md` and `workflow_<workflow id>/prompt_for_supervisor_goal.md` are required run files. Do not report completion until both exist, are edited for the workflow id, and contain no `<...>` placeholders.
 - Do not write `blocked`, `BLOCKED`, or `Current Blocker` into executor run files. Executor failures are correction issues with next actions.
 - If the user already specified a method, tool, function, setting, output, metric, or constraint, write it directly into goal/specs. Do not turn it into an undecided choice.
 - A spec is not complete if the executor changes, weakens, bypasses, replaces, or reinterprets any user-required method, tool, function, metric, output, or constraint. Difficulty, repeated failed attempts, slower speed, missing adapter code, or implementation complexity does not prove the user requirement is wrong.
