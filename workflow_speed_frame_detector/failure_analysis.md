@@ -53,3 +53,57 @@ Remaining diagnostics:
 - Command clipping did not explain the remaining error: one command hit the limit.
 
 Stop reason for M01: no meaningful remaining repair is supported inside M01. Gain above 1.1 improved some final-quarter values but worsened the main median metric or increased dropped-suspected counts; unchanged classification had only one new-frame unchanged case in the offline check; compute time and command clipping were not limiting factors.
+
+## M01 - Fresh Review Valid-Updates-Only Failure
+
+Program affected: `/home/yguo173/Programs/game/fps/fps_mock/simulator/algos/speed_frame/m01_fixed_window.py`.
+
+Expected behavior: M01 must update the speed estimate only from observations classified as valid updated frames.
+
+Actual behavior found by fresh no-context review: M01 counted `dropped_suspected` observations but still appended their compensated deltas to `velocity_samples`. That meant suspected dropped-frame samples could change `velocity_estimate`.
+
+Metric or check that proved failure: code review of `m01_fixed_window.py` showed `self.velocity_samples.append(compensated_delta)` ran after the `dropped_suspected` branch instead of only in the `updated` branch.
+
+Cause category: dropped-frame handling corrupted speed estimation. The algorithm treated suspected dropped-frame observations as non-unchanged for command output, but it also used them as speed-learning samples, which violated the valid-updates-only requirement.
+
+Smallest supported repair: move the `velocity_samples.append(compensated_delta)` call into the `updated` branch and add a focused test proving a `dropped_suspected` observation does not increase `velocity_valid_update_count`.
+
+Repair commit: `8ff61c6 Keep dropped frames out of M01 speed estimate`.
+
+Repair checks:
+
+```text
+python -m tools.algo_contract_check
+```
+
+Result: passed.
+
+```text
+python -m unittest tests.test_speed_frame_m01 -v
+```
+
+Result: 4 tests passed.
+
+```text
+python -m unittest discover -s tests -v
+```
+
+Result: 22 tests passed.
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Result: M01 still beats A2 after the valid-updates-only repair. M01 `median_abs_e=27.52582626861647`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.52582626861647`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`; M01 `p99_wall_time_ns=2846.280000000006`.
+
+Remaining diagnostics after repair:
+
+- Speed estimate stayed bounded: mean `-0.7615236886229239`, p50 `-0.22294457794748723`, p90 `1.4229387596586434`.
+- Valid update window was full at the final step: `velocity_valid_update_count=5.0`.
+- Unchanged handling was active: `unchanged_frame_count=180.0`, `handled_unchanged_frame_count=180.0`.
+- Dropped suspicion increased to `suspected_dropped_frame_count=36.0`, but those samples no longer update the speed window.
+- Offline `t_frame` cross-check found `new_t_frame:dropped_suspected=36`, `new_t_frame:unchanged=7`, `new_t_frame:updated=16`, and `same_t_frame:unchanged=173`.
+- Compute time was inside budget: `p99_wall_time_ns=2846.280000000006`.
+- Command clipping happened twice, so clipping is not the dominant remaining bottleneck.
+
+Current M01 stop evidence: after the valid-updates-only repair, M01 still beats A2 and stays inside the compute budget. The workflow still requires two fresh no-context PASS reviews and a workflow evidence checkpoint before final completion can be claimed.

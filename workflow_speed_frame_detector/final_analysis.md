@@ -1,18 +1,18 @@
 # Final Analysis
 
-## Stop Rule Result
+## Stop Rule Status
 
-The workflow can stop under stop rule 1: M01 beats `a2`, remaining visible speed-detection problems were inspected, repairs supported by evidence were tried, and no meaningful remaining M01 repair is supported by the recorded diagnostics.
+Algorithm evidence currently supports stop rule 1 because the latest valid-updates-only M01 still beats `a2`, does not diverge, stays inside the compute budget, and records the required diagnostics. Workflow completion is not yet closed because two fresh no-context PASS reviews of the latest repaired state and a workflow evidence checkpoint are still required.
 
 ## Best Method
 
-Best method by `median_abs_e`: M01 repair, `median_abs_e=24.000517593953077`.
+Best method by `median_abs_e`: M01 compensated-motion repair, `median_abs_e=24.000517593953077`.
 
-Best method by `final_quarter_median`: M01 repair, `final_quarter_median=21.720944919122644`.
+Best method by `final_quarter_median`: M01 compensated-motion repair, `final_quarter_median=21.720944919122644`.
 
-M01 repair compensated-motion audit run path:
+Latest valid-updates-only M01 audit run path:
 
-`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_161329_pid1963084_BE-HYE30LAB-02`
+`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`
 
 Required comparison command:
 
@@ -24,21 +24,21 @@ Comparison result:
 
 | algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
 |---|---:|---:|---|---:|---:|
-| sleep | 60.00000000000003 | 60.0 | false | 102.34615384615384 | 490.25 |
-| a2 | 38.18579621000873 | 36.45623357509305 | false | 332.53648068669526 | 1323.8800000000012 |
-| a4 | 46.619232307654215 | 45.80179802610053 | false | 1168.8068669527897 | 2782.720000000004 |
-| c1 | 54.42964595780069 | 54.319352835616655 | false | 158.30042918454936 | 655.6000000000031 |
-| m01 | 24.000517593953077 | 21.720944919122644 | false | 1076.3562231759656 | 3284.960000000006 |
+| sleep | 60.00000000000003 | 60.0 | false | 97.1923076923077 | 434.75 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 351.83690987124464 | 1278.6800000000007 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1202.2789699570815 | 3769.520000000003 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 149.31330472103005 | 523.3600000000021 |
+| m01 | 27.52582626861647 | 27.52582626861647 | false | 977.2789699570816 | 2846.280000000006 |
 
 ## Stability And Budget
 
 Conclusion: M01 repair is stable in the required comparison run.
 
-Evidence: `diverged=false`, `median_abs_e=24.000517593953077`, and `final_quarter_median=21.720944919122644`.
+Evidence: `diverged=false`, `median_abs_e=27.52582626861647`, and `final_quarter_median=27.52582626861647`.
 
 Compute budget: M01 repair is inside the 5 ms budget.
 
-Evidence: compensated-motion audit recorded `p99_wall_time_ns=3284.960000000006`, which is far below 5,000,000 ns.
+Evidence: valid-updates-only audit recorded `p99_wall_time_ns=2846.280000000006`, which is far below 5,000,000 ns.
 
 Check scope: This proves the recorded seed-42 comparison run only. It does not prove every possible random seed.
 
@@ -46,15 +46,15 @@ Check scope: This proves the recorded seed-42 comparison run only. It does not p
 
 Speed estimate error: bounded and not the current stop blocker.
 
-Evidence: M01 repair recorded `velocity_estimate_mean=1.6373454801114917`, `velocity_estimate_p50=0.7758525406833996`, and `velocity_estimate_p90=13.143091844130117`.
+Evidence: valid-updates-only M01 recorded `velocity_estimate_mean=-0.7615236886229239`, `velocity_estimate_p50=-0.22294457794748723`, and `velocity_estimate_p90=1.4229387596586434`.
 
 Unchanged-frame misclassification: not a meaningful remaining blocker.
 
-Evidence: offline `t_frame` check found `same_t_frame:unchanged=173`, `same_t_frame:updated=1`, `new_t_frame:unchanged=1`, `new_t_frame:updated=35`, and `new_t_frame:dropped_suspected=23`.
+Evidence: offline `t_frame` check found `same_t_frame:unchanged=173`, `new_t_frame:unchanged=7`, `new_t_frame:updated=16`, and `new_t_frame:dropped_suspected=36`.
 
 Dropped-frame handling: present, but not a stop blocker.
 
-Evidence: M01 repair recorded `suspected_dropped_frame_count=23.0`; despite those cases, M01 beat A2 and did not diverge.
+Evidence: valid-updates-only M01 recorded `suspected_dropped_frame_count=36.0`; those samples no longer update the speed window, and M01 still beat A2 and did not diverge.
 
 Response delay: not a stop blocker.
 
@@ -62,7 +62,7 @@ Evidence: M01 uses `post_command_sleep_s=0.0`, and the required comparison shows
 
 Command instability: not a stop blocker.
 
-Evidence: M01 repair did not diverge; command clipping was hit once in 233 iterations.
+Evidence: valid-updates-only M01 did not diverge; command clipping was hit twice in 233 iterations.
 
 ## Repairs Tried
 
@@ -147,6 +147,15 @@ Fresh no-context review correction on 2026-07-07:
 - Repair run: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_161329_pid1963084_BE-HYE30LAB-02`.
 - Result: M01 still beats A2 after the fix. M01 `median_abs_e=24.000517593953077`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=21.720944919122644`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
 
+Second fresh no-context review correction on 2026-07-07:
+
+- Review result: FAIL, because M01 still appended `dropped_suspected` samples to the speed window.
+- Fix commit: `8ff61c6 Keep dropped frames out of M01 speed estimate`.
+- Fix: M01 now counts `dropped_suspected` observations without adding them to `velocity_samples`, and the focused test verifies this rule.
+- Repair run: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`.
+- Result: M01 still beats A2 after the fix. M01 `median_abs_e=27.52582626861647`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.52582626861647`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
+- Remaining gate: two fresh no-context PASS reviews of this repaired state and a workflow evidence checkpoint are still required before final completion can be claimed.
+
 ## Final Conclusion
 
-The speed-detection and frame-update approach is proved useful by M01 repair in the required comparison. Because M01 already beats A2 and the remaining diagnostics do not support a meaningful same-method repair, the workflow stops after M01 instead of continuing to M02.
+The speed-detection and frame-update approach is still proved useful by M01 in the required comparison. Because the second fresh review found a real M01 bug and that bug has now been repaired, this file does not yet close the workflow. The next required step is two fresh no-context PASS reviews of the latest repaired state, followed by a workflow evidence checkpoint.

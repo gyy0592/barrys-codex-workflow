@@ -2,7 +2,7 @@
 
 Current spec: `spec_04_final_analysis.md`.
 
-Status: correction in progress after fresh no-context review found real problems. M01 has been repaired to use compensated motion for unchanged classification and rerun evidence shows it still beats A2.
+Status: correction in progress after two fresh no-context reviews found real problems. M01 has been repaired to use compensated motion for unchanged classification and to keep suspected dropped-frame samples out of the speed estimate. Latest rerun evidence shows M01 still beats A2. Next required action: run two fresh no-context PASS reviews on the latest repaired state, then create a workflow evidence checkpoint.
 
 Evidence written:
 
@@ -191,3 +191,68 @@ Repair run paths:
 - `m01`: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_161329_pid1963084_BE-HYE30LAB-02`
 
 Result: M01 still beats A2 after the compensated-motion fix. M01 `median_abs_e=24.000517593953077`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=21.720944919122644`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`; M01 `p99_wall_time_ns=3284.960000000006`.
+
+Second fresh no-context review on 2026-07-07:
+
+- Reviewer 1 result: FAIL.
+- Real problem: workflow evidence was not closed after the compensated-motion repair. The repair had not passed two fresh no-context PASS reviews and `status.md` still said correction was in progress.
+- Reviewer 2 result: FAIL.
+- Real problem: M01 still updated speed from `dropped_suspected` samples, violating the valid-updated-observations-only requirement.
+- Decision: fix M01 again before any final completion claim.
+
+Project fix after second review:
+
+- Commit: `8ff61c6 Keep dropped frames out of M01 speed estimate`.
+- `simulator/algos/speed_frame/m01_fixed_window.py`: `dropped_suspected` observations are counted but are no longer appended to `velocity_samples`.
+- `tests/test_speed_frame_m01.py`: added `test_dropped_suspected_does_not_update_speed_window`.
+
+Repair checks after valid-updates-only fix:
+
+```text
+python -m tools.algo_contract_check
+```
+
+Result: passed.
+
+```text
+python -m unittest tests.test_speed_frame_m01 -v
+```
+
+Result: 4 tests passed.
+
+```text
+python -m unittest discover -s tests -v
+```
+
+Result: 22 tests passed.
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Repair run paths:
+
+- `sleep`: `/home/yguo173/Programs/game/fps/fps_mock/exp/sleep_seed42_20260707_162821_pid1999374_BE-HYE30LAB-02`
+- `a2`: `/home/yguo173/Programs/game/fps/fps_mock/exp/a2_seed42_20260707_162821_pid1999374_BE-HYE30LAB-02`
+- `a4`: `/home/yguo173/Programs/game/fps/fps_mock/exp/a4_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`
+- `c1`: `/home/yguo173/Programs/game/fps/fps_mock/exp/c1_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`
+- `m01`: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`
+
+Result: M01 still beats A2 after the valid-updates-only fix. M01 `median_abs_e=27.52582626861647`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.52582626861647`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`; M01 `p99_wall_time_ns=2846.280000000006`.
+
+Project checkpoint evidence after valid-updates-only fix:
+
+```text
+git status --short
+?? prompt_for_supervisor.md
+?? prompt_for_supervisor_goal.md
+?? report/fast_cfg_report.md
+
+git log -1 --oneline
+8ff61c6 Keep dropped frames out of M01 speed estimate
+
+git show --stat --oneline --name-status HEAD
+8ff61c6 Keep dropped frames out of M01 speed estimate
+M	simulator/algos/speed_frame/m01_fixed_window.py
+M	tests/test_speed_frame_m01.py
+```

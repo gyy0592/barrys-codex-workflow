@@ -191,3 +191,51 @@ Offline `t_frame` update cross-check:
 Additional diagnostic: command clipping happened once, so command limit is not the remaining bottleneck.
 
 Conclusion: after the compensated-motion fix required by fresh review, M01 still beats A2, stays inside the 5 ms budget, records required diagnostics, and no new evidence-supported M01 repair remains.
+
+### M01 repair - valid-updates-only speed learning after fresh review on 2026-07-07
+
+Fresh no-context review found that M01 still appended `dropped_suspected` compensated deltas into the speed window. That violated the requirement that speed be updated only from valid updated observations. The implementation was repaired so `dropped_suspected` observations are counted but not inserted into `velocity_samples`.
+
+Project repair commit: `8ff61c6 Keep dropped frames out of M01 speed estimate`.
+
+Run path: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_162822_pid1999374_BE-HYE30LAB-02`
+
+Comparison command:
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Comparison metrics from `summary.json`:
+
+| algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
+|---|---:|---:|---|---:|---:|
+| sleep | 60.00000000000003 | 60.0 | false | 97.1923076923077 | 434.75 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 351.83690987124464 | 1278.6800000000007 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1202.2789699570815 | 3769.520000000003 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 149.31330472103005 | 523.3600000000021 |
+| m01 | 27.52582626861647 | 27.52582626861647 | false | 977.2789699570816 | 2846.280000000006 |
+
+M01 valid-updates-only diagnostic metrics:
+
+| metric | value |
+|---|---:|
+| velocity_estimate_mean | -0.7615236886229239 |
+| velocity_estimate_p50 | -0.22294457794748723 |
+| velocity_estimate_p90 | 1.4229387596586434 |
+| velocity_valid_update_count | 5.0 |
+| unchanged_frame_count | 180.0 |
+| handled_unchanged_frame_count | 180.0 |
+| suspected_dropped_frame_count | 36.0 |
+
+Offline `t_frame` update cross-check:
+
+| `t_frame` relation | predicted_frame_update_state | count |
+|---|---|---:|
+| first | updated | 1 |
+| new_t_frame | dropped_suspected | 36 |
+| new_t_frame | unchanged | 7 |
+| new_t_frame | updated | 16 |
+| same_t_frame | unchanged | 173 |
+
+Additional diagnostic: command clipping happened twice. Compute time remained inside the 5 ms budget. M01 still beat A2 after enforcing the valid-updates-only speed-learning rule.
