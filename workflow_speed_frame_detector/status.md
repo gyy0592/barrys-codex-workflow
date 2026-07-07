@@ -2,7 +2,7 @@
 
 Current spec: `spec_04_final_analysis.md`.
 
-Status: final analysis written; M01 repaired and beats A2; diagnostics show no meaningful remaining M01 repair supported by evidence.
+Status: final analysis written; M01 repaired and beats A2 in the original recorded run and in a current-code audit on 2026-07-07; diagnostics show no meaningful remaining M01 repair supported by evidence.
 
 Evidence written:
 
@@ -114,3 +114,37 @@ M	workflow_speed_frame_detector/method_results.csv
 A	workflow_speed_frame_detector/method_results.md
 M	workflow_speed_frame_detector/status.md
 ```
+
+Current-code audit on 2026-07-07:
+
+```text
+python -m tools.algo_contract_check
+```
+
+Result: passed.
+
+```text
+python -m unittest tests.test_speed_frame_m01 -v
+```
+
+Result: 2 tests passed.
+
+```text
+python -m unittest discover -s tests -v
+```
+
+Result: 20 tests passed.
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Current run paths:
+
+- `sleep`: `/home/yguo173/Programs/game/fps/fps_mock/exp/sleep_seed42_20260707_160117_pid1940734_BE-HYE30LAB-02`
+- `a2`: `/home/yguo173/Programs/game/fps/fps_mock/exp/a2_seed42_20260707_160117_pid1940734_BE-HYE30LAB-02`
+- `a4`: `/home/yguo173/Programs/game/fps/fps_mock/exp/a4_seed42_20260707_160117_pid1940734_BE-HYE30LAB-02`
+- `c1`: `/home/yguo173/Programs/game/fps/fps_mock/exp/c1_seed42_20260707_160117_pid1940734_BE-HYE30LAB-02`
+- `m01`: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_160118_pid1940734_BE-HYE30LAB-02`
+
+Result: M01 still beats A2. M01 `median_abs_e=24.000517593953077`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=21.720944919122644`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`; M01 `p99_wall_time_ns=2404.400000000002`.

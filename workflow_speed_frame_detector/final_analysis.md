@@ -10,9 +10,9 @@ Best method by `median_abs_e`: M01 repair, `median_abs_e=24.000517593953077`.
 
 Best method by `final_quarter_median`: M01 repair, `final_quarter_median=21.720944919122644`.
 
-M01 repair run path:
+M01 repair current-code audit run path:
 
-`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260623_154804_pid495346_BE-HYE30LAB-02`
+`/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_160118_pid1940734_BE-HYE30LAB-02`
 
 Required comparison command:
 
@@ -24,11 +24,11 @@ Comparison result:
 
 | algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
 |---|---:|---:|---|---:|---:|
-| sleep | 60.00000000000003 | 60.0 | false | 104.0 | 519.5 |
-| a2 | 38.18579621000873 | 36.45623357509305 | false | 354.83690987124464 | 1409.6800000000003 |
-| a4 | 46.619232307654215 | 45.80179802610053 | false | 1199.901287553648 | 3479.7200000000025 |
-| c1 | 54.42964595780069 | 54.319352835616655 | false | 167.27467811158797 | 566.1200000000023 |
-| m01 | 24.000517593953077 | 21.720944919122644 | false | 886.7768240343347 | 2424.920000000001 |
+| sleep | 60.00000000000003 | 60.0 | false | 111.23076923076923 | 422.5 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 365.0386266094421 | 1883.8800000000042 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1173.1330472103004 | 5050.400000000021 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 145.76394849785407 | 554.6800000000019 |
+| m01 | 24.000517593953077 | 21.720944919122644 | false | 858.4849785407725 | 2404.400000000002 |
 
 ## Stability And Budget
 
@@ -38,7 +38,7 @@ Evidence: `diverged=false`, `median_abs_e=24.000517593953077`, and `final_quarte
 
 Compute budget: M01 repair is inside the 5 ms budget.
 
-Evidence: `p99_wall_time_ns=2424.920000000001`, which is far below 5,000,000 ns.
+Evidence: current-code audit recorded `p99_wall_time_ns=2404.400000000002`, which is far below 5,000,000 ns.
 
 Check scope: This proves the recorded seed-42 comparison run only. It does not prove every possible random seed.
 
@@ -131,6 +131,14 @@ python -m unittest discover -s tests -v
 ```
 
 Result: 20 tests passed.
+
+Current-code audit on 2026-07-07:
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Result: passed. M01 `median_abs_e=24.000517593953077`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=21.720944919122644`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
 
 ## Final Conclusion
 

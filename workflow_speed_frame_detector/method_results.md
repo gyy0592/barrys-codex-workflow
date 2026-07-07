@@ -99,3 +99,47 @@ Repair evidence:
 - Command limit was hit once, so command clipping is not the remaining bottleneck.
 
 Conclusion: no meaningful remaining M01 repair is supported by this evidence.
+
+### M01 repair - current-code audit on 2026-07-07
+
+Run path: `/home/yguo173/Programs/game/fps/fps_mock/exp/m01_seed42_20260707_160118_pid1940734_BE-HYE30LAB-02`
+
+Comparison command:
+
+```text
+python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
+```
+
+Comparison metrics from `summary.json`:
+
+| algo | median_abs_e | final_quarter_median | diverged | mean_wall_time_ns | p99_wall_time_ns |
+|---|---:|---:|---|---:|---:|
+| sleep | 60.00000000000003 | 60.0 | false | 111.23076923076923 | 422.5 |
+| a2 | 38.18579621000873 | 36.45623357509305 | false | 365.0386266094421 | 1883.8800000000042 |
+| a4 | 46.619232307654215 | 45.80179802610053 | false | 1173.1330472103004 | 5050.400000000021 |
+| c1 | 54.42964595780069 | 54.319352835616655 | false | 145.76394849785407 | 554.6800000000019 |
+| m01 | 24.000517593953077 | 21.720944919122644 | false | 858.4849785407725 | 2404.400000000002 |
+
+M01 current-code diagnostic metrics:
+
+| metric | value |
+|---|---:|
+| velocity_estimate_mean | 1.6373454801114917 |
+| velocity_estimate_p50 | 0.7758525406833996 |
+| velocity_estimate_p90 | 13.143091844130117 |
+| velocity_valid_update_count | 5.0 |
+| unchanged_frame_count | 174.0 |
+| handled_unchanged_frame_count | 174.0 |
+| suspected_dropped_frame_count | 23.0 |
+
+Offline `t_frame` update cross-check:
+
+| `t_frame` relation | predicted_frame_update_state | count |
+|---|---|---:|
+| first | updated | 1 |
+| new_t_frame | dropped_suspected | 23 |
+| new_t_frame | unchanged | 1 |
+| new_t_frame | updated | 35 |
+| same_t_frame | unchanged | 173 |
+
+Conclusion: the current worktree still proves the repaired M01 beats A2, stays under the 5 ms compute budget, records speed and frame-update diagnostics, and has no new evidence-supported M01 repair.
