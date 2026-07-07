@@ -78,6 +78,8 @@ grep -F 'requirement_dialogue.md' "$repo_dir/docs/usage.md" >/dev/null
 grep -F 'Do not start the run.' "$repo_dir/README.md" >/dev/null
 grep -F 'Do not start the run.' "$repo_dir/docs/usage.md" >/dev/null
 grep -F 'Type `/goal`.' "$repo_dir/README.md" >/dev/null
+grep -F 'tmux new -s "<project>-<run_id>-supervisor"' "$repo_dir/README.md" >/dev/null
+grep -F 'tmux new -s "<project>-<workflow id>-supervisor"' "$repo_dir/docs/usage.md" >/dev/null
 grep -F 'Paste the text from `workflow_<run_id>/prompt_for_supervisor_goal.md`.' "$repo_dir/README.md" >/dev/null
 grep -F 'After that, the supervisor runs the workflow. You can leave it running in tmux.' "$repo_dir/README.md" >/dev/null
 grep -F 'Do not write user-review, user-choice, or user-approval gates into durable run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null

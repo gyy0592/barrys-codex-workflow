@@ -69,7 +69,7 @@ Codex 应该生成这些文件：
 
 ```bash
 cd /path/to/your/project
-tmux new -s codex-supervisor -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
+tmux new -s "<project>-<run_id>-supervisor" -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
 ```
 
 在这个 Codex 里：

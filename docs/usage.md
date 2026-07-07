@@ -53,7 +53,7 @@ After writing, report which files you created and whether the run can continue a
 Start a supervisor Codex in the task project:
 
 ```bash
-tmux new -s codex-supervisor -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
+tmux new -s "<project>-<workflow id>-supervisor" -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
 ```
 
 In that Codex:

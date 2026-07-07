@@ -69,7 +69,7 @@ Start a new supervisor Codex from the same task project:
 
 ```bash
 cd /path/to/your/project
-tmux new -s codex-supervisor -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
+tmux new -s "<project>-<run_id>-supervisor" -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
 ```
 
 In that Codex:

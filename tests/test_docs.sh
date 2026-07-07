@@ -24,6 +24,7 @@ for doc in "$repo_dir/README.md" "$repo_dir/docs/usage.md"; do
   require 'prompt_for_supervisor_goal.md' "$doc"
   require 'codex --dangerously-bypass-approvals-and-sandbox' "$doc"
   require 'Do not start the run.' "$doc"
+  reject 'tmux new -s codex-supervisor' "$doc"
 
   reject 'user reviews these files before execution' "$doc"
   reject 'Execute After User Approval' "$doc"
