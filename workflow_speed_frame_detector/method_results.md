@@ -98,7 +98,7 @@ Repair evidence:
 - New-frame unchanged mistakes are low: 1 case in the offline `t_frame` check.
 - Command limit was hit once, so command clipping is not the remaining bottleneck.
 
-Conclusion: no meaningful remaining M01 repair is supported by this evidence.
+Historical conclusion at that time: no meaningful remaining M01 repair was supported by the then-available evidence. Later fresh no-context reviews found additional M01 defects, so this older conclusion is superseded by the later compensated-motion and valid-updates-only repairs below.
 
 ### M01 repair - current-code audit on 2026-07-07
 
@@ -142,7 +142,7 @@ Offline `t_frame` update cross-check:
 | new_t_frame | updated | 35 |
 | same_t_frame | unchanged | 173 |
 
-Conclusion: the current worktree still proves the repaired M01 beats A2, stays under the 5 ms compute budget, records speed and frame-update diagnostics, and has no new evidence-supported M01 repair.
+Historical conclusion at that time: the then-current worktree proved M01 beat A2, stayed under the 5 ms compute budget, and recorded speed and frame-update diagnostics. Later fresh no-context review found an evidence-supported M01 repair, so this older stop conclusion is superseded.
 
 ### M01 repair - compensated-motion fix after fresh review on 2026-07-07
 
@@ -190,7 +190,7 @@ Offline `t_frame` update cross-check:
 
 Additional diagnostic: command clipping happened once, so command limit is not the remaining bottleneck.
 
-Conclusion: after the compensated-motion fix required by fresh review, M01 still beats A2, stays inside the 5 ms budget, records required diagnostics, and no new evidence-supported M01 repair remains.
+Historical conclusion at that time: after the compensated-motion fix, M01 still beat A2, stayed inside the 5 ms budget, and recorded required diagnostics. Later fresh no-context review found that `dropped_suspected` samples still polluted the speed estimate, so this older stop conclusion is superseded by the valid-updates-only repair below.
 
 ### M01 repair - valid-updates-only speed learning after fresh review on 2026-07-07
 

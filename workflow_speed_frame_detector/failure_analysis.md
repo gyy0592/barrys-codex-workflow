@@ -52,7 +52,7 @@ Remaining diagnostics:
 - Compute time was inside budget: `p99_wall_time_ns=2424.920000000001`.
 - Command clipping did not explain the remaining error: one command hit the limit.
 
-Stop reason for M01: no meaningful remaining repair is supported inside M01. Gain above 1.1 improved some final-quarter values but worsened the main median metric or increased dropped-suspected counts; unchanged classification had only one new-frame unchanged case in the offline check; compute time and command clipping were not limiting factors.
+Historical stop reason after the first repair: no meaningful remaining repair was supported inside M01 by the evidence available at that time. Later fresh no-context reviews found two additional M01 repairs: compensated-motion unchanged classification and valid-updates-only speed learning. This older stop reason is therefore superseded.
 
 ## M01 - Fresh Review Valid-Updates-Only Failure
 
