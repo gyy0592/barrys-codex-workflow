@@ -68,15 +68,18 @@ grep -F 'Do not start long training' "$repo_dir/templates/prompt_for_run_prep.md
 grep -F 'These "do not start" and "do not submit" rules apply only to the main Codex during run-file creation.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'They must not be copied into executor runtime files as a ban on executor work.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'the controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
-grep -F 'use the `run-file-writer` skill to write final run files from that conflict-free record' "$repo_dir/README.md" >/dev/null
-grep -F 'The installed workflow skills are `tmux-codex-supervisor`, `run-file-writer`, `workflow-error-transition`, and `monitor-codex-goal`.' "$repo_dir/README.md" >/dev/null
+grep -F '[中文](README.zh.md) | English' "$repo_dir/README.md" >/dev/null
+grep -F '中文 | [English](README.md)' "$repo_dir/README.zh.md" >/dev/null
+grep -F 'Read the tmux-codex-supervisor skill and the run-file-writer skill.' "$repo_dir/README.md" >/dev/null
 grep -F 'Use the run-file-writer skill.' "$repo_dir/README.md" >/dev/null
 grep -F 'Use the run-file-writer skill.' "$repo_dir/docs/usage.md" >/dev/null
 grep -F 'requirement_dialogue.md' "$repo_dir/README.md" >/dev/null
 grep -F 'requirement_dialogue.md' "$repo_dir/docs/usage.md" >/dev/null
-grep -F 'no second execution approval' "$repo_dir/README.md" >/dev/null
-grep -F 'no second execution approval' "$repo_dir/docs/usage.md" >/dev/null
-grep -F 'Future Codex sessions can discover the workflow skills from `~/.codex/skills/`.' "$repo_dir/docs/usage.md" >/dev/null
+grep -F 'Do not start the run.' "$repo_dir/README.md" >/dev/null
+grep -F 'Do not start the run.' "$repo_dir/docs/usage.md" >/dev/null
+grep -F 'Type `/goal`.' "$repo_dir/README.md" >/dev/null
+grep -F 'Paste the text from `workflow_<run_id>/prompt_for_supervisor_goal.md`.' "$repo_dir/README.md" >/dev/null
+grep -F 'After that, the supervisor runs the workflow. You can leave it running in tmux.' "$repo_dir/README.md" >/dev/null
 grep -F 'Do not write user-review, user-choice, or user-approval gates into durable run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Every time Codex asks the user whether the task should be one way or another way' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'ask whether Codex should start writing the run files now' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
