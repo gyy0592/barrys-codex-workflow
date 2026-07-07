@@ -2,7 +2,7 @@
 
 Current spec: `spec_04_final_analysis.md`.
 
-Status: correction in progress after fresh no-context reviews found real M01 problems. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 still beats A2. Next required action: run two fresh no-context PASS reviews on the latest no-bootstrap repaired state, then create a workflow evidence checkpoint.
+Status: correction in progress after fresh no-context reviews found real M01 problems and stale closure evidence. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 still beats A2. Latest review pair found no new M01 code defect, but found stale `final_analysis.md` facts and the still-open review checkpoint gate. Next required action: run two fresh no-context PASS reviews on the latest evidence state, then create a workflow evidence checkpoint.
 
 Evidence written:
 
@@ -327,3 +327,28 @@ d061ad1 Do not bootstrap M01 speed window
 M	simulator/algos/speed_frame/m01_fixed_window.py
 M	tests/test_speed_frame_m01.py
 ```
+
+Fresh review pair after no-bootstrap fix:
+
+- Reviewer 1 result: FAIL as workflow closure, with no new M01 code defect.
+- Reviewer 2 result: FAIL as workflow closure, with no new M01 code defect.
+- Shared finding: algorithmically, M01 now supports stopping after M01 under stop rule 1.
+- Workflow finding: the review results had not yet been recorded, so the review gate was still open.
+- Additional reviewer 2 finding: `final_analysis.md` had stale facts about best method, evidence-file row count, and test count.
+
+Workflow evidence fix after no-bootstrap review pair:
+
+- `final_analysis.md`: now names the no-bootstrap M01 repair as the current non-superseded best method.
+- `final_analysis.md`: now says `method_results.csv` records all M01 repair rows through the no-bootstrap repair.
+- `final_analysis.md`: now says focused test result is 5 tests passed and full suite result is 23 tests passed.
+- `review_no_bootstrap_repair.md`: records both fresh review results and the evidence fix.
+
+Next required checkpoint after this evidence fix:
+
+```text
+git status --short
+git log -1 --oneline
+git show --stat --oneline --name-status HEAD
+```
+
+Then run two fresh no-context reviews on the resulting workflow evidence state.

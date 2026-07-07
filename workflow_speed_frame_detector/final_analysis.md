@@ -6,9 +6,9 @@ Algorithm evidence currently supports stop rule 1 because the latest no-bootstra
 
 ## Best Method
 
-Best method by `median_abs_e`: M01 compensated-motion repair, `median_abs_e=24.000517593953077`.
+Best current non-superseded method by `median_abs_e`: M01 no-bootstrap repair, `median_abs_e=27.680817196046235`.
 
-Best method by `final_quarter_median`: M01 compensated-motion repair, `final_quarter_median=21.720944919122644`.
+Best current non-superseded method by `final_quarter_median`: M01 no-bootstrap repair, `final_quarter_median=27.5070398240764`.
 
 Latest no-bootstrap M01 audit run path:
 
@@ -77,19 +77,22 @@ Repair diagnostics:
 - `gain=1.1` gave the best checked median error before higher checked gains worsened the main median metric or increased dropped-suspected counts.
 - `gain=1.2` and `gain=1.25` improved final-quarter median but worsened overall median and increased dropped-suspected counts, so they were not selected.
 
-Final repair:
+Current final M01 repair:
 
 - M01 default `gain=1.1`.
 - M01 default `pending_window=3`.
+- Compensated-motion unchanged classification is used.
+- `dropped_suspected` samples are not added to the speed window.
+- The first observation does not add a bootstrap speed sample.
 - Required comparison rerun completed and beat A2.
 
 ## Required Evidence Files
 
 - `source_discovery.md`: records local source checks and internet-source discovery.
 - `method_list.md`: records fixed M01 through M10 method list.
-- `method_results.csv`: records initial M01 row and repaired M01 row.
-- `method_results.md`: records commands, run paths, metrics, diagnostics, and repair analysis.
-- `failure_analysis.md`: records why initial M01 failed and why repaired M01 can stop.
+- `method_results.csv`: records the initial M01 row and all M01 repair rows through the no-bootstrap repair.
+- `method_results.md`: records commands, run paths, metrics, diagnostics, superseded historical conclusions, and repair analysis.
+- `failure_analysis.md`: records why initial M01 and later reviewed M01 variants failed, and why the no-bootstrap M01 is the current stop candidate.
 
 ## Internet Evidence Used
 
@@ -114,7 +117,7 @@ Focused test:
 python -m unittest tests.test_speed_frame_m01 -v
 ```
 
-Result: passed.
+Result: 5 tests passed.
 
 Algorithm contract check:
 
@@ -130,15 +133,15 @@ Existing relevant test suite:
 python -m unittest discover -s tests -v
 ```
 
-Result: 20 tests passed.
+Result: 23 tests passed.
 
-Current-code audit on 2026-07-07:
+Current no-bootstrap audit on 2026-07-07:
 
 ```text
 python run_demo.py --algos sleep,a2,a4,c1,m01 --seeds 42 --show 0
 ```
 
-Result: passed. M01 `median_abs_e=24.000517593953077`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=21.720944919122644`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`.
+Result: passed. M01 `median_abs_e=27.680817196046235`; A2 `median_abs_e=38.18579621000873`; M01 `final_quarter_median=27.5070398240764`; A2 `final_quarter_median=36.45623357509305`; M01 `diverged=false`; M01 `p99_wall_time_ns=2838.0000000000055`.
 
 Fresh no-context review correction on 2026-07-07:
 
