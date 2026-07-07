@@ -25,7 +25,8 @@ The controlled Codex must not use this skill. It receives only the short `/goal`
 - The short `/goal` message only points the controlled Codex to the two control files. Those control files may point to the active spec and required evidence files.
 - The main Codex supervises; the controlled Codex executes.
 - Run-file creation writes final run files and checks that they support autonomous execution. It does not start the controlled Codex or long-running task work.
-- Execution starts only after a separate execution request. Do not encode user-review, user-choice, or user-approval gates in durable run files.
+- Execution starts when the user starts the supervisor Codex in tmux and sets `prompt_for_supervisor_goal.md` as its `/goal`. That action is the user's approval to run; do not ask for a second execution approval.
+- Do not encode user-review, user-choice, or user-approval gates in durable run files.
 - A controlled Codex blocked report is an executor-local correction issue, not a supervisor blocked state. Durable run files must avoid `blocked`, `BLOCKED`, and `Current Blocker`; use `needs_correction`, `failed`, or `INSUFFICIENT_INFORMATION` with a next action instead.
 
 ## Skill Router
@@ -33,7 +34,7 @@ The controlled Codex must not use this skill. It receives only the short `/goal`
 Before acting, classify the latest user request and select one helper path:
 
 - Use the `run-file-writer` skill when the user asks to create final run files before execution.
-- Use `start-supervised-run` when the user explicitly asks to start execution and final run files already exist.
+- Use `start-supervised-run` when the supervisor goal is active or when the user explicitly asks to start execution and final run files already exist.
 - Use `monitor-run` when a controlled Codex is already running and the user asks to supervise, continue supervising, check progress, correct drift, or verify completion.
 - Use `persist-user-requirement` when a later user message changes execution permission, correction triggers, required settings, or completion criteria.
 
@@ -46,7 +47,6 @@ Use this helper only after the user explicitly asks to start execution.
 Before starting:
 
 - confirm final run files exist,
-- confirm the `run-file-writer` autonomy review passed, or inspect and fix the run files before execution,
 - checkpoint final run files when they must be preserved,
 - start one controlled Codex in tmux with explicit yolo mode, for example `tmux new-session -d -s <session-name> -c <task-directory> 'codex --dangerously-bypass-approvals-and-sandbox'`,
 - do not start the controlled Codex with bare `codex` or through a shell wrapper; the yolo flag must be in the tmux start command itself,
@@ -54,7 +54,7 @@ Before starting:
 - send only the short `/goal` that points to `control/goal.md` and `control/constraint.md`,
 - send and verify that message through `__WORKFLOW_ROOT__/scripts/inject_steer.sh`.
 
-Do not start execution when the user only asked to create run files, discuss a plan, or review files.
+Do not start execution when the user only asked to create run files, discuss a plan, or review files. When the user has started this supervisor Codex with `prompt_for_supervisor_goal.md` as `/goal`, treat that as execution approval and continue without asking for another approval.
 
 ## Helper: monitor-run
 

@@ -15,7 +15,9 @@ Project root:
 When starting the controlled Codex, send only this short goal message:
 
 ```text
-/goal Read and obey /home/yguo173/Programs/codex_workflow_tmux/control/goal.md and /home/yguo173/Programs/codex_workflow_tmux/control/constraint.md
+/goal
+/home/yguo173/Programs/codex_workflow_tmux/control/goal.md
+/home/yguo173/Programs/codex_workflow_tmux/control/constraint.md
 ```
 
 Do not paste specs, plans, or supervisor-only files into the controlled Codex. The controlled Codex must find workflow files through the control files.

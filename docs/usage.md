@@ -24,70 +24,49 @@ curl -fsSL <raw-install.sh-url> | bash -s -- <repo-url>
 
 `install.sh` requires `git` and `tmux`, warns if the Codex CLI is not available, installs the workflow skills, and verifies the required installed files.
 
-The lower-level installer is still available:
-
-```bash
-~/Programs/codex_workflow_tmux/scripts/install_skill.sh
-```
-
-This creates:
-
-```text
-~/.codex/skills/tmux-codex-supervisor/SKILL.md
-~/.codex/skills/tmux-codex-supervisor/templates/
-~/.codex/skills/tmux-codex-supervisor/scripts/
-~/.codex/skills/run-file-writer/SKILL.md
-~/.codex/skills/run-file-writer/templates/
-~/.codex/skills/run-file-writer/scripts/
-~/.codex/skills/workflow-error-transition/SKILL.md
-~/.codex/skills/monitor-codex-goal/SKILL.md
-```
-
 Future Codex sessions can discover the workflow skills from `~/.codex/skills/`.
 
-## Create Final Run Files Before Execution
+## Clarify Requirements Before Run Files
 
-From the directory where the real task should happen, ask the main Codex to create final run files only:
+From the directory where the real task should happen, ask the main Codex to read the supervisor and run-file-writer skills, clarify the task, and maintain `workflow_<workflow id>/requirement_dialogue.md`.
+
+Every clarification question and answer must be recorded in that file. Before run files are written, Codex must reread the file and check whether later answers replace earlier requirements. If there is a conflict, Codex must ask the user to confirm the replacement or removal before writing run files.
+
+If the user has not already said to start writing run files, Codex must ask whether it should start writing the run files now.
+
+## Create Final Run Files
+
+After the user confirms, ask the main Codex to create final run files only:
 
 ```text
 Use the run-file-writer skill.
 
 The current directory is the task project.
+Use workflow_<workflow id>/requirement_dialogue.md as the source requirement record.
 Generate final run files only.
 Do not start the controlled Codex.
 Do not start long-running work.
-
-My task is: write the real task here.
+Before writing, reread workflow_<workflow id>/requirement_dialogue.md and confirm there are no unresolved conflicts.
+After writing, report the file list and the autonomy checks.
 ```
 
-The `run-file-writer` skill makes the main Codex create `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, `workflow_<workflow id>/specs.md`, per-spec evidence files, and workflow-local supervisor prompt files. It must not start a controlled Codex or long-running work.
+The `run-file-writer` skill makes the main Codex create `control/goal.md`, `control/constraint.md`, `workflow_<workflow id>/run_goal.md`, `workflow_<workflow id>/specs.md`, `workflow_<workflow id>/requirement_dialogue.md`, per-spec evidence files, and workflow-local supervisor prompt files.
 
-Before stopping, the main Codex must run the `run-file-writer` autonomy review. This means it checks that the files used during the long run do not tell Codex to ask the user, wait for user review, wait for user choice, follow stale file names, or depend only on chat history.
+The run files must not include user-review, user-choice, or user-approval gates for execution. The user starting the supervisor goal later is the execution approval.
 
-## Start Execution After Run-File Creation
+## Start Execution
 
-Start execution with a separate user request after final run files exist. This request enters the execution phase. Before starting the controlled Codex, the supervisor Codex may run the final autonomy check and fix run files if needed. This is not user approval and does not ask the user to read the files.
+After final run files exist, the user manually starts the supervisor Codex from the task project:
 
-From the directory where the real task should happen, ask the main Codex to use the supervisor skill:
-
-```text
-Use the tmux-codex-supervisor skill.
-Use ~/Programs/codex_workflow_tmux/templates/prompt_for_supervisor.md.
-
-The current directory is the task project.
-Act as the main Codex:
-1. Confirm the final run files exist.
-2. Confirm the run-file-writer autonomy review passed, or inspect and fix the files before execution.
-3. Checkpoint the final run files if they must be preserved.
-4. Start a controlled Codex inside tmux.
-5. Send only the short /goal message from ~/Programs/codex_workflow_tmux/templates/short_goal_message.md to the controlled Codex.
-6. Verify that the message arrived.
-7. Supervise, correct drift, require checkpoint commits and no-context reviews after completed specs, and verify completion. Do not directly do the controlled Codex task.
-
-My task is: write the real task here.
+```bash
+tmux new -s codex-supervisor -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
 ```
 
-The short `/goal` message sent to the controlled Codex is exactly:
+Then the user types `/goal` in Codex and pastes the text from `workflow_<workflow id>/prompt_for_supervisor_goal.md`. The prompt file should contain only the goal body after `/goal`; `/goal` itself is typed by the user and must not be included in the template.
+
+After that goal is submitted, execution is approved and started. There is no second execution approval. The supervisor must not ask for another approval.
+
+The supervisor starts one controlled Codex in tmux, then sends the controlled Codex this short `/goal` message:
 
 ```text
 /goal
@@ -107,22 +86,13 @@ Create the two control files in the current task directory:
 ~/Programs/codex_workflow_tmux/scripts/init_control_files.sh "$PWD"
 ```
 
-The two control files are:
-
-```text
-control/goal.md
-control/constraint.md
-```
-
 Start the controlled Codex in tmux:
 
 ```bash
 tmux new -s mytask -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
 ```
 
-Put the yolo flag directly in the tmux start command. After startup, inspect the tmux screen and confirm the intended permissions mode before sending the short `/goal`.
-
-Send the short `/goal` message from any directory:
+Send the controlled Codex short goal from any directory:
 
 ```bash
 ~/Programs/codex_workflow_tmux/scripts/inject_steer.sh send \
@@ -135,7 +105,3 @@ If the tmux target is uncertain, list candidate Codex panes first:
 ```bash
 ~/Programs/codex_workflow_tmux/scripts/locate_codex.sh
 ```
-
-The main Codex supervises. The controlled Codex executes the task described in `control/goal.md` while following `control/constraint.md`.
-
-After each completed stable spec, the supervisor must require a checkpoint git commit. After each checkpoint commit, the supervisor must run no-context review before moving to the next spec. No-context review means a fresh reviewer receives only the current spec, relevant control-file excerpts, evidence, latest git evidence, relevant diff, and explicit review instructions.

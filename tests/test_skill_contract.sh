@@ -78,6 +78,8 @@ run_file_writer_skill="$repo_dir/skills/run-file-writer/SKILL.md"
 test -f "$run_file_writer_skill"
 require 'If the user already specified a method, tool, function, setting, output, metric, or constraint, write it directly into goal/specs.' "$run_file_writer_skill"
 require 'Do not encode user-review, user-choice, or user-approval gates in durable run files.' "$run_file_writer_skill"
+require 'workflow_<workflow id>/requirement_dialogue.md' "$run_file_writer_skill"
+require 'ask whether Codex should start writing the run files now' "$run_file_writer_skill"
 require 'Allowed external sources means sources permitted by the user, the task, and the available tools.' "$run_file_writer_skill"
 require 'Conservative option means the option that is reversible, smallest in scope' "$run_file_writer_skill"
 
@@ -144,6 +146,10 @@ require "$executor_duty_text" "$repo_dir/stage_supervisor_prompt_for_supervisor.
 require "$executor_duty_text" "$repo_dir/stage_supervisor_filled_goal.md"
 require 'codex --dangerously-bypass-approvals-and-sandbox' "$repo_dir/templates/prompt_for_supervisor.md"
 require 'codex --dangerously-bypass-approvals-and-sandbox' "$repo_dir/templates/prompt_for_supervisor_goal.md"
+if grep -x '/goal' "$repo_dir/templates/prompt_for_supervisor_goal.md" "$repo_dir/templates/prompt_for_run_prep.md" "$repo_dir"/stage_supervisor_*.md >/dev/null; then
+  printf 'supervisor/run-prep paste files must not include /goal; user types it manually\n' >&2
+  exit 1
+fi
 
 # Script references still exist after the refactor.
 require 'run-file-writer'

@@ -1,4 +1,3 @@
-/goal
 Read and follow this run-file creation instruction file:
 /home/barry/Programs/codex_workflow_tmux/stage_supervisor_prep_message.md
 

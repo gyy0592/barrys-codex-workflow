@@ -5,7 +5,6 @@ Use this template as the first message to a main Codex when the user wants final
 Replace every `<...>` field before use.
 
 ```text
-/goal
 You are writing final run files for a supervised run. This is not the execution phase.
 
 Task directory:
@@ -34,11 +33,21 @@ Run-file creation rule:
 - If the future task requires training, jobs, experiments, final outputs, or other task submissions, write that the controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`.
 - Stop after the run files are written and report the file list and autonomy checks.
 
+Requirement dialogue rule:
+- Before writing run files, create and maintain `workflow_<workflow id>/requirement_dialogue.md`.
+- Every time Codex asks the user whether the task should be one way or another way, append the question, the user's answer, and the updated conclusion to `workflow_<workflow id>/requirement_dialogue.md`.
+- Ask clarification questions until the goal, constraints, task material, output, success checks, and spec list are clear enough to write final run files.
+- If the user has not already said to start writing run files, ask whether Codex should start writing the run files now.
+- Before writing run files, reread `workflow_<workflow id>/requirement_dialogue.md` and check for conflicts. A conflict means an earlier requirement says one thing and a later requirement changes it.
+- The latest user answer wins, but Codex must report the conflict and ask the user to confirm the removal or replacement of the older requirement before writing run files.
+- Do not write run files until `workflow_<workflow id>/requirement_dialogue.md` has no unresolved conflicts and the user has confirmed that run-file writing may begin.
+
 Required run files:
 - control/goal.md
 - control/constraint.md
 - workflow_<workflow id>/run_goal.md
 - workflow_<workflow id>/specs.md
+- workflow_<workflow id>/requirement_dialogue.md
 - workflow_<workflow id>/prompt_for_supervisor.md
 - workflow_<workflow id>/prompt_for_supervisor_goal.md
 
@@ -70,6 +79,7 @@ Run-file content rules:
 - workflow_<workflow id>/run_goal.md must preserve the user's task as a stable run description.
 - workflow_<workflow id>/specs.md must split the task into checkable steps. Each step must have a purpose, required information, expected outputs, observable success evidence, and correction triggers.
 - workflow_<workflow id>/specs.md must state that specs run one at a time, in order, and the next spec cannot start until the current spec has evidence, status, checkpoint commit, and required review.
+- workflow_<workflow id>/requirement_dialogue.md must record the clarified requirement history and must have no unresolved conflicts before the run files are written.
 - workflow_<workflow id>/prompt_for_supervisor.md must be the long supervisor companion file for this workflow id.
 - workflow_<workflow id>/prompt_for_supervisor_goal.md must be the short supervisor `/goal` prompt for this workflow id.
 - Do not write supervisor prompt files at the task root.
@@ -79,6 +89,7 @@ Run-file content rules:
 - Do not write `blocked`, `BLOCKED`, `Current Blocker`, or user-response blockers into executor run files. Executor failures must become correction issues with next actions. The supervisor Codex must keep supervising.
 - Do not write user-review, user-choice, or user-approval gates into durable run files.
 - Final run files must be complete enough for autonomous execution.
+- Run-file requirement conflicts must be fixed during run-file creation. Do not leave conflict repair for the supervisor phase.
 - After execution starts, the controlled Codex must not ask for choices, approvals, or review. If information is missing, it must return to source discovery, inspect files and outputs, use allowed external sources, choose a conservative option within constraints, record the reason in evidence, and continue.
 - Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
 - Conservative option means the option that is reversible, smallest in scope, least likely to delete or overwrite user data, does not add cost or permissions, and follows existing project defaults when those defaults are visible. Record the options considered and the chosen reason in evidence.
@@ -106,5 +117,5 @@ Run-file finalization rule:
 - After writing the run files, stop.
 - Do not start execution.
 - Report the file list and the autonomy checks performed.
-- A later execution request starts the long run. Do not encode a review or approval gate in durable run files.
+- The user starts the long run by manually starting the supervisor Codex in tmux and setting `prompt_for_supervisor_goal.md` as its `/goal`. That action is the user's approval to run. Do not encode a review or approval gate in durable run files.
 ```

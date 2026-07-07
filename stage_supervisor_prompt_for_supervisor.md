@@ -15,7 +15,7 @@ Workflow id:
 workflow_20260612_physics_for_llm_scale_training
 
 Task request:
-The user made a separate execution request for the Stage 2 final run files. Start the execution phase for scaling the current Physics of LMs Part 2.1 baseline toward a paper-scale training run. The controlled Codex must follow `control/goal.md`, `control/constraint.md`, `workflow_20260612_physics_for_llm_scale_training/run_goal.md`, and `workflow_20260612_physics_for_llm_scale_training/specs.md`.
+The user started the supervisor goal for the Stage 2 final run files. Start the execution phase without asking for another approval for scaling the current Physics of LMs Part 2.1 baseline toward a paper-scale training run. The controlled Codex must follow `control/goal.md`, `control/constraint.md`, `workflow_20260612_physics_for_llm_scale_training/run_goal.md`, and `workflow_20260612_physics_for_llm_scale_training/specs.md`.
 
 The future controlled Codex must expand the current minimum runnable baseline toward a paper-scale training run, use close-to-paper scale when supported by source discovery, use eight GPUs when appropriate, record ETA before every non-trivial run, make a serious acceleration effort before long training, record speed metrics including GPU utilization and MFU, require MFU at least 30 percent or main-training ETA at most 2 days before continuing long training, kill and fix bad slow jobs when evidence shows clear optimization room, expand evaluation to the paper count if confirmed or at least 5000 questions if not clear, and make clean checkpoint git commits.
 
@@ -85,7 +85,7 @@ Use the workflow document: `/home/barry/Programs/codex_workflow_tmux/specific wo
 
 - `control/goal.md` is the controlled Codex's task contract. It must contain the goal, required input material, required output, progress evidence, and completion standard.
 - `control/constraint.md` is the controlled Codex's limit contract. It must contain forbidden actions, global constraints, and self-check rules.
-- If the user adds a global requirement later that changes execution permission, stop conditions, required settings, or completion criteria, write it into `control/goal.md` or `control/constraint.md` before relying on it. Then send a plain correction to the controlled Codex when needed.
+- If the user adds a global requirement later that changes execution permission, correction triggers, required settings, or completion criteria, write it into `control/goal.md` or `control/constraint.md` before relying on it. Then send a plain correction to the controlled Codex when needed.
 - After any correction, check whether the same correction also belongs in `control/goal.md` or `control/constraint.md`. If yes, update the correct control file before relying on memory.
 
 ## Drift Rule

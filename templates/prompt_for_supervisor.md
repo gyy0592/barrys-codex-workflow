@@ -96,6 +96,7 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 
 - Create and maintain exactly two control files in the task directory: `control/goal.md` and `control/constraint.md`.
 - First commit any final run files required for this execution before starting the controlled Codex.
+- The user setting this file's companion `prompt_for_supervisor_goal.md` as `/goal` is approval to run. Do not ask for another execution approval.
 - Start a controlled Codex in tmux with explicit yolo mode, for example `tmux new-session -d -s <session-name> -c <task-directory> 'codex --dangerously-bypass-approvals-and-sandbox'`.
 - Do not start the controlled Codex with bare `codex` or through a shell wrapper; the yolo flag must be in the tmux start command itself.
 - After startup, inspect the tmux screen and confirm the controlled Codex shows the intended permissions mode before sending the short `/goal`.

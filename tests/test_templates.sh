@@ -68,12 +68,18 @@ grep -F 'Do not start long training' "$repo_dir/templates/prompt_for_run_prep.md
 grep -F 'These "do not start" and "do not submit" rules apply only to the main Codex during run-file creation.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'They must not be copied into executor runtime files as a ban on executor work.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'the controlled Codex must do them during execution under `control/goal.md` and `control/constraint.md`' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
-grep -F 'use the `run-file-writer` skill to write and review the run files' "$repo_dir/README.md" >/dev/null
+grep -F 'use the `run-file-writer` skill to write final run files from that conflict-free record' "$repo_dir/README.md" >/dev/null
 grep -F 'The installed workflow skills are `tmux-codex-supervisor`, `run-file-writer`, `workflow-error-transition`, and `monitor-codex-goal`.' "$repo_dir/README.md" >/dev/null
 grep -F 'Use the run-file-writer skill.' "$repo_dir/README.md" >/dev/null
 grep -F 'Use the run-file-writer skill.' "$repo_dir/docs/usage.md" >/dev/null
+grep -F 'requirement_dialogue.md' "$repo_dir/README.md" >/dev/null
+grep -F 'requirement_dialogue.md' "$repo_dir/docs/usage.md" >/dev/null
+grep -F 'no second execution approval' "$repo_dir/README.md" >/dev/null
+grep -F 'no second execution approval' "$repo_dir/docs/usage.md" >/dev/null
 grep -F 'Future Codex sessions can discover the workflow skills from `~/.codex/skills/`.' "$repo_dir/docs/usage.md" >/dev/null
 grep -F 'Do not write user-review, user-choice, or user-approval gates into durable run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'Every time Codex asks the user whether the task should be one way or another way' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'ask whether Codex should start writing the run files now' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]' "$repo_dir/SKILL.md" >/dev/null
 grep -F 'copies every missing executor run file, leaves existing executor files unchanged, and always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md`' "$repo_dir/SKILL.md" >/dev/null
 grep -F 'It always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md` and `workflow_<workflow id>/prompt_for_supervisor_goal.md` from templates.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
@@ -126,6 +132,14 @@ if grep -x '/goal' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null; th
   printf 'prompt_for_supervisor.md must not be the pasted /goal file\n' >&2
   exit 1
 fi
+if grep -x '/goal' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null; then
+  printf 'prompt_for_supervisor_goal.md must not include /goal; user types it manually\n' >&2
+  exit 1
+fi
+if grep -x '/goal' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null; then
+  printf 'prompt_for_run_prep.md must not include /goal; user types it manually\n' >&2
+  exit 1
+fi
 grep -F 'write an ETA' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'CPU utilization' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'GPU utilization' "$repo_dir/templates/constraint.md" >/dev/null
@@ -159,7 +173,7 @@ if grep -F 'User Review Points' "$repo_dir/templates/run_goal.md" >/dev/null; th
   printf 'run_goal.md must not contain User Review Points\n' >&2
   exit 1
 fi
-if grep -F -e 'ask the user' -e 'wait for user review' -e 'user approval needed' "$repo_dir/templates/run_goal.md" "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null; then
+if grep -F -e 'wait for user review' -e 'user approval needed' "$repo_dir/templates/run_goal.md" "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null; then
   printf 'run files and run-prep prompt must not encode user review or approval gates\n' >&2
   exit 1
 fi
@@ -167,7 +181,6 @@ semantic_gate_templates=("$repo_dir"/templates/*.md)
 for semantic_gate_template in "${semantic_gate_templates[@]}"; do
   if grep -F -e 'user approves' \
              -e 'asking the user' \
-             -e 'ask the user' \
              -e 'wait for user review' \
              -e 'user approval needed' \
              -e 'user decision needed' \

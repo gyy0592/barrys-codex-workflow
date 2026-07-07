@@ -1,4 +1,3 @@
-/goal
 Use the tmux-codex-supervisor skill.
 Use /home/barry/Programs/codex_workflow_tmux/templates/prompt_for_run_prep.md.
 

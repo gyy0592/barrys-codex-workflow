@@ -1,11 +1,10 @@
 # Prompt For Supervisor Goal
 
-Use this as the direct text to paste into the main Codex that will supervise a controlled Codex in tmux.
+Use this as the text to paste into the main Codex after the user manually types `/goal`.
 
 This file is intentionally short because the active `/goal` may be reread when the main Codex stops. Put long task details in `prompt_for_supervisor.md`, not here.
 
 ```text
-/goal
 You are the supervisor only.
 
 Supervisor Codex means this main Codex. It is not the user. Executor Codex means the controlled Codex running in tmux.

@@ -1,5 +1,4 @@
-/goal
-The user made a separate execution request for the final run files for:
+The user started the supervisor goal for the final run files for:
 
 ```text
 /home/barry/github_repo/physics_for_llm

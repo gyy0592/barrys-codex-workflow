@@ -20,12 +20,9 @@ reject() {
 
 for doc in "$repo_dir/README.md" "$repo_dir/docs/usage.md"; do
   require 'run-file-writer' "$doc"
-  require 'tmux-codex-supervisor' "$doc"
-  require 'separate' "$doc"
-  require 'This request enters the execution phase.' "$doc"
-  require 'Before starting the controlled Codex, the supervisor Codex may run the final autonomy check and fix run files if needed.' "$doc"
-  require 'This is not user approval and does not ask the user to read the files.' "$doc"
-  require 'no-context review' "$doc"
+  require 'requirement_dialogue.md' "$doc"
+  require 'prompt_for_supervisor_goal.md' "$doc"
+  require 'no second execution approval' "$doc"
   require 'codex --dangerously-bypass-approvals-and-sandbox' "$doc"
 
   reject 'user reviews these files before execution' "$doc"
@@ -33,6 +30,9 @@ for doc in "$repo_dir/README.md" "$repo_dir/docs/usage.md"; do
   reject 'After the user approves' "$doc"
   reject 'user approval step' "$doc"
   reject 'Create and fill control/goal.md and control/constraint.md.' "$doc"
+  reject 'separate execution request' "$doc"
+  reject 'This request enters the execution phase.' "$doc"
+  reject 'fix run files if needed' "$doc"
 done
 
 require 'short /goal message' "$repo_dir/README.md"
@@ -44,8 +44,7 @@ require 'curl -fsSL <raw-install.sh-url> | bash -s -- <repo-url>' "$repo_dir/doc
 require 'Use the run-file-writer skill.' "$repo_dir/docs/usage.md"
 require 'Generate final run files only.' "$repo_dir/docs/usage.md"
 require 'Do not start the controlled Codex.' "$repo_dir/docs/usage.md"
-require 'Confirm the run-file-writer autonomy review passed, or inspect and fix the files before execution.' "$repo_dir/docs/usage.md"
-require 'checkpoint git commit' "$repo_dir/docs/usage.md"
-require 'fresh reviewer receives only the current spec' "$repo_dir/docs/usage.md"
+require 'the user types `/goal` in Codex and pastes the text' "$repo_dir/docs/usage.md"
+require 'must not be included in the template' "$repo_dir/docs/usage.md"
 
 printf 'test_docs PASS\n'

@@ -1,20 +1,23 @@
 # codex_workflow_tmux
 
+[中文](README.zh.md) | English
+
 This repository implements a tmux-based supervision workflow for Codex.
 
 The source design is `/home/yguo173/Downloads/tmux_codex_workflow_design.html`.
 
 Core rule:
 
-- The main Codex supervises.
+- The main Codex prepares run files and later supervises.
 - The controlled Codex executes.
-- The task contract uses only `control/goal.md` and `control/constraint.md`.
-- Concrete tmux command details live in scripts and tests, not in the high-level design text.
+- The controlled Codex task contract uses only `control/goal.md` and `control/constraint.md`.
+- Requirement clarification and conflict repair happen before run files are written.
+- Starting the supervisor Codex with `prompt_for_supervisor_goal.md` as `/goal` is approval to run.
 
 Required repository areas:
 
 - `SKILL.md`: the `tmux-codex-supervisor` skill, used only to start or supervise a controlled Codex in tmux.
-- `skills/run-file-writer/SKILL.md`: the `run-file-writer` skill, used only to create final run files before execution.
+- `skills/run-file-writer/SKILL.md`: the `run-file-writer` skill, used only to clarify requirements, create final run files, and stop before execution.
 - `templates/`: legacy fallback copies of the run templates and supervisor templates.
 - `scripts/`: deterministic tmux and evidence-checking commands.
 - `tests/`: shell tests that prove the scripts and templates work.
@@ -24,7 +27,7 @@ Required repository areas:
 
 ## Usage
 
-Use this workflow in two phases. First, use the `run-file-writer` skill to write and review the run files. Second, use the `tmux-codex-supervisor` skill to start or supervise a separate Codex inside tmux and give it the short `/goal` message. During run-file creation, the main Codex turns the user's task into final run files, checks that they will not make the long run wait for later user review or user choice, and stops before execution.
+Use this workflow in three phases. First, use Codex to clarify the task and record every clarification in `workflow_<run_id>/requirement_dialogue.md`. Second, use the `run-file-writer` skill to write final run files from that conflict-free record. Third, the user manually starts the supervisor Codex in tmux and sets `prompt_for_supervisor_goal.md` as `/goal`; that action starts the run and is the approval to execute.
 
 ### 1. Install
 
@@ -54,73 +57,87 @@ The lower-level installer is still available:
 ~/Programs/codex_workflow_tmux/scripts/install_skill.sh
 ```
 
-### 2. Ask Codex To Prepare The Run Files
+### 2. Clarify The Task And Record The Dialogue
 
-Then open Codex from the project where the real task should happen:
+Open Codex from the project where the real task should happen:
 
 ```bash
 cd /path/to/your/project
 codex
 ```
 
-Describe your task normally first. Then ask Codex to use the run-file writing skill and write the run files. A short request can look like this:
+Ask Codex to read the two workflow skills, clarify the task with you, and record the dialogue:
+
+```text
+Read the tmux-codex-supervisor skill and the run-file-writer skill.
+
+The current directory is the task project.
+Do not write run files yet.
+Create and maintain workflow_<run_id>/requirement_dialogue.md.
+Every time you ask me whether the task should be one way or another way, append your question, my answer, and the updated conclusion to that file.
+Ask me clarification questions until the goal, constraints, task material, output, success checks, and spec list are clear enough to write final run files.
+If I have not already said to start writing run files, ask me whether you should start writing the run files now.
+
+My task is: write the real task here.
+```
+
+Codex should ask concrete questions when the task is unclear. It should not silently choose between meanings that would change the goal, constraints, required output, success checks, or spec list.
+
+### 3. Check Conflicts Before Writing Run Files
+
+Before writing run files, Codex must reread `workflow_<run_id>/requirement_dialogue.md` and check whether earlier requirements conflict with later answers. The latest user answer wins, but Codex must report the conflict and ask before removing or replacing the older requirement.
+
+The question should be direct, for example:
+
+```text
+You previously said to keep X, but later you said to use Y instead. Should I remove X and write the run files using Y?
+```
+
+Codex may start writing run files only after the dialogue file has no unresolved conflicts and the user confirms that writing run files may begin.
+
+### 4. Write The Final Run Files
+
+After the user confirms, ask Codex to use the run-file writing skill:
 
 ```text
 Use the run-file-writer skill.
 
 The current directory is the task project.
+Use workflow_<run_id>/requirement_dialogue.md as the source requirement record.
 Generate final run files only.
 Do not start the controlled Codex.
 Do not start long-running work.
-Stop and ask me when a missing choice would change the goal, constraints, or spec list.
-After each run file is written, report:
-- which file was written,
-- a short summary of what it contains,
-- which files still need to be written,
-- what you plan to write next.
-Then ask whether the file is correct before continuing.
-
-My task is: write the real task here.
+Before writing, reread workflow_<run_id>/requirement_dialogue.md and confirm there are no unresolved conflicts.
+After writing, report the file list and the autonomy checks.
 ```
 
-Codex should write files such as `control/goal.md`, `control/constraint.md`, `workflow_<run_id>/run_goal.md`, and `workflow_<run_id>/specs.md`. It should also write workflow-local supervisor prompt files such as `workflow_<run_id>/prompt_for_supervisor.md` and `workflow_<run_id>/prompt_for_supervisor_goal.md`. It should stop after the run files are ready and tell you what was written. Review the short summaries and confirm whether they match your task.
+Codex should write files such as `control/goal.md`, `control/constraint.md`, `workflow_<run_id>/run_goal.md`, `workflow_<run_id>/specs.md`, `workflow_<run_id>/requirement_dialogue.md`, `workflow_<run_id>/prompt_for_supervisor.md`, and `workflow_<run_id>/prompt_for_supervisor_goal.md`.
 
-### 3. Start The Controlled Codex In tmux
+The run files must not contain a later user-approval gate. After the supervisor goal starts, missing information must be handled through source discovery, local inspection, allowed external sources, or a conservative option written into evidence.
 
-After the run files are ready, start tmux from the task project:
+### 5. Start The Supervisor Codex Manually
+
+After the run files are ready, the user should briefly inspect `workflow_<run_id>/prompt_for_supervisor_goal.md`, then start a supervisor Codex from the task project:
 
 ```bash
-tmux new -s codex-run -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
+cd /path/to/your/project
+tmux new -s codex-supervisor -c "$PWD" 'codex --dangerously-bypass-approvals-and-sandbox'
 ```
 
-Put the yolo flag directly in the tmux start command. After startup, inspect the tmux screen and confirm the intended permissions mode before sending the short `/goal`.
+In that Codex, type `/goal`, then paste the prompt text from `workflow_<run_id>/prompt_for_supervisor_goal.md`. The file must contain only the goal text after `/goal`; `/goal` itself is typed by the user and must not be included in the prompt template.
 
-In the new Codex, paste the contents of:
+Important: do not paste `templates/prompt_for_supervisor.md` or `workflow_<run_id>/prompt_for_supervisor.md` as the active `/goal`. That file is the long companion file. The active supervisor goal should be `prompt_for_supervisor_goal.md`, which tells the supervisor to read the companion file.
+
+If Codex stores a long pasted goal as a pasted text file, that is acceptable only when the active goal points to the pasted file and the pasted file contains the intended supervisor goal text.
+
+### 6. Execution Starts
+
+Once the user submits the supervisor `/goal`, the run has started and no second execution approval is required. The supervisor Codex should read `prompt_for_supervisor.md`, confirm the final run files exist, start one controlled Codex in tmux, send the controlled Codex only the short `/goal` message that points to `control/goal.md` and `control/constraint.md`, and supervise until completion is proved or the user explicitly says to stop.
+
+The controlled Codex still receives a short /goal message from the supervisor. That controlled-Codex message is exactly:
 
 ```text
-templates/short_goal_message.md
+/goal
+control/goal.md
+control/constraint.md
 ```
-
-That short message points the controlled Codex to `control/goal.md` and `control/constraint.md`. It is the only startup message the controlled Codex needs.
-
-### 4. Supervise The tmux Run
-
-In the original Codex chat, send a separate execution request. This request enters the execution phase. Before starting the controlled Codex, the supervisor Codex may run the final autonomy check and fix run files if needed. This is not user approval and does not ask the user to read the files.
-
-```text
-Use the tmux-codex-supervisor skill.
-Use templates/prompt_for_supervisor.md.
-
-The current directory is the task project.
-Act as the main Codex:
-1. Confirm the final run files exist.
-2. Confirm the run-file-writer autonomy review passed, or inspect and fix the files before execution.
-3. Checkpoint the final run files if they must be preserved.
-4. If the controlled Codex is already open in tmux, send only the short /goal message from templates/short_goal_message.md to it. If it is not open, tell me to open tmux and start Codex first.
-5. Verify that the message arrived.
-6. Supervise, correct drift, require checkpoint commits and no-context reviews after completed specs, and verify completion. Do not directly do the controlled Codex task.
-
-My task is: write the real task here.
-```
-
-For execution after run-file creation, start from `templates/prompt_for_supervisor.md`. That template is for the main Codex, not the controlled Codex. It exists so the supervisor role, drift rule, checkpoint rule, file-priority rule, and control-file update rule are written before the run starts.
