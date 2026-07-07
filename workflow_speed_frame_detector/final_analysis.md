@@ -2,7 +2,7 @@
 
 ## Stop Rule Status
 
-Algorithm evidence currently supports stop rule 1 because the latest no-bootstrap M01 still beats `a2`, does not diverge, stays inside the compute budget, and records the required diagnostics. Workflow completion is not yet closed because two fresh no-context PASS reviews of the latest repaired state and a workflow evidence checkpoint are still required.
+The workflow can stop under stop rule 1. The latest no-bootstrap M01 beats `a2`, does not diverge, stays inside the compute budget, records the required diagnostics, and passed two fresh no-context reviews with no substantive blocker.
 
 ## Best Method
 
@@ -172,4 +172,4 @@ Third fresh no-context review correction on 2026-07-07:
 
 ## Final Conclusion
 
-The speed-detection and frame-update approach is still proved useful by M01 in the required comparison. Because the latest fresh review found a real M01 bootstrap bug and that bug has now been repaired, this file does not yet close the workflow. The next required step is two fresh no-context PASS reviews of the latest repaired state, followed by a workflow evidence checkpoint.
+The speed-detection and frame-update approach is proved useful by M01 in the required comparison. The latest no-bootstrap M01 satisfies stop rule 1, and two fresh no-context reviews passed with no substantive blocker. The workflow stops after M01 instead of continuing to M02.

@@ -2,7 +2,7 @@
 
 Current spec: `spec_04_final_analysis.md`.
 
-Status: correction in progress after fresh no-context reviews found real M01 problems and stale closure evidence. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 still beats A2. Latest review pair found no new M01 code defect, but found stale `final_analysis.md` facts and the still-open review checkpoint gate. Next required action: run two fresh no-context PASS reviews on the latest evidence state, then create a workflow evidence checkpoint.
+Status: final closure evidence recorded. M01 has been repaired to use compensated motion for unchanged classification, keep suspected dropped-frame samples out of the speed estimate, and avoid bootstrapping the speed window from the first observation. Latest rerun evidence shows M01 beats A2. Two fresh no-context reviews passed for the latest evidence state and found no substantive blocker. Next required action: commit this closure evidence checkpoint, then run the final completion audit.
 
 Evidence written:
 
@@ -352,3 +352,12 @@ git show --stat --oneline --name-status HEAD
 ```
 
 Then run two fresh no-context reviews on the resulting workflow evidence state.
+
+Final closure review pair after evidence cleanup:
+
+- Reviewer 1 result: PASS.
+- Reviewer 2 result: PASS.
+- Blocking findings: none substantive.
+- Shared conclusion: M01 now updates speed only from valid updated deltas, still uses compensated motion for unchanged classification, uses no forbidden truth data, records required diagnostics, beats `sleep` and `a2`, stays inside the 5 ms budget, and supports stopping after M01 under stop rule 1.
+- Residual risk: the stop proof is based on the required seed-42 comparison, not a broader seed sweep.
+- Evidence file: `review_final_closure.md`.
