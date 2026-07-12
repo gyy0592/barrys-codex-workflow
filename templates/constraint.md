@@ -18,6 +18,10 @@ Conservative option means the option that is reversible, smallest in scope, leas
 
 These rules apply to every task unless the user explicitly removes them.
 
+- Maintain the current spec's `review_checklist.md`. Extract checklist rows from the current global/project instruction files, `control/goal.md`, `control/constraint.md`, `run_goal.md`, `specs.md`, current `abstract_plan.md`, and observed evidence where applicable.
+- Before implementation, before any expensive or hard-to-reverse run, and before review, update `review_checklist.md` and make every applicable controlling row `PASS`. If a row is `FAIL` or `INSUFFICIENT_INFORMATION`, stop that path and return to source discovery or correction.
+- If the task uses a user-required method, tool, metric, output, original repository capability, accelerated path, or high-performance implementation, do not substitute a slower, simpler, ordinary, unfused, or different path unless the checklist records user authorization or original-path failure handling evidence.
+- Original-path failure handling evidence means the command, working location, exit result, complete error source, environment/dependency/path/version/compatibility inspection, fix, and rerun result.
 - Before any non-trivial run, write an ETA. ETA means estimated time to finish.
 - During runs, print or record useful speed information when available, such as throughput, CPU utilization, GPU utilization, memory use, and progress per unit time.
 - Before starting expensive or long-running work, first inspect whether the code or command can be made faster in a reasonable way.
@@ -40,6 +44,7 @@ Before each meaningful action, the controlled Codex checks:
 - Does the action serve `control/goal.md`?
 - Does the action violate this constraint file?
 - Will the action produce or improve observable evidence?
+- Is the current `review_checklist.md` updated for this action?
 - Does this action need an ETA or speed information?
 - Is there a reasonable acceleration step that should happen before this run?
 
@@ -49,4 +54,5 @@ After each meaningful action, the controlled Codex checks:
 - Is the task complete under `control/goal.md`?
 - Is a correction from the main Codex needed before continuing?
 - Is a checkpoint git commit needed now?
+- Did any checklist row become `FAIL` or `INSUFFICIENT_INFORMATION` because of this action?
 - Did the run reveal slow speed, low CPU/GPU use, or another performance issue that requires stopping and fixing before continuing?

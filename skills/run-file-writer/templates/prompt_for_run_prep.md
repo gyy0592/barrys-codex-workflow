@@ -50,6 +50,7 @@ Required run files:
 - workflow_<workflow id>/requirement_dialogue.md
 - workflow_<workflow id>/prompt_for_supervisor.md
 - workflow_<workflow id>/prompt_for_supervisor_goal.md
+- per-spec review_checklist.md files
 
 Use these templates from the workflow root:
 - templates/goal.md
@@ -62,6 +63,7 @@ Use these templates from the workflow root:
 - templates/source_discovery.md
 - templates/abstract_plan.md
 - templates/evidence.md
+- templates/review_checklist.md
 - templates/review.md
 - templates/bitter_lesson.md
 
@@ -80,6 +82,8 @@ Run-file content rules:
 - workflow_<workflow id>/specs.md must split the task into checkable steps. Each step must have a purpose, required information, expected outputs, observable success evidence, and correction triggers.
 - workflow_<workflow id>/specs.md must state that specs run one at a time, in order, and the next spec cannot start until the current spec has evidence, status, checkpoint commit, and required review.
 - workflow_<workflow id>/requirement_dialogue.md must record the clarified requirement history and must have no unresolved conflicts before the run files are written.
+- Each spec must have a `review_checklist.md`. The checklist must tell the executor and reviewers to extract rows from the current global/project instruction files, control files, current spec, current abstract plan, and observed evidence. Do not hard-code one user's local instruction text into the template.
+- Each checklist must include a hard gate for user-required methods, tools, metrics, outputs, original repository capabilities, accelerated paths, and high-performance implementations. A slower, simpler, ordinary, or unfused substitute cannot pass unless the checklist records user authorization or original-path failure handling with command, location, exit result, complete error source, environment/dependency/path/version/compatibility inspection, fix, and rerun evidence.
 - workflow_<workflow id>/prompt_for_supervisor.md must be the long supervisor companion file for this workflow id.
 - workflow_<workflow id>/prompt_for_supervisor_goal.md must be the short supervisor `/goal` prompt for this workflow id.
 - Do not write supervisor prompt files at the task root.

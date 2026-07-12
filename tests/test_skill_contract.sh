@@ -82,6 +82,9 @@ require 'workflow_<workflow id>/requirement_dialogue.md' "$run_file_writer_skill
 require 'ask whether Codex should start writing the run files now' "$run_file_writer_skill"
 require 'Allowed external sources means sources permitted by the user, the task, and the available tools.' "$run_file_writer_skill"
 require 'Conservative option means the option that is reversible, smallest in scope' "$run_file_writer_skill"
+require 'review_checklist.md' "$run_file_writer_skill"
+require 'original repository capability, accelerated path, or high-performance implementation' "$run_file_writer_skill"
+require 'complete error source, environment/dependency/path/version/compatibility inspection' "$run_file_writer_skill"
 
 # Persistence and later-user-requirement handling.
 require 'supervisor Codex is not the user'
@@ -112,12 +115,14 @@ require 'git status --short'
 require 'git log -1 --oneline'
 require 'git show --stat --oneline --name-status HEAD'
 require '## No-Context Review Rule'
-require 'After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` to fresh no-context Codex subagent reviewers using `gpt5.4 high`'
+require 'After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` and current `review_checklist.md` to fresh no-context Codex subagent reviewers using `gpt5.4 high`'
+require 'current `git diff` and current `review_checklist.md`' "$skill_file"
 require 'The checkpoint commit is allowed only after the required reviewers PASS'
 require 'ordinary spec: at least two no-context reviewers'
 require 'high-risk spec: three to five no-context reviewers'
 require 'High-risk spec means the completed step touches destructive operations, git history, user data, paid or cloud resources'
-require 'If a reviewer finds a real problem, fix the current spec, rerun fresh no-context Codex subagent review on the new `git diff`, and commit only after PASS.'
+require 'If a reviewer finds a real problem, fix the current spec, rerun fresh no-context Codex subagent review on the new `git diff` and current `review_checklist.md`, and commit only after PASS.'
+require 'A reviewer PASS is invalid if it does not address the checklist row by row.' "$skill_file"
 
 # Controlled Codex startup must explicitly request yolo mode. Do not depend on a
 # user-specific shell wrapper because wrapper flags can conflict or be absent.
@@ -146,6 +151,9 @@ require "$executor_duty_text" "$repo_dir/stage_supervisor_prompt_for_supervisor.
 require "$executor_duty_text" "$repo_dir/stage_supervisor_filled_goal.md"
 require 'codex --dangerously-bypass-approvals-and-sandbox' "$repo_dir/templates/prompt_for_supervisor.md"
 require 'codex --dangerously-bypass-approvals-and-sandbox' "$repo_dir/templates/prompt_for_supervisor_goal.md"
+require 'Require `review_checklist.md` for each spec.' "$repo_dir/templates/prompt_for_supervisor_goal.md"
+require 'Before expensive, long-running, GPU, cloud, destructive, or hard-to-reverse actions' "$repo_dir/templates/prompt_for_supervisor_goal.md"
+require 'fresh no-context Codex subagent review of the current `git diff` and current `review_checklist.md` using `gpt5.4 high`' "$repo_dir/templates/prompt_for_supervisor_goal.md"
 if grep -x '/goal' "$repo_dir/templates/prompt_for_supervisor_goal.md" "$repo_dir/templates/prompt_for_run_prep.md" "$repo_dir"/stage_supervisor_*.md >/dev/null; then
   printf 'supervisor/run-prep paste files must not include /goal; user types it manually\n' >&2
   exit 1
@@ -174,5 +182,13 @@ test -x "$repo_dir/skills/run-file-writer/scripts/init_run_templates.sh"
 test -f "$repo_dir/skills/run-file-writer/templates/prompt_for_run_prep.md"
 test -f "$repo_dir/skills/run-file-writer/templates/prompt_for_supervisor.md"
 test -f "$repo_dir/skills/run-file-writer/templates/prompt_for_supervisor_goal.md"
+test -f "$repo_dir/skills/run-file-writer/templates/review_checklist.md"
+require 'Maintain the current spec' "$repo_dir/templates/constraint.md"
+require 'do not substitute a slower, simpler, ordinary, unfused, or different path' "$repo_dir/templates/constraint.md"
+require 'review_checklist.md' "$repo_dir/templates/review.md"
+require 'Mandatory Global Rows' "$repo_dir/templates/review_checklist.md"
+require 'Expensive-Run Gate' "$repo_dir/templates/review_checklist.md"
+require 'templates/review_checklist.md' "$repo_dir/templates/prompt_for_run_prep.md"
+require 'fresh no-context Codex subagent review of the current `git diff` and current `review_checklist.md` using `gpt5.4 high`' "$repo_dir/templates/specs.md"
 
 printf 'test_skill_contract PASS\n'

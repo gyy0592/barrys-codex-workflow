@@ -68,6 +68,8 @@ If the controlled Codex is stable and working within the current task step, do n
 
 If the controlled Codex reports a correction issue, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed external sources, conservative option when an option is unavoidable, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
 
+Before any expensive, long-running, paid, GPU, cloud, destructive, or hard-to-reverse action, require the current spec's `review_checklist.md` to exist and contain PASS rows for every requirement controlling that action. If the checklist is missing, stale, or has an applicable `FAIL` or `INSUFFICIENT_INFORMATION` row, correct the executor before the action continues.
+
 ## Helper: persist-user-requirement
 
 Use this helper only when a later user message changes execution permission, correction triggers, required settings, or completion criteria.
@@ -94,7 +96,7 @@ Before each checkpoint commit, require:
 - staging only files required for the current workflow/spec,
 - no unrelated user files,
 - no still-changing experiment outputs.
-- current `git diff` sent to fresh no-context Codex subagent reviewers using `gpt5.4 high`, with PASS required before commit.
+- current `git diff` and current `review_checklist.md` sent to fresh no-context Codex subagent reviewers using `gpt5.4 high`, with PASS required before commit.
 
 If relevant and unrelated files cannot be separated safely, stop the commit and report the exact paths.
 
@@ -108,7 +110,7 @@ git show --stat --oneline --name-status HEAD
 
 ## No-Context Review Rule
 
-After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` to fresh no-context Codex subagent reviewers using `gpt5.4 high`. The checkpoint commit is allowed only after the required reviewers PASS, and the workflow can move to the next spec only after that checkpoint commit exists.
+After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` and current `review_checklist.md` to fresh no-context Codex subagent reviewers using `gpt5.4 high`. The checkpoint commit is allowed only after the required reviewers PASS, and the workflow can move to the next spec only after that checkpoint commit exists.
 
 Default review count:
 
@@ -117,10 +119,12 @@ Default review count:
 
 High-risk spec means the completed step touches destructive operations, git history, user data, paid or cloud resources, security or permissions, broad refactors, long expensive runs, ambiguous requirements, or weak test coverage.
 
-The reviewers must receive only the current spec, relevant goal/constraint excerpts, source discovery, abstract plan, evidence, status, latest git evidence, relevant diff, and explicit review instructions.
+The reviewers must receive only the current spec, relevant goal/constraint excerpts, source discovery, abstract plan, review checklist, evidence, status, latest git evidence, relevant diff, and explicit review instructions.
 
 The reviewers must check:
 
+- whether `review_checklist.md` was extracted from the current global/project instruction files, control files, current spec, current abstract plan, and observed evidence where applicable,
+- whether every applicable checklist row has required evidence, observed evidence, and `PASS`,
 - whether the current spec is truly complete,
 - whether any user-required method, tool, function, metric, output, or constraint was changed, weakened, bypassed, replaced, or reinterpreted without evidence proving the original requirement does not exist or cannot work as stated and the failure is not caused by executor implementation error,
 - drift from `control/goal.md`,
@@ -130,7 +134,9 @@ The reviewers must check:
 - unnecessary extra work,
 - failure risk.
 
-If a reviewer finds a real problem, fix the current spec, rerun fresh no-context Codex subagent review on the new `git diff`, and commit only after PASS. If a reviewer only gives style preference, unsupported nitpicking, or a claim contradicted by file evidence, record why it is ignored and continue.
+If a reviewer finds a real problem, fix the current spec, rerun fresh no-context Codex subagent review on the new `git diff` and current `review_checklist.md`, and commit only after PASS. If a reviewer only gives style preference, unsupported nitpicking, or a claim contradicted by file evidence, record why it is ignored and continue.
+
+A reviewer PASS is invalid if it does not address the checklist row by row. If any applicable checklist row remains `FAIL` or `INSUFFICIENT_INFORMATION`, treat the review as FAIL even if the reviewer wrote PASS.
 
 ## File Ownership And Priority
 

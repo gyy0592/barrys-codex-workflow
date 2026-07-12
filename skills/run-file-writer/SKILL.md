@@ -29,7 +29,7 @@ __RUN_FILE_WRITER_ROOT__/scripts/init_run_templates.sh <task-directory> <workflo
    - `workflow_<workflow id>/run_goal.md`: stable run description.
    - `workflow_<workflow id>/specs.md`: ordered specs with success evidence and correction triggers.
    - `workflow_<workflow id>/requirement_dialogue.md`: final conflict-free requirement record used to write the run files.
-   - per-spec files: `status.md`, `source_discovery.md`, `abstract_plan.md`, `evidence.md`, `review.md`, `bitter_lesson.md`.
+   - per-spec files: `status.md`, `source_discovery.md`, `abstract_plan.md`, `evidence.md`, `review_checklist.md`, `review.md`, `bitter_lesson.md`.
    - `workflow_<workflow id>/prompt_for_supervisor.md`: rebuilt supervisor companion prompt for this workflow id.
    - `workflow_<workflow id>/prompt_for_supervisor_goal.md`: rebuilt short supervisor `/goal` prompt for this workflow id.
 8. Edit the rebuilt supervisor prompt files for the workflow id. Do not write supervisor prompt files at the task root.
@@ -47,6 +47,8 @@ __RUN_FILE_WRITER_ROOT__/scripts/init_run_templates.sh <task-directory> <workflo
 - Do not write `blocked`, `BLOCKED`, or `Current Blocker` into executor run files. Executor failures are correction issues with next actions.
 - If the user already specified a method, tool, function, setting, output, metric, or constraint, write it directly into goal/specs. Do not turn it into an undecided choice.
 - A spec is not complete if the executor changes, weakens, bypasses, replaces, or reinterprets any user-required method, tool, function, metric, output, or constraint. Difficulty, repeated failed attempts, slower speed, missing adapter code, or implementation complexity does not prove the user requirement is wrong.
+- Every spec must have a `review_checklist.md` generated from the current requirement sources. The checklist must not hard-code one user's local rules; it must instruct the executor and reviewers to extract applicable rows from the current global/project instruction files, control files, current spec, current abstract plan, and observed evidence.
+- The checklist must include rows for any user-required original repository capability, accelerated path, or high-performance implementation discovered in the current requirement sources. If such a path fails, the checklist must require command, working location, exit result, complete error source, environment/dependency/path/version/compatibility inspection, fix, and rerun evidence before any slower or ordinary substitute can pass.
 - After execution starts, missing information must be resolved through source discovery, local inspection, allowed external sources, or a conservative option within constraints. Do not create a runtime user-response gate.
 
 Allowed external sources means sources permitted by the user, the task, and the available tools. If no specific source is named, use local files first, then official documentation, repository documentation, papers, or public web pages only when the missing fact cannot be found locally and network use is allowed.
@@ -63,6 +65,7 @@ Return `PASS` only when:
 - controlled-execution files do not depend on supervisor chat memory,
 - `control/goal.md`, `control/constraint.md`, `specs.md`, and `run_goal.md` do not conflict,
 - runtime terms such as `allowed external sources` and `conservative option` are defined where used,
+- every spec has a `review_checklist.md` template and the run files require reviewers to use it row by row,
 - lower-priority files cannot override higher-priority control files.
 
 Return `FAIL` and fix the run files before execution when any check fails.

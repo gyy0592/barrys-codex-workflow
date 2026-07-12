@@ -74,10 +74,10 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - If the task uses specs or task steps, execute one spec at a time, in the order written in the active specs file.
 - Each spec's `source_discovery.md` is per-spec evidence, so do not treat source discovery as its own separate spec unless the user explicitly asks for that.
 - The supervisor must always know which spec is current.
-- For the current spec, require source discovery, a short high-level abstract plan, implementation, evidence, status update, fresh no-context Codex subagent review of the current `git diff` using `gpt5.4 high`, and checkpoint commit before moving on.
+- For the current spec, require source discovery, a short high-level abstract plan, implementation, evidence, status update, fresh no-context Codex subagent review of the current `git diff` and current `review_checklist.md` using `gpt5.4 high`, and checkpoint commit before moving on.
 - The controlled Codex must not work on a later spec before the current spec passes all required evidence and review files.
 - The controlled Codex must not batch multiple specs into one checkpoint commit or one review.
-- If evidence is missing, a review fails, or a required file is absent, the current spec is not done. Stay on the current spec, fix it, rerun fresh no-context Codex subagent review of the new `git diff` using `gpt5.4 high`, and commit only after PASS.
+- If evidence is missing, a review fails, or a required file is absent, the current spec is not done. Stay on the current spec, fix it, rerun fresh no-context Codex subagent review of the new `git diff` and current `review_checklist.md` using `gpt5.4 high`, and commit only after PASS.
 - Drift includes doing future-spec work before the current spec has passed all required checks.
 
 ## Specific Workflow Enforcement Rule
@@ -86,6 +86,8 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 - `source_discovery.md` must record the files inspected, command outputs inspected, external sources inspected when needed, what each finding supports, and remaining uncertainty.
 - The executor may leave source discovery only when the current spec can proceed without guessing, required files have been inspected, required knowledge is recorded, and required external information is recorded when external facts are needed.
 - Before implementation starts, require a short `abstract_plan.md` that states the current approach and the evidence needed to prove the spec.
+- Before implementation and again after `abstract_plan.md` changes, require current `review_checklist.md`. It must extract rows from the current global/project instruction files, control files, current spec, current plan, and observed evidence where applicable.
+- Before any expensive, long-running, paid, GPU, cloud, destructive, or hard-to-reverse action, check `review_checklist.md`. Every applicable row controlling that action must be `PASS`; otherwise correct the executor before the action continues.
 - During implementation, every executor action must serve the current spec. If the next action would require guessing a fact, file purpose, API behavior, data format, user requirement, benchmark meaning, or external rule, require the executor to stop implementation and return to source discovery.
 - `evidence.md` must record what was checked, which file or command was used, expected result, actual result, and conclusion: `PASS`, `FAIL`, or `INSUFFICIENT_INFORMATION`.
 - If evidence is `FAIL`, require the executor to fix the current spec and update evidence. If evidence is `INSUFFICIENT_INFORMATION`, require the executor to return to source discovery.
@@ -142,20 +144,21 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 
 - After each completed stable task step, require a checkpoint git commit unless the task explicitly forbids git commits.
 - Before each checkpoint commit, require the controlled Codex to inspect git status, stage only files required for the supervised workflow, and leave unrelated files unstaged.
-- Before each checkpoint commit, send the current `git diff` to fresh no-context Codex subagent reviewers using `gpt5.4 high`; commit only after the required reviewers PASS.
-- A step is not ready to leave until required evidence is written, status is updated, git diff review has passed, checkpoint evidence is recorded, and any required review has passed.
+- Before each checkpoint commit, send the current `git diff` and current `review_checklist.md` to fresh no-context Codex subagent reviewers using `gpt5.4 high`; commit only after the required reviewers PASS.
+- A step is not ready to leave until required evidence is written, status is updated, git diff plus checklist review has passed, checkpoint evidence is recorded, and any required review has passed.
 
 ## Review Rule
 
-- When the workflow uses task steps or specs, each completed spec must be reviewed before its checkpoint commit by fresh no-context Codex subagents using `gpt5.4 high` and the current `git diff`.
+- When the workflow uses task steps or specs, each completed spec must be reviewed before its checkpoint commit by fresh no-context Codex subagents using `gpt5.4 high`, the current `git diff`, and current `review_checklist.md`.
 - Use at least two fresh no-context reviewers for an ordinary completed spec: one implementation reviewer and one constraint reviewer.
 - Use three to five fresh no-context reviewers for a high-risk completed spec. High-risk means the spec touches destructive operations, git history, user data, paid or cloud resources, security or permissions, broad refactors, long expensive runs, ambiguous requirements, or weak test coverage.
 - The implementation reviewer checks correct spec implementation and drift from `control/goal.md`.
 - The constraint reviewer checks violations of `control/constraint.md`, global user requirements, git rules, and workflow rules.
 - Reviewers must fail the spec if any user-required method, tool, function, metric, output, or constraint was changed, weakened, bypassed, replaced, or reinterpreted without evidence proving the original requirement does not exist or cannot work as stated and the failure is not caused by executor implementation error.
+- Reviewers must fail the spec if `review_checklist.md` is missing, stale, not sourced from the current requirement files, not checked row by row, or has any applicable `FAIL` or `INSUFFICIENT_INFORMATION` row.
 - The reviewers must receive only the current spec files, the relevant requirements, and latest git evidence.
 - The controlled workflow may move to the next spec only after all required review files are `PASS` and the checkpoint commit exists.
-- If any review fails, the controlled Codex must fix the current spec and get fresh review of the new `git diff` before commit.
+- If any review fails, the controlled Codex must fix the current spec and get fresh review of the new `git diff` and current `review_checklist.md` before commit.
 
 ## Completion Rule
 

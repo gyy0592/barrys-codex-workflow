@@ -74,6 +74,7 @@ for spec_name in "$@"; do
   copy_if_missing source_discovery.md "$spec_dir/source_discovery.md"
   copy_if_missing abstract_plan.md "$spec_dir/abstract_plan.md"
   copy_if_missing evidence.md "$spec_dir/evidence.md"
+  copy_if_missing review_checklist.md "$spec_dir/review_checklist.md"
   copy_if_missing review.md "$spec_dir/review.md"
   copy_if_missing bitter_lesson.md "$spec_dir/bitter_lesson.md"
 done

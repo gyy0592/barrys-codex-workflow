@@ -22,6 +22,7 @@ grep -F "CREATED $tmp_dir/run_task/workflow_demo/run_goal.md" "$tmp_dir/init_run
 grep -F "REBUILT $tmp_dir/run_task/workflow_demo/prompt_for_supervisor.md" "$tmp_dir/init_run.out" >/dev/null
 grep -F "REBUILT $tmp_dir/run_task/workflow_demo/prompt_for_supervisor_goal.md" "$tmp_dir/init_run.out" >/dev/null
 grep -F "CREATED $tmp_dir/run_task/workflow_demo/spec_001_first/status.md" "$tmp_dir/init_run.out" >/dev/null
+grep -F "CREATED $tmp_dir/run_task/workflow_demo/spec_001_first/review_checklist.md" "$tmp_dir/init_run.out" >/dev/null
 grep -F "CREATED $tmp_dir/run_task/workflow_demo/spec_002_second/status.md" "$tmp_dir/init_run.out" >/dev/null
 test -f "$tmp_dir/run_task/control/goal.md"
 test -f "$tmp_dir/run_task/control/constraint.md"
@@ -36,6 +37,7 @@ for spec_dir in "$tmp_dir/run_task/workflow_demo/spec_001_first" "$tmp_dir/run_t
   test -f "$spec_dir/source_discovery.md"
   test -f "$spec_dir/abstract_plan.md"
   test -f "$spec_dir/evidence.md"
+  test -f "$spec_dir/review_checklist.md"
   test -f "$spec_dir/review.md"
   test -f "$spec_dir/bitter_lesson.md"
 done
@@ -85,6 +87,8 @@ grep -F 'After that, the supervisor runs the workflow. You can leave it running 
 grep -F 'Do not write user-review, user-choice, or user-approval gates into durable run files.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'Every time Codex asks the user whether the task should be one way or another way' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'ask whether Codex should start writing the run files now' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'Each spec must have a `review_checklist.md`.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
+grep -F 'Do not hard-code one user' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'scripts/init_run_templates.sh <task-directory> <workflow-id> [spec-name ...]' "$repo_dir/SKILL.md" >/dev/null
 grep -F 'copies every missing executor run file, leaves existing executor files unchanged, and always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md`' "$repo_dir/SKILL.md" >/dev/null
 grep -F 'It always rebuilds `workflow_<workflow id>/prompt_for_supervisor.md` and `workflow_<workflow id>/prompt_for_supervisor_goal.md` from templates.' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
@@ -132,7 +136,9 @@ grep -F 'runtime autonomy definitions' "$repo_dir/templates/prompt_for_superviso
 grep -F 'allowed external sources as defined in `control/constraint.md`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Use at least two fresh no-context reviewers for an ordinary completed spec' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'Use three to five fresh no-context reviewers for a high-risk completed spec' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
-grep -F 'fresh no-context Codex subagent review of the current `git diff` using `gpt5.4 high`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'fresh no-context Codex subagent review of the current `git diff` and current `review_checklist.md` using `gpt5.4 high`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'current `git diff` and current `review_checklist.md`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'Reviewers must fail the spec if `review_checklist.md` is missing' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 if grep -x '/goal' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null; then
   printf 'prompt_for_supervisor.md must not be the pasted /goal file\n' >&2
   exit 1
@@ -148,6 +154,9 @@ fi
 grep -F 'write an ETA' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'CPU utilization' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'GPU utilization' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'Maintain the current spec' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'do not substitute a slower, simpler, ordinary, unfused, or different path' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'Original-path failure handling evidence means the command, working location, exit result' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'first inspect whether the code or command can be made faster' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'stop or kill the run' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'Create checkpoint git commits' "$repo_dir/templates/constraint.md" >/dev/null
@@ -155,7 +164,13 @@ grep -F 'Runtime Autonomy Definitions' "$repo_dir/templates/constraint.md" >/dev
 grep -F 'Allowed external sources means sources permitted by the user, the task, and the available tools.' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'Conservative option means the option that is reversible, smallest in scope' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'Specs run one at a time, in order' "$repo_dir/templates/specs.md" >/dev/null
+grep -F 'review_checklist.md' "$repo_dir/templates/specs.md" >/dev/null
+grep -F 'templates/review_checklist.md' "$repo_dir/templates/prompt_for_run_prep.md" >/dev/null
 grep -F 'must not review multiple specs at once' "$repo_dir/templates/review.md" >/dev/null
+grep -F 'review_checklist.md' "$repo_dir/templates/review.md" >/dev/null
+grep -F 'Mandatory Global Rows' "$repo_dir/templates/review_checklist.md" >/dev/null
+grep -F 'accelerated paths, or high-performance implementations' "$repo_dir/templates/review_checklist.md" >/dev/null
+grep -F 'Expensive-Run Gate' "$repo_dir/templates/review_checklist.md" >/dev/null
 grep -F 'During execution, do not wait for a user response.' "$repo_dir/templates/source_discovery.md" >/dev/null
 grep -F 'allowed external sources as defined in `control/constraint.md`' "$repo_dir/templates/source_discovery.md" >/dev/null
 grep -F 'choosing a conservative option defined in `control/constraint.md`' "$repo_dir/templates/abstract_plan.md" >/dev/null
@@ -199,7 +214,7 @@ for semantic_gate_template in "${semantic_gate_templates[@]}"; do
     exit 1
   fi
 done
-for template in run_goal specs spec_status source_discovery abstract_plan evidence review bitter_lesson prompt_for_supervisor_goal; do
+for template in run_goal specs spec_status source_discovery abstract_plan evidence review_checklist review bitter_lesson prompt_for_supervisor_goal; do
   test -f "$repo_dir/templates/$template.md"
 done
 if grep -F -e 'control/self_check.md' -e 'control/progress.md' -e 'control/done.md' "$repo_dir/templates/short_goal_message.md" >/dev/null; then
