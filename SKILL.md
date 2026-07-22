@@ -1,6 +1,6 @@
 ---
 name: tmux-codex-supervisor
-description: "Use when the main Codex must prepare final run files, start, or supervise one controlled Codex in tmux. Do not use inside the controlled Codex; the startup message to the controlled Codex only points to control/goal.md and control/constraint.md."
+description: "Use when the main Codex must prepare final run files, start, supervise, or urgently interrupt/resume one controlled Codex in tmux with the force_interrupt_send_resume.sh injection script. Do not use inside the controlled Codex; the startup message to the controlled Codex only points to control/goal.md and control/constraint.md."
 ---
 
 # tmux Codex Supervisor
@@ -65,6 +65,8 @@ The supervisor may read control files, workflow files, spec files, evidence file
 The supervisor must not read full project source code and must not implement task code. If source code understanding is needed, instruct the controlled Codex to inspect the relevant code and report evidence.
 
 If the controlled Codex is stable and working within the current task step, do not interrupt it frequently. Stable means it is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step. When stable, monitor at a low frequency, usually once every 2 to 10 minutes.
+
+If the user orders an immediate correction while the controlled Codex is stuck in a long `sleep`, `wait`, background terminal wait, or paused/interrupted state, use `__WORKFLOW_ROOT__/scripts/force_interrupt_send_resume.sh <pane> <message-file>`. The script presses Escape, stops a visible background terminal when needed, injects the message through `inject_steer.sh`, sends `/goal resume`, and writes evidence under `temp/tmux-codex-supervisor` unless `STEER_EVIDENCE_DIR` overrides it. Do not hand-type tmux keys for this path.
 
 If the controlled Codex reports a correction issue, a run fails, information is missing, or a review fails, do not mark the supervisor goal blocked. Force the controlled Codex to continue the correction loop: source discovery, local inspection, allowed external sources, conservative option when an option is unavoidable, concrete fix, test, benchmark when relevant, evidence, checkpoint, no-context review, and next action.
 
@@ -169,6 +171,7 @@ Use scripts for fixed operations:
 - The `run-file-writer` skill owns `init_control_files.sh` and `init_run_templates.sh`.
 - `__WORKFLOW_ROOT__/scripts/locate_codex.sh` lists candidate Codex tmux panes so the supervisor can confirm the target pane before sending.
 - `__WORKFLOW_ROOT__/scripts/inject_steer.sh` is the required and only allowed tmux input path for controlled Codex messages. It verifies the target pane, pastes text from a file, verifies the text landed in the input box, submits it, verifies it left the input box, and saves evidence under `temp/tmux-codex-supervisor` unless `STEER_EVIDENCE_DIR` overrides it.
+- `__WORKFLOW_ROOT__/scripts/force_interrupt_send_resume.sh` is the required urgent-wakeup path when a human orders an immediate correction and the controlled Codex may be blocked inside a long `sleep`, `wait`, or background terminal wait. It verifies the target, interrupts to a paused state, stops the visible background terminal if present, sends the correction via `inject_steer.sh`, sends `/goal resume`, verifies `Pursuing goal`, and saves evidence. Use it instead of ordinary `inject_steer.sh send` for urgent corrections that must preempt a routine wait.
 - Outside `inject_steer.sh`, do not use any other tmux input path for controlled Codex messages.
 - `__WORKFLOW_ROOT__/scripts/check_progress.sh` compares current progress evidence against the last saved check.
 - `__WORKFLOW_ROOT__/scripts/check_done.sh` runs the completion check command.
