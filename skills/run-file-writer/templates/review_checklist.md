@@ -2,6 +2,15 @@
 
 This file is the required checklist for one spec. It must be filled before implementation, updated after `abstract_plan.md`, checked before any expensive run, and used by every fresh no-context reviewer.
 
+## Canonical Paths
+
+TASK_ROOT: {{TASK_ROOT}}
+WORKFLOW_ROOT: {{WORKFLOW_ROOT}}
+CONTROL_ROOT: {{CONTROL_ROOT}}
+CURRENT_SPEC_ROOT: {{CURRENT_SPEC_ROOT}}
+
+Replace every path placeholder before review. Record the resolved absolute source path in every checklist row. Bare `control/goal.md`, `control/constraint.md`, `specs.md`, `review.md`, or `status.md` paths are invalid.
+
 ## Spec
 
 Write the spec id and short name here.
@@ -11,13 +20,13 @@ Write the spec id and short name here.
 List every source used to build this checklist. Include only sources that apply to the current run.
 
 - Current global and project instruction files available to this task, such as active agent instruction files.
-- `control/goal.md`
-- `control/constraint.md`
-- `workflow_<workflow id>/run_goal.md`
-- `workflow_<workflow id>/specs.md`
-- Current spec `source_discovery.md`
-- Current spec `abstract_plan.md`
-- Current spec `evidence.md`
+- `{{CONTROL_ROOT}}/goal.md`
+- `{{CONTROL_ROOT}}/constraint.md`
+- `{{WORKFLOW_ROOT}}/run_goal.md`
+- `{{WORKFLOW_ROOT}}/specs.md`
+- Current spec `{{CURRENT_SPEC_ROOT}}/source_discovery.md`
+- Current spec `{{CURRENT_SPEC_ROOT}}/abstract_plan.md`
+- Current spec `{{CURRENT_SPEC_ROOT}}/evidence.md`
 - Current git evidence and run outputs when reviewing observed evidence.
 
 ## Extraction Rule
@@ -45,7 +54,11 @@ Every spec must include rows for these generic gates when applicable:
 - no completion claim without observable evidence;
 - no skipped tests or skipped required checks hidden as success;
 - no unrelated file changes or commit pollution;
-- no future-spec work before current-spec gates pass.
+- no dependent-spec work before its own direct-prerequisite gates pass; independent ready specs may run concurrently.
+- the dependency DAG has no cycle and every spec records `depends_on`, concrete prerequisite evidence, verification command, pass condition, and release condition.
+- every scheduling point launches all ready, non-conflicting, resource-compatible tasks up to actual available capacity, preserves declared order only under capacity pressure, and immediately refills capacity after completion.
+- every matching resource left unused has a concrete recorded reason; fixed GPU-count branches and unrelated serial waits are absent.
+- every cross-file source reference resolves through the current absolute path map.
 
 ## Checklist Table
 

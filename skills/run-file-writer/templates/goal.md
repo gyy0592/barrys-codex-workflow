@@ -1,5 +1,14 @@
 # Goal
 
+## Canonical Paths
+
+TASK_ROOT: {{TASK_ROOT}}
+WORKFLOW_ROOT: {{WORKFLOW_ROOT}}
+CONTROL_ROOT: {{CONTROL_ROOT}}
+CURRENT_SPEC_ROOT: {{CURRENT_SPEC_ROOT}}
+
+Replace every path placeholder before reporting completion. Any cross-file reference in this control file must use the resolved absolute path from this map; bare control, workflow, spec, evidence, review, or status paths are invalid.
+
 ## Task
 
 Write the requested task in one or two clear paragraphs.
@@ -19,4 +28,3 @@ Name the evidence that proves the controlled Codex is making progress. This can 
 ## Completion Standard
 
 State what proves the task is complete. Include the check command when a command can prove completion.
-

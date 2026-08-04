@@ -9,6 +9,28 @@ Use this skill only for run-file creation before execution. Do not start tmux, d
 
 Run files are durable task files read later by the supervisor or executor. The two executor control files are `control/goal.md` and `control/constraint.md`.
 
+## Canonical paths in generated run files
+
+The relative names in this skill describe file roles only. Before writing any final run file, define and record the resolved absolute path map for the current task:
+
+```text
+TASK_ROOT: /absolute/task/directory
+WORKFLOW_ROOT: /absolute/task/directory/workflow_<workflow-id>
+CONTROL_ROOT: /absolute/task/directory/control
+CURRENT_SPEC_ROOT: /absolute/task/directory/workflow_<workflow-id>/spec_<spec-id>
+RUN_FILE_WRITER_ROOT: /absolute/path/to/run-file-writer
+```
+
+Every generated `prompt_for_supervisor.md`, `prompt_for_supervisor_goal.md`, `run_goal.md`, `specs.md`, control file, and per-spec file MUST contain the applicable path map near its beginning. Every actionable cross-file reference in a final run file MUST use the corresponding resolved absolute path, such as `${CONTROL_ROOT}/goal.md` after substitution to its actual value. A bare `control/goal.md`, `control/constraint.md`, `specs.md`, `review.md`, `status.md`, or `workflow_<workflow-id>/...` reference is invalid because it can resolve against the wrong directory. A basename may appear only as a label after its canonical absolute path has been written.
+
+Before reporting run-file completion, replace every path placeholder and verify that no `<...>`, `{{...}}`, unresolved `${...}`, or bare workflow-file reference remains in an executable instruction. If the current workflow root or a current spec root cannot be resolved, stop run-file creation and report the missing path; do not guess.
+
+## Dependency-aware ordering and parallel execution
+
+“Ordered specs” means topological order of declared direct dependencies. It does not mean global serial execution. Before writing `specs.md`, create a dependency DAG or equivalent table. For every spec or runnable task, record `depends_on`, each concrete prerequisite file/interface/test result, the verification command, the pass condition, and the release condition. A spec with no direct prerequisite is ready when its own source and authorization checks pass.
+
+The generated control and supervisor files MUST instruct the executor to wait only for an unmet direct prerequisite. At every scheduling point, compute the ready set and launch all ready, non-conflicting, resource-compatible tasks concurrently up to the actual available capacity. Preserve the declared dependency order when capacity is insufficient to select among ready tasks; dependency order is not permission to delay an independent ready task. When any task finishes, recompute the ready set and immediately fill the released capacity. Do not wait for an unrelated task or an entire wave. Do not encode a fixed GPU-count branch; use the current resource query and record a concrete reason for every matching resource left unused.
+
 ## Workflow
 
 1. Read the user's task and task material. For a supervised tmux workflow, read the `tmux-codex-supervisor` skill before designing run files.
@@ -27,7 +49,7 @@ __RUN_FILE_WRITER_ROOT__/scripts/init_run_templates.sh <task-directory> <workflo
    - `control/goal.md`: task goal, input material, required outputs, progress evidence, completion standard.
    - `control/constraint.md`: user constraints, forbidden actions, checkpoint rules, review rules, autonomous execution boundaries, self-check rules.
    - `workflow_<workflow id>/run_goal.md`: stable run description.
-   - `workflow_<workflow id>/specs.md`: ordered specs with success evidence and correction triggers.
+   - `workflow_<workflow id>/specs.md`: dependency-ordered specs with success evidence, direct prerequisite gates, parallel groups, and correction triggers.
    - `workflow_<workflow id>/requirement_dialogue.md`: final conflict-free requirement record used to write the run files.
    - per-spec files: `status.md`, `source_discovery.md`, `abstract_plan.md`, `evidence.md`, `review_checklist.md`, `review.md`, `bitter_lesson.md`.
    - `workflow_<workflow id>/prompt_for_supervisor.md`: rebuilt supervisor companion prompt for this workflow id.
@@ -66,6 +88,9 @@ Return `PASS` only when:
 - `control/goal.md`, `control/constraint.md`, `specs.md`, and `run_goal.md` do not conflict,
 - runtime terms such as `allowed external sources` and `conservative option` are defined where used,
 - every spec has a `review_checklist.md` template and the run files require reviewers to use it row by row,
+- the spec DAG has no cycle, every direct prerequisite has a concrete evidence and release condition, and independent ready specs are not forced into global serial execution,
+- the supervisor files define ready-set recomputation, actual resource allocation, immediate refill after task completion, and a concrete reason for every unused matching resource,
+- every final cross-file reference resolves to the current workflow's absolute path map and no bare workflow-file path remains in an executable instruction,
 - lower-priority files cannot override higher-priority control files.
 
 Return `FAIL` and fix the run files before execution when any check fails.

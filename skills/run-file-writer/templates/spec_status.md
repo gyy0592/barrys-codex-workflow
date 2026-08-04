@@ -1,5 +1,14 @@
 # Spec Status
 
+## Canonical Paths
+
+TASK_ROOT: {{TASK_ROOT}}
+WORKFLOW_ROOT: {{WORKFLOW_ROOT}}
+CONTROL_ROOT: {{CONTROL_ROOT}}
+CURRENT_SPEC_ROOT: {{CURRENT_SPEC_ROOT}}
+
+Replace every path placeholder before reporting completion. Any cross-file reference in this status file must use a resolved absolute path from this map.
+
 Status: not_started
 
 Allowed status values:
