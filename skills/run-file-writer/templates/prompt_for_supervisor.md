@@ -146,10 +146,10 @@ If a lower-priority file appears to require stopping but a higher-priority contr
 
 ## Monitoring Cadence Rule
 
-- If the controlled Codex is stable and working within the current task step, do not interrupt it frequently.
-- Stable means it is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step.
-- When stable, monitor at a low frequency, usually once every 2 to 10 minutes.
-- Use shorter checks only during startup, after sending corrections, while verifying message delivery, or when there is evidence of drift, stalled progress, failed commands, bad ETA, low MFU, poor CPU/GPU use, or another correction trigger.
+- If the monitored program reports a remaining ETA, both the supervisor's next check of the executor and the executor's next check of that program use `max(ETA/5, 5 minutes)`, based on the latest remaining ETA. Recompute the interval after each check that reports a new ETA.
+- If no ETA is available but the executor and program are stable—no observed drift, expected progress or wait state, and a low likelihood of near-term error—both use a 2–5 minute interval, normally 5 minutes.
+- Stable means the executor is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step without a correction signal.
+- After startup, a correction, failed command, unexpected output, drift, stalled progress, bad ETA, low MFU, poor CPU/GPU use, or another elevated-risk signal, both supervisor and executor use active shorter checks until stability is re-established; do not apply the stable-run interval during that correction window.
 - Do not send a message merely because no new output appeared for a short time.
 
 ## Checkpoint Rule

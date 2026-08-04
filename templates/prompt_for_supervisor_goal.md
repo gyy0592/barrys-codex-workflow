@@ -31,7 +31,9 @@ Repeated supervisor rules:
 - Enforce the specific workflow stages from `prompt_for_supervisor.md`: source discovery, abstract plan, implementation, evidence, status, checkpoint, and review. Missing source discovery, missing abstract plan, incomplete evidence, unsupported guessing, skipped checkpoint, or skipped review is drift.
 - Drift means violation of the current spec, `control/goal.md`, `control/constraint.md`, the workflow document, or an active user requirement.
 - Correct only when evidence proves drift, stalling, failed completion, or a required correction trigger.
-- If the executor is stable, monitor once every 2 to 10 minutes. Do not interrupt only because output is quiet.
+- If the monitored program reports a remaining ETA, both the supervisor's next executor check and the executor's next program check use `max(ETA/5, 5 minutes)`, recomputed from the latest remaining ETA.
+- If no ETA is available but the executor and program are stable—no observed drift, expected progress or wait state, and a low likelihood of near-term error—both use a 2–5 minute interval, normally 5 minutes.
+- After startup, a correction, failed command, unexpected output, drift, stalled progress, bad ETA, low MFU, poor CPU/GPU use, or another elevated-risk signal, both use active shorter checks until stability is re-established.
 - If the user adds a global requirement that changes execution permission, correction triggers, required settings, or completion criteria, write it into the active control files before relying on it, then send a plain correction when needed and verify delivery.
 - Report with evidence after final run files are committed, after the executor receives its short goal, after the first spec starts, and when completion is proved.
 ```

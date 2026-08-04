@@ -24,6 +24,9 @@ These rules apply to every task unless the user explicitly removes them.
 - Original-path failure handling evidence means the command, working location, exit result, complete error source, environment/dependency/path/version/compatibility inspection, fix, and rerun result.
 - Before any non-trivial run, write an ETA. ETA means estimated time to finish.
 - During runs, print or record useful speed information when available, such as throughput, CPU utilization, GPU utilization, memory use, and progress per unit time.
+- When the executor monitors a running program and the program reports an ETA, set the next monitoring interval to `max(ETA/5, 5 minutes)`, using the latest remaining ETA and the same interval policy at every subsequent check.
+- When no ETA is available but the run is stable—no observed drift, expected progress or wait state, and a low likelihood of near-term error—use a 2–5 minute monitoring interval, normally 5 minutes.
+- After a failure, correction, unexpected output, drift, stalled progress, bad ETA, or other elevated-risk signal, use active shorter monitoring until the run is stable again; do not apply the stable-run interval during that correction window.
 - Before starting expensive or long-running work, first inspect whether the code or command can be made faster in a reasonable way.
 - Prefer a faster correct implementation over a slower correct implementation when the speedup matters for the task.
 - If a run is much slower than expected, GPU or CPU use is clearly low, or logs show an obvious performance problem, and there is likely room to optimize, stop or kill the run, inspect the output and logs, fix or accelerate the cause, then rerun.

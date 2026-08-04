@@ -64,7 +64,7 @@ The supervisor may read control files, workflow files, spec files, evidence file
 
 The supervisor must not read full project source code and must not implement task code. If source code understanding is needed, instruct the controlled Codex to inspect the relevant code and report evidence.
 
-If the controlled Codex is stable and working within the current task step, do not interrupt it frequently. Stable means it is reading required sources, writing expected evidence, running an expected command, monitoring an expected job, or waiting on a legitimate long-running step. When stable, monitor at a low frequency, usually once every 2 to 10 minutes.
+If the monitored program reports a remaining ETA, the supervisor's next check of the executor and the executor's next check of that program must both use `max(ETA/5, 5 minutes)`, based on the latest remaining ETA and recomputed after each check. If no ETA is available but the executor and program are stable—no observed drift, expected progress or wait state, and a low likelihood of near-term error—both use a 2–5 minute interval, normally 5 minutes. After startup, a correction, failed command, unexpected output, drift, stalled progress, bad ETA, low MFU, poor CPU/GPU use, or another elevated-risk signal, both use active shorter checks until stability is re-established.
 
 If the user orders an immediate correction while the controlled Codex is stuck in a long `sleep`, `wait`, background terminal wait, or paused/interrupted state, use `__WORKFLOW_ROOT__/scripts/force_interrupt_send_resume.sh <pane> <message-file>`. The script presses Escape, stops a visible background terminal when needed, injects the message through `inject_steer.sh`, sends `/goal resume`, and writes evidence under `temp/tmux-codex-supervisor` unless `STEER_EVIDENCE_DIR` overrides it. Do not hand-type tmux keys for this path.
 
@@ -98,7 +98,7 @@ Before each checkpoint commit, require:
 - staging only files required for the current workflow/spec,
 - no unrelated user files,
 - no still-changing experiment outputs.
-- current `git diff` and current `review_checklist.md` sent to fresh no-context Codex subagent reviewers using `gpt5.4 high`, with PASS required before commit.
+- current `git diff` and current `review_checklist.md` sent to fresh no-context Codex subagent reviewers using the reviewer model required by the active workflow prompt/control files. If those files do not specify a reviewer model, default to `gpt5.5 high`. PASS is required before commit unless the active workflow prompt/control files explicitly waive or replace the review gate for the current spec; in that case, obey the active workflow prompt/control files and record the waiver evidence.
 
 If relevant and unrelated files cannot be separated safely, stop the commit and report the exact paths.
 
@@ -112,7 +112,7 @@ git show --stat --oneline --name-status HEAD
 
 ## No-Context Review Rule
 
-After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` and current `review_checklist.md` to fresh no-context Codex subagent reviewers using `gpt5.4 high`. The checkpoint commit is allowed only after the required reviewers PASS, and the workflow can move to the next spec only after that checkpoint commit exists.
+After each completed task step and before its checkpoint commit, the supervisor must send the current `git diff` and current `review_checklist.md` to fresh no-context Codex subagent reviewers using the reviewer model required by the active workflow prompt/control files. If those files do not specify a reviewer model, default to `gpt5.5 high`. The checkpoint commit is allowed only after the required reviewers PASS, unless the active workflow prompt/control files explicitly waive or replace the review gate for the current spec. The workflow can move to the next spec only after the checkpoint commit exists and the active prompt/control release authority is recorded.
 
 Default review count:
 

@@ -31,6 +31,10 @@ Before reporting run-file completion, replace every path placeholder and verify 
 
 The generated control and supervisor files MUST instruct the executor to wait only for an unmet direct prerequisite. At every scheduling point, compute the ready set and launch all ready, non-conflicting, resource-compatible tasks concurrently up to the actual available capacity. Preserve the declared dependency order when capacity is insufficient to select among ready tasks; dependency order is not permission to delay an independent ready task. When any task finishes, recompute the ready set and immediately fill the released capacity. Do not wait for an unrelated task or an entire wave. Do not encode a fixed GPU-count branch; use the current resource query and record a concrete reason for every matching resource left unused.
 
+## Monitoring cadence
+
+Generated executor and supervisor instructions MUST use the same monitoring cadence. When a monitored program reports a remaining ETA, the next executor and supervisor checks MUST use `max(ETA/5, 5 minutes)`, recomputed from the latest ETA after each check. When no ETA is available but the executor and program are stable—no observed drift, expected progress or wait state, and a low likelihood of near-term error—both MUST use a 2–5 minute interval, normally 5 minutes. After startup, a correction, failure, unexpected output, drift, stalled progress, bad ETA, or another elevated-risk signal, both MUST use active shorter checks until stability is re-established.
+
 ## Workflow
 
 1. Read the user's task and task material. For a supervised tmux workflow, read the `tmux-codex-supervisor` skill before designing run files.

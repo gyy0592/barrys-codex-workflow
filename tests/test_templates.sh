@@ -108,8 +108,9 @@ grep -F 'control/constraint.md' "$repo_dir/templates/prompt_for_supervisor.md" >
 grep -F 'File Conflict Priority Rule' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'If a lower-priority file appears to require stopping' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'send a plain correction message, not a new `/goal`' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
-grep -F 'once every 2 to 10 minutes' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
-grep -F 'do not interrupt it frequently' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'max(ETA/5, 5 minutes)' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F '2–5 minute interval' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
+grep -F 'active shorter checks until stability is re-established' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'execute one spec at a time' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'must not batch multiple specs into one checkpoint commit or one review' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
 grep -F 'doing future-spec work before the current spec has passed' "$repo_dir/templates/prompt_for_supervisor.md" >/dev/null
@@ -124,7 +125,9 @@ grep -F 'You are the supervisor only.' "$repo_dir/templates/prompt_for_superviso
 grep -F 'Read `prompt_for_supervisor.md` in the current working directory before acting' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'The executor does the controlled task. The executor must produce required outputs and may run or submit jobs' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Work and monitor one spec at a time' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
-grep -F 'If the executor is stable, monitor once every 2 to 10 minutes' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
+grep -F 'max(ETA/5, 5 minutes)' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
+grep -F '2–5 minute interval' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
+grep -F 'active shorter checks until stability is re-established' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'They are not permission for the supervisor to stop supervising' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Do not mark the supervisor goal complete or blocked' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
 grep -F 'Executor Codex means the controlled Codex running in tmux.' "$repo_dir/templates/prompt_for_supervisor_goal.md" >/dev/null
@@ -154,6 +157,9 @@ fi
 grep -F 'write an ETA' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'CPU utilization' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'GPU utilization' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'max(ETA/5, 5 minutes)' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F '2–5 minute monitoring interval' "$repo_dir/templates/constraint.md" >/dev/null
+grep -F 'active shorter monitoring until the run is stable again' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'Maintain the current spec' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'do not substitute a slower, simpler, ordinary, unfused, or different path' "$repo_dir/templates/constraint.md" >/dev/null
 grep -F 'Original-path failure handling evidence means the command, working location, exit result' "$repo_dir/templates/constraint.md" >/dev/null
